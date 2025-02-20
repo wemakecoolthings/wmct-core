@@ -2,7 +2,7 @@
 
 **NOTICE: This plugin is currently under development. Do not attempt to utilize this plugin as it is- we will publish releases.**
 
-A server management plugin for Minecraft Events & Survival Servers.
+A server management plugin for Minecraft Events & Survival Servers using Endstone -> https://github.com/EndstoneMC/endstone
 
 NOTES: 
 - All features are disabled by default for performance. Use /settings to enable modules in-game or via the config file.
