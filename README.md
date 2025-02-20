@@ -1,7 +1,6 @@
 # WMCT Core
 
-**NOTICE: This plugin is currently under development.**
-- Do not attempt to utilize this plugin as it is- we will publish releases.
+**NOTICE: This plugin is currently under development. Do not attempt to utilize this plugin as it is- we will publish releases.**
 
 A server management plugin for Minecraft Events & Survival Servers.
 
