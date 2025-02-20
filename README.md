@@ -34,7 +34,7 @@ NOTES:
   - [OP] /viewscriptprofiles (Views script profiler outputs)
   - [OP] /logtag [add | remove] [tag] (Adds or removes a tag to be used when sending log notifications)
   - [OP] /logs [true | false] (Enables or disables whether you should recieve logs at all)
-  - [OP] /dim [DIM] [true | false] (Enables are disables world dimensions)
+  - [OP] /dim [DIM] [true | false] (Enables OR disables world dimensions)
   - [OP] /dimtp [player] [DIM] [coords] (Warps player(s) to another dimension at the same or specified coordiantes)
   - [OP] /ability [player] [ability node] [ability settings] (Sets a player's ability node such as flight, speed, and so on)
     - Ability Nodes
