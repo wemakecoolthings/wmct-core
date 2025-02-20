@@ -38,4 +38,4 @@ NOTES:
   - [DEFAULT] /spectate [player] (Through a menu or directly through the command- allows players in spectator to teleport to players in other gamemodes)
 
 - Logging Systems
- - TBD
+  - TBD
