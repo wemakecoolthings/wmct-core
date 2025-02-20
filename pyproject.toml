@@ -1,0 +1,12 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "endstone-wmctcore"
+version = "0.0.1"
+description = "A server management plugin for Minecraft Events & Survival Servers!"
+author = "PrimeStrat"
+
+[project.entry-points."endstone"]
+wmctserver = "endstone_wmctcore:WMCTPlugin"
