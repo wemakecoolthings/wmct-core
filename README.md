@@ -36,3 +36,6 @@ NOTES:
   - [OP] /dimtp <player> <DIM> [coords] (Warps player(s) to another dimension at the same or specified coordiantes)
   - [DEFAULT] /ping [player] (Displays the ping of a player in the chat!)
   - [DEFAULT] /spectate [player] (Through a menu or directly through the command- allows players in spectator to teleport to players in other gamemodes)
+
+- Logging Systems
+ - TBD
