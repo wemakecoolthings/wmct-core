@@ -9,4 +9,4 @@ description = "A server management plugin for Minecraft Events & Survival Server
 author = "PrimeStrat"
 
 [project.entry-points."endstone"]
-wmctserver = "endstone_wmctcore:WMCTPlugin"
+wmctcore = "endstone_wmctcore:WMCTPlugin"

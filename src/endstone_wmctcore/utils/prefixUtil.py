@@ -9,3 +9,6 @@ class Prefix:
 
     def griefLog(self):
         return f"{ColorFormat.BOLD}{ColorFormat.DARK_GRAY}[{ColorFormat.GOLD}GL{ColorFormat.DARK_GRAY}] {ColorFormat.RESET}"
+
+    def debugLog(self):
+        return f"{ColorFormat.BOLD}{ColorFormat.DARK_GRAY}[{ColorFormat.MATERIAL_REDSTONE}DEBUG{ColorFormat.DARK_GRAY}] {ColorFormat.RESET}"

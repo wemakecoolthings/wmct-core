@@ -2,26 +2,21 @@ from endstone._internal.endstone_python import CommandSender, Player, ColorForma
 from src.endstone_wmctcore.utils.prefixUtil import Prefix
 
 class Ping:
-
-    # Declare Command
-    # Need to replace with custom selector
-    command: {
-         "ping": {
+    command = {
+        "ping": {
             "description": "Check the server ping!",
             "usages": ["/ping [target: player]"],
             "permissions": ["wmctcore.command.ping"]
-        },
+        }
     }
 
-    # Declare Permission Node
-    permission: {
+    permission = {
         "wmctcore.command.ping": {
             "description": "Allows use of ping command",
             "default": "true"
-        },
+        }
     }
 
-    # Command Function
     def run_command(self, sender: CommandSender, args: list[str]) -> bool:
         if len(args) == 0:
             if not isinstance(sender, Player):
@@ -39,13 +34,13 @@ class Ping:
                     return True
 
         ping = target.ping
-        if ping <= 80:
-            ping_color = ColorFormat.GREEN
-        elif ping <= 160:
-            ping_color = ColorFormat.YELLOW
-        else:
-            ping_color = ColorFormat.RED
+        ping_color = (
+            ColorFormat.GREEN if ping <= 80 else
+            ColorFormat.YELLOW if ping <= 160 else
+            ColorFormat.RED
+        )
 
         sender.send_message(
-            f"{Prefix.infoLog()}The ping of {target.name} is {ping_color}{ping}{ColorFormat.RESET}ms")
+            f"{Prefix.infoLog()}The ping of {target.name} is {ping_color}{ping}{ColorFormat.RESET}ms"
+        )
         return True

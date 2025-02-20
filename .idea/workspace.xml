@@ -5,10 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c7d218b7-1d64-4d86-b676-1590657abe3a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/ping.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/prefixUtil.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/selectorUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/WMCT-CORE.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/endstone-wmct-core.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/ping.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/ping.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/processors/commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/processors/commands.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/prefixUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/prefixUtil.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -119,7 +122,39 @@
       <option name="project" value="LOCAL" />
       <updated>1740022932496</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="init method">
+      <option name="closed" value="true" />
+      <created>1740087063381</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1740087063381</updated>
+    </task>
+    <task id="LOCAL-00007" summary="create: selectorUtil">
+      <option name="closed" value="true" />
+      <created>1740087075685</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1740087075685</updated>
+    </task>
+    <task id="LOCAL-00008" summary="create prefixUtil">
+      <option name="closed" value="true" />
+      <created>1740087085254</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1740087085254</updated>
+    </task>
+    <task id="LOCAL-00009" summary="test: ping command">
+      <option name="closed" value="true" />
+      <created>1740087098145</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1740087098145</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -138,6 +173,10 @@
     <MESSAGE value="fixing crazy guy name kekw" />
     <MESSAGE value="remove unused init" />
     <MESSAGE value="file setup" />
-    <option name="LAST_COMMIT_MESSAGE" value="file setup" />
+    <MESSAGE value="init method" />
+    <MESSAGE value="create: selectorUtil" />
+    <MESSAGE value="create prefixUtil" />
+    <MESSAGE value="test: ping command" />
+    <option name="LAST_COMMIT_MESSAGE" value="test: ping command" />
   </component>
 </project>
