@@ -30,6 +30,8 @@ NOTES:
       - Player Ping List (sorted from highest to lowest)
   - [OP] /check [player] (Displays all client info associated with the player)
   - [OP] /activity [player] [list number] (Lists out session information and the total time playing on the server)
+  - [OP] /activitylist (Lists all of the player's total session logs in a menu)
+  - [OP] /viewscriptprofiles (Views script profiler outputs)
   - [OP] /logtag [add | remove] [tag] (Adds or removes a tag to be used when sending log notifications)
   - [OP] /logs [true | false] (Enables or disables whether you should recieve logs at all)
   - [OP] /dim [DIM] [true | false] (Enables are disables world dimensions)
@@ -39,6 +41,7 @@ NOTES:
       - Flight
       - Flight Speed
   - [OP] /mute [player] [duration number] [duration string] [reason] (A moderation command that blocks chat messages)
+  - [OP] /unmute [player] [reason] (Unmutes a muted player)
   - [DEFAULT] /ping [player] (Displays the ping of a player in the chat!)
   - [DEFAULT] /spectate [player] (Through a menu or directly through the command- allows players in spectator to teleport to players in other gamemodes)
 
