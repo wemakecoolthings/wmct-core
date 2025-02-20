@@ -30,8 +30,6 @@ NOTES:
   - [OP] /addlogtag <tag> (Adds a tag to the logging system so that players with this tag are notified)
   - [OP] /removelogtag <tag> (Removes a tag to the logging system so that players with this tag are no longer notified)
   - [OP] /logs <true | false> (Enables or disables whether you should recieve logs at all)
-  - [OP] /worldborder <center> <radius> (Creates a world border that players cannot pass)
-   - IMPORTANT: The worldborder does not current support DIM adjustments. You may find portals spawning outside the worldborder if built right on the edge of the border.
   - [OP] /dim <DIM> [true | false] (Enables are disables world dimensions)
   - [OP] /dimtp <player> <DIM> [coords] (Warps player(s) to another dimension at the same or specified coordiantes)
   - [DEFAULT] /ping [player] (Displays the ping of a player in the chat!)
