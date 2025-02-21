@@ -32,6 +32,8 @@ NOTES:
     - Toggle game patches (sub menu)
     - AFK Detection Settings
     - Prolonged Death Screen Settings
+    - Level DB Storage Settings
+    - Grief Log DB Storage Settings
   - [OP] /monitor [statistic: optional] (Used to track active changes in server stability & player connection)
     - Server Statistics
       - ALL / No Stat Specified (displays a compressed version of important server information)
