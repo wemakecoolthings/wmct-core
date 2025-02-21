@@ -42,6 +42,7 @@ NOTES:
       - Command Usage Per Second
       - Player Ping List (sorted from highest to lowest)
   - [OP] /check [player] (Displays all client info associated with the player)
+  - [OP] /reloadscripts (Reloads only the Script API, ignoring plugins and other external data)
   - [OP] /reloadpacks (Automatically increments resource pack UUIDs then performs a server restart and relogs players)
   - [OP] /activity [player] [list number: optional] (Lists out session information and the total time playing on the server)
   - [OP] /activitylist (Lists all of the player's total session logs in a menu)
