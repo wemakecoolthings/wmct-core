@@ -3,11 +3,11 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "endstone-wmct-core"
+name = "endstone-wmctcore"
 version = "0.0.1"
 description = "A server management plugin for Minecraft Events & Survival Servers!"
 author = "PrimeStrat"
 
 [project.entry-points."endstone"]
-wmct-core = "endstone_wmct_core:WMCTPlugin"
+wmctcore = "endstone_wmctcore:WMCTPlugin"
 
