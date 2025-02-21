@@ -44,6 +44,8 @@ NOTES:
   - [OP] /check [player] (Displays all client info associated with the player)
   - [OP] /reloadscripts (Reloads only the Script API, ignoring plugins and other external data)
   - [OP] /reloadpacks (Automatically increments resource pack UUIDs then performs a server restart and relogs players)
+  - [OP] /saveleveldb [ID] (Saves scoreboards and player data to an external DB)
+  - [OP] /loadleveldb [ID] (Loads scoreboards and player data to the world if saved data was found)
   - [OP] /bossbar [ID] [player] [text] [color] [progress] (Creates a custom bossbar that can be set to only display to certain players)
   - [OP] /activity [player] [list number: optional] (Lists out session information and the total time playing on the server)
   - [OP] /activitylist (Lists all of the player's total session logs in a menu)
