@@ -1,5 +1,6 @@
-from endstone._internal.endstone_python import CommandSender, Player, ColorFormat
-from src.endstone_wmctcore.utils.prefixUtil import Prefix
+from endstone import ColorFormat, Player
+from endstone.command import CommandSender
+from src.endstone_wmct_core.utils.prefixUtil import Prefix
 
 class Ping:
     command = {

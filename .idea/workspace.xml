@@ -4,15 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c7d218b7-1d64-4d86-b676-1590657abe3a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/WMCT-CORE.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/endstone-wmct-core.iml" afterDir="false" />
+    <list default="true" id="c7d218b7-1d64-4d86-b676-1590657abe3a" name="Changes" comment="test: plugin load">
+      <change afterPath="$PROJECT_DIR$/src/endstone_wmct_core/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/endstone-wmct-core.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/endstone-wmct-core.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/ping.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/ping.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/processors/commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/processors/commands.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/prefixUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/prefixUtil.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/ping.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmct_core/commands/ping.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/processors/commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmct_core/processors/commands.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/processors/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmct_core/processors/events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/prefixUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmct_core/utils/prefixUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/selectorUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmct_core/utils/selectorUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmct_core/wmctcore.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,14 +59,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/mkate&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/mkate/PycharmProjects/endstone-wmct-core",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -154,7 +158,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740087098145</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="test: plugin load">
+      <option name="closed" value="true" />
+      <created>1740095792554</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1740095792554</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -177,6 +189,7 @@
     <MESSAGE value="create: selectorUtil" />
     <MESSAGE value="create prefixUtil" />
     <MESSAGE value="test: ping command" />
-    <option name="LAST_COMMIT_MESSAGE" value="test: ping command" />
+    <MESSAGE value="test: plugin load" />
+    <option name="LAST_COMMIT_MESSAGE" value="test: plugin load" />
   </component>
 </project>

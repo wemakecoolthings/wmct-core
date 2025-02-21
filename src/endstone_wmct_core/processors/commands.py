@@ -1,6 +1,6 @@
 import importlib
 import pkgutil
-import src.endstone_wmctcore.commands as commands_module
+import src.endstone_wmct_core.commands as commands_module
 
 class CommandProcessor:
     def __init__(self):
@@ -12,7 +12,7 @@ class CommandProcessor:
         package_path = commands_module.__path__
 
         for _, module_name, _ in pkgutil.iter_modules(package_path):
-            module = importlib.import_module(f"src.endstone_wmctcore.commands.{module_name}")
+            module = importlib.import_module(f"src.endstone_wmct_core.commands.{module_name}")
 
             if hasattr(module, "command") and hasattr(module, "permission"):
                 self.commands.update(module.command)
