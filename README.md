@@ -14,6 +14,8 @@ NOTES:
     - Logs will always fire but you can choose whether to auto-kick or auto-ban as this usually only ever is caused by hacked clients
   - FIX: Riptide trident collision with players in spectator mode
   - FIX: Sneak-Flight Block Placement
+  - ENHANCEMENT: AFK Detection (optional public log & OP log)
+  - ENHANCEMENT: Aliases for gamemode commands
   - ENHANCEMENT: Prolonged death screen detection
     - If a player forces the game to stay stuck on the death screen, they will be automatically kicked or logged depending on settings
     
