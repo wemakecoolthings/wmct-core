@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/endstone-wmct-core.iml" filepath="$PROJECT_DIR$/.idea/endstone-wmct-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/endstone-wmctcore.iml" filepath="$PROJECT_DIR$/.idea/endstone-wmctcore.iml" />
     </modules>
   </component>
 </project>

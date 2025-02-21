@@ -1,60 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="c7d218b7-1d64-4d86-b676-1590657abe3a" name="Changes" comment="test: plugin load">
-      <change afterPath="$PROJECT_DIR$/src/endstone_wmct_core/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/endstone-wmct-core.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/endstone-wmct-core.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/ping.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmct_core/commands/ping.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/processors/commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmct_core/processors/commands.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/processors/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmct_core/processors/events.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/prefixUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmct_core/utils/prefixUtil.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/selectorUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmct_core/utils/selectorUtil.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmct_core/wmctcore.py" afterDir="false" />
-    </list>
+    <list default="true" id="f5fd6630-a202-4725-bfac-b315f4cd2d56" name="Changes" comment="tes" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Python Script" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;PrimeStrat&quot;
-  }
-}</component>
   <component name="GithubDefaultAccount">
     <option name="defaultAccountId" value="3f1d193a-c92a-4f38-a5ca-add439d4f598" />
   </component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/wemakecoolthings/wmct-core.git&quot;,
-    &quot;accountId&quot;: &quot;3f1d193a-c92a-4f38-a5ca-add439d4f598&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/wemakecoolthings/wmct-core",
+    "accountId": "3f1d193a-c92a-4f38-a5ca-add439d4f598"
   }
-}</component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 6
-}</component>
-  <component name="ProjectId" id="2tHqnUHGuIe2efjZFOS1tPM7EQV" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="2tKspewaWJJaf03lIKaP2OXlM35" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -63,10 +32,15 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/mkate/PycharmProjects/endstone-wmct-core",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+    "last_opened_file_path": "C:/Users/mkate/PycharmProjects/endstone-wmctcore",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\mkate\PycharmProjects\endstone-wmctcore" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -75,121 +49,27 @@
     </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
-  <component name="SvnConfiguration">
-    <configuration>C:\Users\mkate\AppData\Roaming\Subversion</configuration>
-  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="c7d218b7-1d64-4d86-b676-1590657abe3a" name="Changes" comment="" />
-      <created>1740019514491</created>
+      <changelist id="f5fd6630-a202-4725-bfac-b315f4cd2d56" name="Changes" comment="" />
+      <created>1740112284188</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1740019514491</updated>
+      <updated>1740112284188</updated>
     </task>
-    <task id="LOCAL-00001" summary="core files">
+    <task id="LOCAL-00001" summary="test">
       <option name="closed" value="true" />
-      <created>1740022516166</created>
+      <created>1740112473793</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1740022516166</updated>
+      <updated>1740112473793</updated>
     </task>
-    <task id="LOCAL-00002" summary="fixing crazy guy name kekw">
-      <option name="closed" value="true" />
-      <created>1740022571282</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1740022571282</updated>
-    </task>
-    <task id="LOCAL-00003" summary="remove unused init">
-      <option name="closed" value="true" />
-      <created>1740022680152</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1740022680152</updated>
-    </task>
-    <task id="LOCAL-00004" summary="remove unused init">
-      <option name="closed" value="true" />
-      <created>1740022898274</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1740022898274</updated>
-    </task>
-    <task id="LOCAL-00005" summary="file setup">
-      <option name="closed" value="true" />
-      <created>1740022932496</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1740022932496</updated>
-    </task>
-    <task id="LOCAL-00006" summary="init method">
-      <option name="closed" value="true" />
-      <created>1740087063381</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1740087063381</updated>
-    </task>
-    <task id="LOCAL-00007" summary="create: selectorUtil">
-      <option name="closed" value="true" />
-      <created>1740087075685</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1740087075685</updated>
-    </task>
-    <task id="LOCAL-00008" summary="create prefixUtil">
-      <option name="closed" value="true" />
-      <created>1740087085254</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1740087085254</updated>
-    </task>
-    <task id="LOCAL-00009" summary="test: ping command">
-      <option name="closed" value="true" />
-      <created>1740087098145</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1740087098145</updated>
-    </task>
-    <task id="LOCAL-00010" summary="test: plugin load">
-      <option name="closed" value="true" />
-      <created>1740095792554</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1740095792554</updated>
-    </task>
-    <option name="localTasksCounter" value="11" />
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="core files" />
-    <MESSAGE value="fixing crazy guy name kekw" />
-    <MESSAGE value="remove unused init" />
-    <MESSAGE value="file setup" />
-    <MESSAGE value="init method" />
-    <MESSAGE value="create: selectorUtil" />
-    <MESSAGE value="create prefixUtil" />
-    <MESSAGE value="test: ping command" />
-    <MESSAGE value="test: plugin load" />
-    <option name="LAST_COMMIT_MESSAGE" value="test: plugin load" />
+    <MESSAGE value="test" />
+    <option name="LAST_COMMIT_MESSAGE" value="test" />
   </component>
 </project>
