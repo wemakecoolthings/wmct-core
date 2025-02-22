@@ -19,6 +19,7 @@ def preload_commands():
             for cmd, details in module.command.items():
                 preloaded_commands[cmd] = details
                 preloaded_handlers[cmd] = module.handler
+                print(f"✓ {cmd} - {details.get('description', 'No description')}")
 
             if hasattr(module, 'permission'):
                 for perm, details in module.permission.items():
@@ -27,4 +28,4 @@ def preload_commands():
 # Run preload automatically when this file is imported
 preload_commands()
 
-__all__ = [preloaded_commands, preloaded_permissions]
+__all__ = [preloaded_commands, preloaded_permissions, preloaded_handlers]
