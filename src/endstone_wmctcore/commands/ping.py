@@ -1,12 +1,13 @@
 from endstone import Player, ColorFormat
 from endstone.command import CommandSender
-from endstone_wmctcore.utils.commandUtil import CommandRegister
+from endstone_wmctcore.utils.commandUtil import usage, create_command
 from endstone_wmctcore.utils.prefixUtil import infoLog
 
 # Register command
-command, permission = CommandRegister.create_command(
+command, permission = create_command(
     "ping",
     "Checks the server ping!",
+    ["[player: player]", "(ALL)[selector: All]"],
     ["wmctcore.command.ping"]
 )
 
