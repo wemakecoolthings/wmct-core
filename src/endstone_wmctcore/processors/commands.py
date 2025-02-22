@@ -1,10 +1,11 @@
 import importlib
 import pkgutil
-
-import src.endstone_wmctcore.commands as commands_module
+import endstone_wmctcore.commands as commands_module
+from endstone_wmctcore import wmctcore
 
 class CommandProcessor:
     def __init__(self):
+        super().__init__()
         self.commands = {}
         self.permissions = {}
 
@@ -13,16 +14,17 @@ class CommandProcessor:
         package_path = commands_module.__path__
 
         for _, module_name, _ in pkgutil.iter_modules(package_path):
-            module = importlib.import_module(f"src.endstone_wmctcore.commands.{module_name}")
+
+            module = importlib.import_module(f"endstone_wmctcore.commands.{module_name}")
 
             if hasattr(module, "command") and hasattr(module, "permission"):
                 self.commands.update(module.command)
                 self.permissions.update(module.permission)
 
-    def register_command(self, plugin_instance):
-        """Register loaded commands to the plugin."""
+    def register_command(self):
+        """Register loaded commands to the plugin and print them neatly."""
+        print("\n=== Registered Commands ===")
         for cmd, details in self.commands.items():
-            plugin_instance.register_command(cmd, details)
+            print(f"✓ {cmd} - {details.get('description', 'No description')}")
 
-        for perm, details in self.permissions.items():
-            plugin_instance.register_permission(perm, details)
+        return self.commands, self.permissions

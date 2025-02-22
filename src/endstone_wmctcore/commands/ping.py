@@ -1,25 +1,29 @@
 from endstone import ColorFormat, Player
-from endstone.command import CommandSender
+from endstone.command import CommandSender, Command, CommandExecutor
+from endstone_wmctcore.utils.prefixUtil import Prefix
 
-from src.endstone_wmctcore.utils.prefixUtil import Prefix
-
-class Ping:
-    command = {
-        "ping": {
-            "description": "Check the server ping!",
-            "usages": ["/ping [target: player]"],
-            "permissions": ["wmctcore.command.ping"]
-        }
+# Define the command details
+command = {
+    "ping": {
+        "description": "Checks the server ping!",
+        "usages": ["/ping [target: player]"],
+        "permissions": ["wmctcore.command.ping"]
     }
+}
 
-    permission = {
-        "wmctcore.command.ping": {
-            "description": "Allows use of ping command",
-            "default": "true"
-        }
+permission = {
+    "wmctcore.command.ping": {
+        "description": "Allows use of ping command",
+        "default": "true"
     }
+}
 
-    def run_command(self, sender: CommandSender, args: list[str]) -> bool:
+class Ping(CommandExecutor):
+    def __init__(self, server):
+        super().__init__()
+        self.server = server
+
+    def on_command(self, sender: CommandSender, command: Command, args: list[str]) -> bool:
         if len(args) == 0:
             if not isinstance(sender, Player):
                 sender.send_error_message("This command can only be executed by a player")

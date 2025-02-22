@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="f5fd6630-a202-4725-bfac-b315f4cd2d56" name="Changes" comment="tes" />
+    <list default="true" id="f5fd6630-a202-4725-bfac-b315f4cd2d56" name="Changes" comment="tes">
+      <change beforePath="$PROJECT_DIR$/.idea/endstone-wmctcore.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/endstone-wmctcore.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.1.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.1.tar.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/ping.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/ping.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/processors/commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/processors/commands.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,18 +20,24 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "PrimeStrat"
+  }
+}]]></component>
   <component name="GithubDefaultAccount">
     <option name="defaultAccountId" value="3f1d193a-c92a-4f38-a5ca-add439d4f598" />
   </component>
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
-    "url": "https://github.com/wemakecoolthings/wmct-core",
+    "url": "https://github.com/wemakecoolthings/wmct-core.git",
     "accountId": "3f1d193a-c92a-4f38-a5ca-add439d4f598"
   }
 }]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2tKspewaWJJaf03lIKaP2OXlM35" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -32,8 +48,8 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/mkate/PycharmProjects/endstone-wmctcore",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
+    "last_opened_file_path": "C:/Users/mkate/OneDrive/Documents/GitHub/wmct-core",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">

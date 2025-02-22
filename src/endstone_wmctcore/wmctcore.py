@@ -1,13 +1,25 @@
 from endstone.plugin import Plugin
+from endstone_wmctcore.processors.commands import CommandProcessor
 
 class WMCTPlugin(Plugin):
-    api_version = "0.5"
+    api_version = "0.6"
+    authors = ["PrimeStrat", "Cra-ZGuy", "trainer jeo"]
 
-    def on_load(self) -> None:
-        self.logger.info("on_load is called!")
+    commands = {}
+    permissions = {}
 
-    def on_enable(self) -> None:
-        self.logger.info("on_enable is called!")
+    def __init__(self):
+        super().__init__()
+        self.command_processor = CommandProcessor()
 
-    def on_disable(self) -> None:
-        self.logger.info("on_disable is called!")
+    def on_load(self):
+        self.register_commands()
+
+    def register_commands(self):
+        # Load commands and permissions dynamically
+        self.command_processor.load_commands()
+
+        # Register commands and permissions to the plugin instance
+        self.commands, self.permissions = self.command_processor.register_command()
+
+        print("Commands and permissions successfully registered!\n")
