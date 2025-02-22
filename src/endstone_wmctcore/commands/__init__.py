@@ -62,6 +62,7 @@ def preload_commands():
                     preloaded_permissions[perm] = details
 
     # Save updated config if new commands were added
+    print("\n")
     save_config(config)
 
 # Run preload automatically when this file is imported

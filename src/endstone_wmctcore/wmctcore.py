@@ -33,11 +33,15 @@ class WMCTPlugin(Plugin):
 
     def __init__(self):
         super().__init__()
-        self.user_db = UserDB("wmctcore_users.db")
+        self.user_db = None
 
     @event_handler()
     def on_load(self):
         plugin_text()
+        
+    @event_handler()
+    def on_enable(self):
+        self.user_db = UserDB("wmctcore_users.db")
 
     @event_handler()
     def on_disable(self):

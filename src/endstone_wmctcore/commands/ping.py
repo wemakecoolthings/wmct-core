@@ -34,7 +34,7 @@ def handler(self, sender: CommandSender, args: list[str]) -> bool:
             return True
 
         ping_list = [
-            f"{trailLog()}{player.name}: {get_ping_color(player.ping)}{player.ping}{ColorFormat.RESET}ms\n"
+            f"{trailLog()}{player.name}: {get_ping_color(player.ping)}{player.ping}{ColorFormat.RESET}ms"
             for player in players
         ]
         sender.send_message(f"{infoLog()}Online Players' Pings:\n" + "\n".join(ping_list))

@@ -9,8 +9,6 @@
       <change beforePath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.1.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.1.tar.gz" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/ping.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/ping.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/dbUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/dbUtil.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/prefixUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/prefixUtil.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
