@@ -1,5 +1,6 @@
 import sqlite3
 import time
+from endstone.util import Vector
 from typing import List, Tuple, Any, Dict
 
 class DatabaseManager:
@@ -59,12 +60,15 @@ class DatabaseManager:
         if self.conn:
             self.conn.close()
 
-# DB
+def log_db_call():
+    print("\n[DB] Connection opened successfully!\n")
+
 class UserDB(DatabaseManager):
     def __init__(self, db_name: str):
         """Initialize the database connection and create tables."""
         super().__init__(db_name)  # Call DatabaseManager's init
         self.create_tables()
+        log_db_call()
 
     def create_tables(self):
         """Create tables if they don't exist."""
@@ -89,7 +93,7 @@ class UserDB(DatabaseManager):
         }
         self.create_table('actions_log', action_log_columns)
 
-    def log_action(self, xuid: int, action: str, location: str, timestamp: int):
+    def log_action(self, xuid: int, action: str, location: Vector, timestamp: int):
         """Logs an action performed by a player."""
         data = {
             'xuid': xuid,
@@ -159,4 +163,5 @@ class UserDB(DatabaseManager):
 
     def close_connection(self):
         """Closes the database connection."""
+        print("\n[DB] Connection closed successfully!\n")
         self.close()
