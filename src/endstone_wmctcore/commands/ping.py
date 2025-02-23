@@ -3,16 +3,22 @@ from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
 from endstone_wmctcore.utils.prefixUtil import infoLog, trailLog
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from endstone_wmctcore.wmctcore import WMCTPlugin
+
 # Register command
 command, permission = create_command(
     "ping",
     "Checks the server ping!",
     ["/ping [player: player]", "/ping (all)[selector: All]"],
-    ["wmctcore.command.ping"]
+    ["wmctcore.command.ping"],
+    "true"
 )
 
 # PING COMMAND FUNCTIONALITY
-def handler(self, sender: CommandSender, args: list[str]) -> bool:
+def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     if len(args) == 0:
         if not isinstance(sender, Player):
             sender.send_error_message("This command can only be executed by a player")
