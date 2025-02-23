@@ -1,5 +1,5 @@
 from endstone import ColorFormat
-from endstone.event import event_handler, EventPriority
+from endstone.event import event_handler, PlayerLoginEvent, PlayerJoinEvent
 from endstone.plugin import Plugin
 from endstone.command import Command, CommandSender
 from endstone_wmctcore.commands import (
@@ -23,6 +23,10 @@ WMCT Core Loaded!
         """
     )
 
+# EVENT IMPORTS
+from endstone_wmctcore.events.player_connect import handle_login_event, handle_join_event
+
+
 class WMCTPlugin(Plugin):
     api_version = "0.6"
     authors = ["PrimeStrat", "CraZ-Guy", "trainer jeo"]
@@ -35,17 +39,37 @@ class WMCTPlugin(Plugin):
         super().__init__()
         self.user_db = None
 
+    # EVENT HANDLER
     @event_handler()
-    def on_load(self):
-        plugin_text()
-        
-    @event_handler()
-    def on_enable(self):
-        self.user_db = UserDB("wmctcore_users.db")
+    def on_player_login(self, ev: PlayerLoginEvent):
+        handle_login_event(self, ev)
 
     @event_handler()
+    def on_player_join(self, ev: PlayerJoinEvent):
+        handle_join_event(self, ev)
+
+    def on_load(self):
+        plugin_text()
+
+    def on_enable(self):
+        self.register_events(self)
+        self.reload_custom_perms()
+        self.user_db = UserDB("wmctcore_users.db")
+
     def on_disable(self):
         self.user_db.close_connection()
+
+    def reload_custom_perms(self):
+        for player in self.server.online_players:
+
+            # Remove Overwritten Permissions
+            player.add_attachment(self, "endstone.command.ban", False)
+            player.add_attachment(self, "endstone.command.banip", False)
+            player.add_attachment(self, "endstone.command.unban", False)
+            player.add_attachment(self, "endstone.command.unbanip", False)
+            player.add_attachment(self, "endstone.command.banlist", False)
+
+            player.recalculate_permissions()
 
     # COMMAND HANDLER
     def on_command(self, sender: CommandSender, command: Command, args: list[str]) -> bool:
@@ -59,9 +83,8 @@ class WMCTPlugin(Plugin):
                     handler_func = self.handlers[command.name]  # Get the handler function
                     return handler_func(self, sender, args)  # Execute the handler
             else:
-                sender.send_message(f"Command '{command.name}' not found.")
+                sender.send_message(f"{errorLog()}Command '{command.name}' not found.")
                 return False
         except Exception as e:
             sender.send_message(f"\n========\nThis command generated an error -> please report this on our GitHub!\n========\n\n{errorLog()}{e}\n\n{ColorFormat.RESET}========")
             return False
-

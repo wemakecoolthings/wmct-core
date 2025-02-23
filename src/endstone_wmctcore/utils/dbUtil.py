@@ -61,7 +61,7 @@ class DatabaseManager:
             self.conn.close()
 
 def log_db_call():
-    print("\n[DB] Connection opened successfully!\n")
+    print("\n[WMCT CORE DB] Connection opened successfully!\n")
 
 class UserDB(DatabaseManager):
     def __init__(self, db_name: str):
@@ -80,7 +80,11 @@ class UserDB(DatabaseManager):
             'device': 'TEXT',
             'client_ver': 'TEXT',
             'last_join': 'INTEGER',
-            'last_leave': 'INTEGER'
+            'last_leave': 'INTEGER',
+            'is_muted': 'INTEGER',
+            'mute_time': 'INTEGER',
+            'is_banned': 'INTEGER',
+            'banned_time': 'INTEGER'
         }
         self.create_table('users', columns)
         
@@ -163,5 +167,5 @@ class UserDB(DatabaseManager):
 
     def close_connection(self):
         """Closes the database connection."""
-        print("\n[DB] Connection closed successfully!\n")
+        print("\n[WMCT CORE DB] Connection closed successfully!\n")
         self.close()
