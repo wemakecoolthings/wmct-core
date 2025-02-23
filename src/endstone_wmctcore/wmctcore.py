@@ -1,5 +1,5 @@
 from endstone import ColorFormat
-from endstone.event import event_handler, PlayerLoginEvent, PlayerJoinEvent
+from endstone.event import event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent
 from endstone.plugin import Plugin
 from endstone.command import Command, CommandSender
 from endstone_wmctcore.commands import (
@@ -24,7 +24,7 @@ WMCT Core Loaded!
     )
 
 # EVENT IMPORTS
-from endstone_wmctcore.events.player_connect import handle_login_event, handle_join_event
+from endstone_wmctcore.events.player_connect import handle_login_event, handle_join_event, handle_leave_event
 
 
 class WMCTPlugin(Plugin):
@@ -47,6 +47,10 @@ class WMCTPlugin(Plugin):
     @event_handler()
     def on_player_join(self, ev: PlayerJoinEvent):
         handle_join_event(self, ev)
+
+    @event_handler()
+    def on_player_quit(self, ev: PlayerQuitEvent):
+        handle_leave_event(self, ev)
 
     def on_load(self):
         plugin_text()

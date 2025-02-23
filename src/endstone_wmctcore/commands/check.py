@@ -30,18 +30,15 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
             return True
 
-    elif player_name.lower() == "offline":
-
-        return True
-
     else:
         target = sender.server.get_player(player_name)
         if target is None:
-            sender.send_error_message(f"{errorLog()}Player {player_name} not found.")
+
+            # Check Offline DB
+
             return True
 
-        sender.send_message(f"{self.user_db.get_online_user('users', target.xuid, 'device_os')}")
-        sender.send_message(f"{self.user_db.get_offline_user('users', target.name, 'device_os')}")
+        sender.send_message(f"test")
 
     return True
 
