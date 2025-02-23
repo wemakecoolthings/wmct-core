@@ -15,6 +15,7 @@ NOTES:
     - Logs will always fire but you can choose whether to auto-kick or auto-ban as this usually only ever is caused by hacked clients
   - FIX: Riptide trident collision with players in spectator mode
   - FIX: Sneak-Flight Block Placement
+  - ENHANCEMENT: Custom moderation system (overriding Endstone's banning systems)
   - ENHANCEMENT: Auto-recalc for permissions upon changing a player's permission status
   - ENHANCEMENT: AFK Detection (optional public log & OP log)
   - ENHANCEMENT: Aliases for gamemode commands
@@ -60,8 +61,13 @@ NOTES:
     - Ability Nodes
       - Flight
       - Flight Speed
-  - [OP] /mute [player] [duration number] [duration string] [reason: optional] (A moderation command that blocks chat messages)
+  - [OP] /mute [player] [reason: optional] (A moderation command that blocks chat messages)
   - [OP] /unmute [player] [reason: optional] (Unmutes a muted player)
+  - [OP] /tempmute [player] [duration number] [duration string] [reason: optional] (A moderation command that blocks chat messages)
+  - [OP] /ban [player] [reason: optional] (A moderation command that prevents the player from rejoining the server)
+  - [OP] /unban [player] [reason: optional]
+  - [OP] /tempban [player] [duration number] [duration string] [reason: optional]
+  - [OP] /punishments [player] (Displays past and current moderation actions)
   - [OP] /inspect (Toggles inspect mode where interacting or breaking a block will return any related grief logs)
   - [OP] /grieflog [player] [radius] [filter: optional] (Returns grief logs in the specified area)
     - Supported Logs
