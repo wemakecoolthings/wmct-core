@@ -40,7 +40,7 @@ def preload_commands():
     commands_path = os.path.join(os.path.dirname(endstone_wmctcore.__file__), 'commands')
     config = load_config()
 
-    print("[COMMANDS] Registering...")
+    print("[WMCT CORE] Registering commands...")
     for _, module_name, _ in pkgutil.iter_modules([commands_path]):
         module = importlib.import_module(f"endstone_wmctcore.commands.{module_name}")
 
