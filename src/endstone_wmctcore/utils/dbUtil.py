@@ -72,51 +72,42 @@ class UserDB(DatabaseManager):
 
     def create_tables(self):
         """Create tables if they don't exist."""
-        columns = {
-            'xuid': 'INTEGER PRIMARY KEY',
-            'uuid': 'INTEGER',
+        user_info_columns = {
+            'xuid': 'TEXT PRIMARY KEY',
+            'uuid': 'TEXT',
             'name': 'TEXT',
             'ping': 'INTEGER',
-            'device': 'TEXT',
+            'device_os': 'TEXT',
             'client_ver': 'TEXT',
             'last_join': 'INTEGER',
             'last_leave': 'INTEGER',
+        }
+        self.create_table('users', user_info_columns)
+
+        moderation_log_columns = {
+            'xuid': 'TEXT PRIMARY KEY',
             'is_muted': 'INTEGER',
             'mute_time': 'INTEGER',
+            'mute_reason': 'TEXT',
             'is_banned': 'INTEGER',
-            'banned_time': 'INTEGER'
+            'banned_time': 'INTEGER',
+            'ban_reason': 'TEXT',
         }
-        self.create_table('users', columns)
+        self.create_table('mod_logs',  moderation_log_columns)
         
         action_log_columns = {
             'id': 'INTEGER PRIMARY KEY AUTOINCREMENT',
-            'xuid': 'INTEGER',
+            'xuid': 'TEXT',
             'action': 'TEXT',
             'location': 'TEXT',
             'timestamp': 'INTEGER'
         }
         self.create_table('actions_log', action_log_columns)
 
-    def log_action(self, xuid: int, action: str, location: Vector, timestamp: int):
-        """Logs an action performed by a player."""
-        data = {
-            'xuid': xuid,
-            'action': action,
-            'location': location,
-            'timestamp': timestamp
-        }
-        self.insert('actions_log', data)
-
-    def delete_old_logs(self, cutoff_timestamp: int):
-        """Deletes logs older than a given timestamp."""
-        condition = 'timestamp < ?'
-        params = (cutoff_timestamp,)
-        self.delete('actions_log', condition, params)
-
     def save_user(self, player):
         """Checks if a user exists and saves them if not."""
         xuid = player.xuid
-        uuid = player.unique_id
+        uuid = str(player.unique_id)
         name = player.name
         ping = player.ping
         device = player.device_os
@@ -140,30 +131,64 @@ class UserDB(DatabaseManager):
             }
             self.insert('users', data)
             return True 
-        else:
-            return False
+        elif user:
+            condition = 'xuid = ?'
+            params = (xuid,)
 
-    def update_user_join_time(self, xuid: int, new_join_time: int):
-        """Updates the join time for an existing user in the 'users' table."""
-        condition = 'xuid = ?'
-        params = (xuid,)
-        
-        updates = {
-            'last_join': new_join_time
-        }
-        
-        self.update('users', updates, condition, params)
+            updates = {
+                'xuid': xuid,
+                'uuid': uuid,
+                'name': name,
+                'ping': ping,
+                'device_os': device,
+                'client_ver': client_ver,
+                'last_join': int(time.time()),
+            }
 
-    def update_user_leave_time(self, xuid: int, new_leave_time: int):
+            self.update('users', updates, condition, params)
+            return True
+
+    def get_offline_user(self, table_name: str, name: str, stat: str):
+        """
+        Retrieves a specific stat (column value) for a user using their name.
+
+        :param table_name: The name of the table to retrieve data from.
+        :param name: The player's name (str).
+        :param stat: The column name to fetch.
+        :return: The value of the requested stat, or None if not found.
+        """
+        query = f"SELECT {stat} FROM {table_name} WHERE name = ?"
+        self.cursor.execute(query, (name,))
+        result = self.cursor.fetchone()
+
+        return result[0] if result else None  # Return the value if found, else None
+
+    def update_user_leave_data(self, xuid: str):
         """Updates the leave time for an existing user in the 'users' table."""
         condition = 'xuid = ?'
         params = (xuid,)
         
         updates = {
-            'last_leave': new_leave_time
+            'last_leave': int(time.time())
         }
         
         self.update('users', updates, condition, params)
+
+    def log_grief_action(self, xuid: str, action: str, location: Vector, timestamp: int):
+        """Logs an action performed by a player."""
+        data = {
+            'xuid': xuid,
+            'action': action,
+            'location': location,
+            'timestamp': timestamp
+        }
+        self.insert('actions_log', data)
+
+    def delete_old_grief_logs(self, cutoff_timestamp: int):
+        """Deletes logs older than a given timestamp."""
+        condition = 'timestamp < ?'
+        params = (cutoff_timestamp,)
+        self.delete('actions_log', condition, params)
 
     def close_connection(self):
         """Closes the database connection."""
