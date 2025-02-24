@@ -2,6 +2,7 @@ import importlib
 import pkgutil
 import os
 import json
+from collections import defaultdict
 import endstone_wmctcore
 
 CONFIG_PATH = os.path.join(os.path.dirname(endstone_wmctcore.__file__), '../../../../wmctcore-config.json')
@@ -32,36 +33,50 @@ def save_config(config):
     with open(CONFIG_PATH, "w") as config_file:
         json.dump(config, config_file, indent=4)
 
-
 def preload_commands():
     """Preload all command modules before WMCTPlugin is instantiated, respecting the config."""
     global preloaded_commands, preloaded_permissions, preloaded_handlers
 
-    commands_path = os.path.join(os.path.dirname(endstone_wmctcore.__file__), 'commands')
+    commands_base_path = os.path.join(os.path.dirname(endstone_wmctcore.__file__), 'commands')
     config = load_config()
 
+    grouped_commands = defaultdict(list)
+
     print("[WMCT CORE] Registering commands...")
-    for _, module_name, _ in pkgutil.iter_modules([commands_path]):
-        module = importlib.import_module(f"endstone_wmctcore.commands.{module_name}")
 
-        if hasattr(module, 'command') and hasattr(module, 'handler'):
-            for cmd, details in module.command.items():
-                # Ensure command exists in config, default to enabled
-                if cmd not in config["commands"]:
-                    config["commands"][cmd] = {"enabled": True}
+    # Recursively find all submodules
+    for root, _, _ in os.walk(commands_base_path):
+        rel_path = os.path.relpath(root, commands_base_path)
+        package_path = rel_path.replace(os.sep, ".") if rel_path != "." else ""
 
-                if config["commands"][cmd]["enabled"]:
-                    preloaded_commands[cmd] = details
-                    preloaded_handlers[cmd] = module.handler
-                    print(f"✓ {cmd} - {details.get('description', 'No description')}")
-                else:
-                    print(f"✗ {cmd} - Disabled by config")
+        for _, module_name, _ in pkgutil.iter_modules([root]):
+            module_import_path = f"endstone_wmctcore.commands{('.' + package_path) if package_path else ''}.{module_name}"
+            module = importlib.import_module(module_import_path)
 
-            if hasattr(module, 'permission'):
-                for perm, details in module.permission.items():
-                    preloaded_permissions[perm] = details
+            if hasattr(module, 'command') and hasattr(module, 'handler'):
+                for cmd, details in module.command.items():
+                    # Ensure command exists in config, default to enabled
+                    if cmd not in config["commands"]:
+                        config["commands"][cmd] = {"enabled": True}
 
-    # Save updated config if new commands were added
+                    if config["commands"][cmd]["enabled"]:
+                        preloaded_commands[cmd] = details
+                        preloaded_handlers[cmd] = module.handler
+                        grouped_commands[package_path].append((cmd, details.get('description', 'No description')))
+                    else:
+                        grouped_commands[package_path].append((cmd, "Disabled by config"))
+
+                if hasattr(module, 'permission'):
+                    for perm, details in module.permission.items():
+                        preloaded_permissions[perm] = details
+
+    # Print grouped commands
+    for category, commands in grouped_commands.items():
+        print(f"\n[{category if category else 'Root'}]")
+        for cmd, desc in commands:
+            status = "✓" if "Disabled by config" not in desc else "✗"
+            print(f"{status} {cmd} - {desc}")
+
     print("\n")
     save_config(config)
 
