@@ -1,7 +1,7 @@
 import sqlite3
 import time
-from endstone.util import Vector
-from typing import List, Tuple, Any, Dict
+from dataclasses import dataclass
+from typing import List, Tuple, Any, Dict, Optional
 
 class DatabaseManager:
     def __init__(self, db_name: str):
@@ -60,15 +60,45 @@ class DatabaseManager:
         if self.conn:
             self.conn.close()
 
-def log_db_call():
-    print("\n[WMCT CORE DB] Connection opened successfully!\n")
+@dataclass
+class User:
+    xuid: str
+    uuid: str
+    name: str
+    ping: int
+    device_os: str
+    client_ver: str
+    last_join: int
+    last_leave: int
+
+
+@dataclass
+class ModLog:
+    xuid: str
+    name: str
+    is_muted: bool
+    mute_time: int
+    mute_reason: str
+    is_banned: bool
+    banned_time: int
+    ban_reason: str
+
+
+@dataclass
+class GriefAction:
+    id: int
+    xuid: str
+    action: str
+    location: str
+    timestamp: int
+
 
 class UserDB(DatabaseManager):
     def __init__(self, db_name: str):
         """Initialize the database connection and create tables."""
-        super().__init__(db_name)  # Call DatabaseManager's init
+        super().__init__(db_name)
+        self.db_name = db_name
         self.create_tables()
-        log_db_call()
 
     def create_tables(self):
         """Create tables if they don't exist."""
@@ -86,6 +116,7 @@ class UserDB(DatabaseManager):
 
         moderation_log_columns = {
             'xuid': 'TEXT PRIMARY KEY',
+            'name': 'TEXT',
             'is_muted': 'INTEGER',
             'mute_time': 'INTEGER',
             'mute_reason': 'TEXT',
@@ -93,16 +124,7 @@ class UserDB(DatabaseManager):
             'banned_time': 'INTEGER',
             'ban_reason': 'TEXT',
         }
-        self.create_table('mod_logs',  moderation_log_columns)
-        
-        action_log_columns = {
-            'id': 'INTEGER PRIMARY KEY AUTOINCREMENT',
-            'xuid': 'TEXT',
-            'action': 'TEXT',
-            'location': 'TEXT',
-            'timestamp': 'INTEGER'
-        }
-        self.create_table('actions_log', action_log_columns)
+        self.create_table('mod_logs', moderation_log_columns)
 
     def save_user(self, player):
         """Checks if a user exists and saves them if not."""
@@ -112,12 +134,12 @@ class UserDB(DatabaseManager):
         ping = player.ping
         device = player.device_os
         client_ver = player.game_version
-        last_join = int(time.time())  # Corrected to call time() to get the current timestamp
+        last_join = int(time.time())
         last_leave = 0
 
         self.cursor.execute("SELECT * FROM users WHERE xuid = ?", (xuid,))
         user = self.cursor.fetchone()
-        
+
         if not user:
             data = {
                 'xuid': xuid,
@@ -129,14 +151,25 @@ class UserDB(DatabaseManager):
                 'last_join': last_join,
                 'last_leave': last_leave
             }
+
+            mod_data = {
+                'xuid': xuid,
+                'name': name,
+                'is_muted': 0,
+                'mute_time': 0,
+                'mute_reason': "None",
+                'is_banned': 0,
+                'banned_time': 0,
+                'ban_reason': "None",
+            }
+
             self.insert('users', data)
-            return True 
-        elif user:
+            self.insert('mod_logs', mod_data)
+            return True
+        else:
             condition = 'xuid = ?'
             params = (xuid,)
-
             updates = {
-                'xuid': xuid,
                 'uuid': uuid,
                 'name': name,
                 'ping': ping,
@@ -144,53 +177,168 @@ class UserDB(DatabaseManager):
                 'client_ver': client_ver,
                 'last_join': int(time.time()),
             }
-
             self.update('users', updates, condition, params)
             return True
 
-    def get_offline_user(self, table_name: str, name: str, stat: str):
-        """
-        Retrieves a specific stat (column value) for a user using their name.
+    def get_mod_log(self, xuid: str) -> Optional[ModLog]:
+        query = "SELECT * FROM mod_logs WHERE xuid = ?"
+        self.cursor.execute(query, (xuid,))
+        result = self.cursor.fetchone()
 
-        :param table_name: The name of the table to retrieve data from.
-        :param name: The player's name (str).
-        :param stat: The column name to fetch.
-        :return: The value of the requested stat, or None if not found.
-        """
-        query = f"SELECT {stat} FROM {table_name} WHERE name = ?"
+        if result:
+            return ModLog(
+                xuid=result[0],
+                name=result[1],
+                is_muted=bool(result[2]),
+                mute_time=result[3],
+                mute_reason=result[4],
+                is_banned=bool(result[5]),
+                banned_time=result[6],
+                ban_reason=result[7]
+            )
+        return None
+
+    def get_offline_user(self, name: str) -> Optional[User]:
+        """Retrieves all user data as an object."""
+        query = "SELECT * FROM users WHERE name = ?"
         self.cursor.execute(query, (name,))
         result = self.cursor.fetchone()
 
-        return result[0] if result else None  # Return the value if found, else None
+        if result:
+            return User(*result)
+        return None  # Return None if user not found
 
-    def update_user_leave_data(self, xuid: str):
-        """Updates the leave time for an existing user in the 'users' table."""
+    def add_ban(self, xuid: str, expiration: int, reason: str):
+        """Bans a player by updating the mod_logs table."""
+
+        updates = {
+            'is_banned': 1,
+            'banned_time': expiration,
+            'ban_reason': reason
+        }
         condition = 'xuid = ?'
         params = (xuid,)
-        
+
+        self.update('mod_logs', updates, condition, params)
+
+    def add_mute(self, xuid: str, expiration: int, reason: str):
+
         updates = {
-            'last_leave': int(time.time())
+            'is_muted': 1,
+            'mute_time': expiration,
+            'mute_reason': reason
         }
-        
+        condition = 'xuid = ?'
+        params = (xuid,)
+        self.update('mod_logs', updates, condition, params)
+
+    def remove_ban(self, name: str):
+        """Bans a player by updating the mod_logs table."""
+        updates = {
+            'is_banned': 0,
+            'banned_time': 0,
+            'ban_reason': "None"
+        }
+        condition = 'name = ?'
+        params = (name,)
+
+        self.update('mod_logs', updates, condition, params)
+
+    def remove_mute(self,  name: str):
+        updates = {
+            'is_muted': 0,
+            'mute_time': 0,
+            'mute_reason': "None"
+        }
+        condition = 'name = ?'
+        params = (name,)
+        self.update('mod_logs', updates, condition, params)
+
+    def get_xuid_by_name(self, player_name: str) -> str:
+        """Fetch the xuid of a player by their name."""
+        query = "SELECT xuid FROM mod_logs WHERE name = ?"
+        self.cursor.execute(query, (player_name,))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        else:
+            raise ValueError(f"Player {player_name} not found in database.")
+
+    def get_offline_mod_log(self, name: str) -> Optional[ModLog]:
+        """Retrieves a user's moderation log as an object."""
+        query = "SELECT * FROM mod_logs WHERE name = ?"
+        self.cursor.execute(query, (name,))
+        result = self.cursor.fetchone()
+
+        if result:
+            return ModLog(
+                xuid=result[0],
+                name=result[1],
+                is_muted=bool(result[2]),
+                mute_time=result[3],
+                mute_reason=result[4],
+                is_banned=bool(result[5]),
+                banned_time=result[6],
+                ban_reason=result[7]
+            )
+        return None
+
+    def update_user_leave_data(self, name: str):
+        """Updates the leave time for an existing user in the 'users' table."""
+        condition = 'name = ?'
+        params = (name,)
+        updates = {'last_leave': int(time.time())}
         self.update('users', updates, condition, params)
 
-    def log_grief_action(self, xuid: str, action: str, location: Vector, timestamp: int):
+    def close_connection(self):
+        """Closes the database connection."""
+        self.close()
+
+# CURRENTLY NOT IN USE BUT IN PROGRESS OF BEING MADE
+class GriefLog(DatabaseManager):
+    """Handles actions related to grief logs."""
+    def __init__(self, db_name: str):
+        """Initialize the database connection and create tables."""
+        super().__init__(db_name)
+        self.create_tables()
+
+    def create_tables(self):
+        """Create tables if they don't exist."""
+        action_log_columns = {
+            'id': 'INTEGER PRIMARY KEY AUTOINCREMENT',
+            'xuid': 'TEXT',
+            'name': 'TEXT',
+            'action': 'TEXT',
+            'location': 'TEXT',
+            'timestamp': 'INTEGER'
+        }
+        self.create_table('actions_log', action_log_columns)
+
+    def log_action(db, xuid: str, name: str, action: str, location: str, timestamp: int):
         """Logs an action performed by a player."""
         data = {
             'xuid': xuid,
+            'name': name,
             'action': action,
             'location': location,
             'timestamp': timestamp
         }
-        self.insert('actions_log', data)
+        db.insert('actions_log', data)
 
-    def delete_old_grief_logs(self, cutoff_timestamp: int):
+    def get_grief_logs(db, name: str) -> list[GriefAction]:
+        """Retrieves all logged actions for a user as a list of objects."""
+        query = "SELECT * FROM actions_log WHERE name = ?"
+        db.cursor.execute(query, (name,))
+        results = db.cursor.fetchall()
+
+        return [GriefAction(*row) for row in results] if results else []
+
+    def delete_old_grief_logs(db, cutoff_timestamp: int):
         """Deletes logs older than a given timestamp."""
         condition = 'timestamp < ?'
         params = (cutoff_timestamp,)
-        self.delete('actions_log', condition, params)
+        db.delete('actions_log', condition, params)
 
     def close_connection(self):
         """Closes the database connection."""
-        print("\n[WMCT CORE DB] Connection closed successfully!\n")
         self.close()

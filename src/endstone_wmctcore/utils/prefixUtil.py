@@ -10,7 +10,7 @@ def trailLog():
     return f"{ColorFormat.BOLD}{ColorFormat.YELLOW}--> {ColorFormat.RESET}"
 
 def modLog():
-    return f"{ColorFormat.BOLD}{ColorFormat.DARK_GRAY}[{ColorFormat.RED}ML{ColorFormat.DARK_GRAY}] {ColorFormat.RESET}"
+    return f"{ColorFormat.BOLD}{ColorFormat.DARK_GRAY}[{ColorFormat.RED}ML{ColorFormat.DARK_GRAY}] {ColorFormat.RESET}{ColorFormat.GOLD}"
 
 def griefLog():
     return f"{ColorFormat.BOLD}{ColorFormat.DARK_GRAY}[{ColorFormat.GOLD}GL{ColorFormat.DARK_GRAY}] {ColorFormat.RESET}"
