@@ -68,7 +68,7 @@ NOTES:
   - [OP] /logs [true | false] (Enables or disables whether you should recieve logs at all)
   - [OP] /dimtoggle [DIM] [true | false] (Enables OR disables world dimensions)
   - [OP] /dimtp [player] [DIM] [coords: optional] (Warps player(s) to another dimension at the same or specified coordiantes)
-  - [OP] /ability [player] [ability node] [ability settings: optional] (Sets a player's ability node such as flight, speed, and so on)
+  - [OP] /attribute [player] [ability node] [ability settings: optional] (Sets a player's ability nodes such as flight and flight speed) 
     - Ability Nodes
       - Flight
       - Flight Speed
