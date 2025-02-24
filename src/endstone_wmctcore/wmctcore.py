@@ -1,7 +1,9 @@
+import traceback
 from endstone import ColorFormat
 from endstone.event import event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent, PlayerCommandEvent, ServerCommandEvent
 from endstone.plugin import Plugin
 from endstone.command import Command, CommandSender
+
 from endstone_wmctcore.commands import (
     preloaded_commands,
     preloaded_permissions,
@@ -10,7 +12,6 @@ from endstone_wmctcore.commands import (
 from endstone_wmctcore.events.command_processes import handle_command_preprocess
 
 from endstone_wmctcore.utils.prefixUtil import errorLog
-from endstone_wmctcore.utils.dbUtil import UserDB
 
 def plugin_text():
     print(
@@ -27,7 +28,6 @@ WMCT Core Loaded!
 # EVENT IMPORTS
 from endstone_wmctcore.events.player_connect import handle_login_event, handle_join_event, handle_leave_event
 
-
 class WMCTPlugin(Plugin):
     api_version = "0.6"
     authors = ["PrimeStrat", "CraZ-Guy", "trainer jeo"]
@@ -38,7 +38,6 @@ class WMCTPlugin(Plugin):
 
     def __init__(self):
         super().__init__()
-        self.user_db = None
 
     # EVENT HANDLER
     @event_handler()
@@ -63,22 +62,10 @@ class WMCTPlugin(Plugin):
     def on_enable(self):
         self.register_events(self)
         self.reload_custom_perms()
-        self.user_db = UserDB("wmctcore_users.db")
-
-    def on_disable(self):
-        self.user_db.close_connection()
 
     def reload_custom_perms(self):
 
         for player in self.server.online_players:
-
-            # Load Plugin Permissions IF Operator
-            if player.is_op:
-                permarray = list(self.permissions)
-                for perm in permarray:
-                    player.add_attachment(self, perm, True)
-
-                return True
 
             # Remove Overwritten Permissions
             player.add_attachment(self, "endstone.command.ban", False)
@@ -91,7 +78,6 @@ class WMCTPlugin(Plugin):
     # COMMAND HANDLER
     def on_command(self, sender: CommandSender, command: Command, args: list[str]) -> bool:
         """Handle incoming commands dynamically."""
-
         try:
             if command.name in self.handlers:
                 if any("@" in arg for arg in args):
@@ -104,5 +90,14 @@ class WMCTPlugin(Plugin):
                 sender.send_message(f"{errorLog()}Command '{command.name}' not found.")
                 return False
         except Exception as e:
-            sender.send_message(f"\n========\nThis command generated an error -> please report this on our GitHub!\n========\n\n{errorLog()}{e}\n\n{ColorFormat.RESET}========")
+            # Capture and log the full stack trace
+            error_message = f"\n========\nThis command generated an error -> please report this on our GitHub and provide a copy of the error below!\n========\n\n"
+            # Append stack trace to the error message
+            error_message += f"{e}\n\n" + traceback.format_exc()  # This includes the stack trace
+
+            sender.send_message(error_message)
+
+            if sender.name != "Server":
+                print(error_message)
+
             return False
