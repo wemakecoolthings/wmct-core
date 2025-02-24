@@ -1,6 +1,7 @@
 import sqlite3
 import time
 from dataclasses import dataclass
+from ipaddress import ip_address
 from typing import List, Tuple, Any, Dict, Optional
 
 class DatabaseManager:
@@ -70,6 +71,7 @@ class User:
     client_ver: str
     last_join: int
     last_leave: int
+    internal_rank: str
 
 
 @dataclass
@@ -82,6 +84,8 @@ class ModLog:
     is_banned: bool
     banned_time: int
     ban_reason: str
+    ip_address: str
+    is_ip_banned: int
 
 
 @dataclass
@@ -111,6 +115,7 @@ class UserDB(DatabaseManager):
             'client_ver': 'TEXT',
             'last_join': 'INTEGER',
             'last_leave': 'INTEGER',
+            'internal_rank': 'TEXT'
         }
         self.create_table('users', user_info_columns)
 
@@ -123,6 +128,8 @@ class UserDB(DatabaseManager):
             'is_banned': 'INTEGER',
             'banned_time': 'INTEGER',
             'ban_reason': 'TEXT',
+            'ip_address': 'TEXT',
+            'is_ip_banned': 'INTEGER'
         }
         self.create_table('mod_logs', moderation_log_columns)
 
@@ -136,6 +143,7 @@ class UserDB(DatabaseManager):
         client_ver = player.game_version
         last_join = int(time.time())
         last_leave = 0
+        ip = str(player.address)
 
         self.cursor.execute("SELECT * FROM users WHERE xuid = ?", (xuid,))
         user = self.cursor.fetchone()
@@ -149,7 +157,8 @@ class UserDB(DatabaseManager):
                 'device_os': device,
                 'client_ver': client_ver,
                 'last_join': last_join,
-                'last_leave': last_leave
+                'last_leave': last_leave,
+                'internal_rank': 'Default'
             }
 
             mod_data = {
@@ -161,6 +170,8 @@ class UserDB(DatabaseManager):
                 'is_banned': 0,
                 'banned_time': 0,
                 'ban_reason': "None",
+                'ip_address': ip,
+                'is_ip_banned': 0
             }
 
             self.insert('users', data)
@@ -194,9 +205,21 @@ class UserDB(DatabaseManager):
                 mute_reason=result[4],
                 is_banned=bool(result[5]),
                 banned_time=result[6],
-                ban_reason=result[7]
+                ban_reason=result[7],
+                ip_address=result[8],
+                is_ip_banned=bool(result[9]),
             )
         return None
+
+    def get_online_user(self, xuid: str) -> Optional[User]:
+        """Retrieves all user data as an object."""
+        query = "SELECT * FROM users WHERE xuid = ?"
+        self.cursor.execute(query, (xuid,))
+        result = self.cursor.fetchone()
+
+        if result:
+            return User(*result)
+        return None  # Return None if user not found
 
     def get_offline_user(self, name: str) -> Optional[User]:
         """Retrieves all user data as an object."""

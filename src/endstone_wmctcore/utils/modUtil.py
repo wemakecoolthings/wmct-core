@@ -16,6 +16,10 @@ def format_time_remaining(expiration) -> str:
     if remaining.total_seconds() <= 0:
         return "Expired"
 
+    # Check if expiration is more than 100 years
+    if remaining.total_seconds() > 100 * 31536000:  # 100 years in seconds
+        return "Never - Permanent Ban"
+
     total_seconds = int(remaining.total_seconds())
 
     years, rem = divmod(total_seconds, 31536000)  # 365 days
