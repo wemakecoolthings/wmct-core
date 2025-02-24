@@ -15,13 +15,24 @@ NOTES:
     - Logs will always fire but you can choose whether to auto-kick or auto-ban as this usually only ever is caused by hacked clients
   - FIX: Riptide trident collision with players in spectator mode
   - FIX: Sneak-Flight Block Placement
-  - ENHANCEMENT: Custom moderation system (overriding Endstone's banning systems)
-  - ENHANCEMENT: Auto-recalc for permissions upon changing a player's permission status
+  - ENHANCEMENT: Admin protection to prevent higher internal permission levels from getting kicked or banned from lower permission levels
+    - Read the Internal Permissions Information section below for more info!
+  - ENHANCEMENT: Custom moderation system (This disables Endstone's banning systems)
   - ENHANCEMENT: AFK Detection (optional public log & OP log)
   - ENHANCEMENT: Aliases for gamemode commands
   - ENHANCEMENT: Prolonged death screen detection
     - If a player forces the game to stay stuck on the death screen while the immediate respawn gamerule is enabled, they will be automatically kicked or logged depending on settings
-    
+
+- Internal Permissions Information
+  - Internal Ranks: This includes Minecraft's Permissions & WMCT Core's Permissions Systems
+    - Admin: Access to ALL permissions without the need for operator
+    - Mod: Access to MODERATION permissions without the need for operator
+    - Helper: Access to INFO permissions without the need for operator
+    - Default: Regular permissions based on Minecraft's internal level: visitor or regular
+  - Rank Protection
+    - Moderation permissions will not effect players with a higher permission level
+    - This applies to moderation commands such as /tempban or /mute as well as Minecraft's moderation commands such as /kick 
+  
 - Commands
   - [OP] /settings (A menu for all plugin settings)
     - Set discord webhook (per logging system)
@@ -64,10 +75,13 @@ NOTES:
   - [OP] /mute [player] [reason: optional] (A moderation command that blocks chat messages)
   - [OP] /unmute [player] [reason: optional] (Unmutes a muted player)
   - [OP] /tempmute [player] [duration number] [duration string] [reason: optional] (A moderation command that blocks chat messages)
-  - [OP] /ban [player] [reason: optional] (A moderation command that prevents the player from rejoining the server)
-  - [OP] /unban [player] [reason: optional]
+  - [OP] /permban [player] [reason: optional] (A moderation command that prevents the player from rejoining the server)
+  - [OP] /removeban [player] [reason: optional]
   - [OP] /tempban [player] [duration number] [duration string] [reason: optional]
-  - [OP] /punishments [player] (Displays past and current moderation actions)
+  - [OP] /punishments [player] (Displays past and current moderation actions taken on the player)
+  - [OP] /addperm [player] (Adds a wmctcore permission directly to the player)
+  - [OP] /removeperm [player] (Removes a wmctcore permission directly from the player)
+  - [OP] /setrank [player] [Default | Helper | Mod | Admin] (Applies an internal permission setting to the player without operator)
   - [OP] /inspect (Toggles inspect mode where interacting or breaking a block will return any related grief logs)
   - [OP] /grieflog [player] [radius] [filter: optional] (Returns grief logs in the specified area)
     - Supported Logs
@@ -78,7 +92,7 @@ NOTES:
       - Block Interact
       - Item Use
   - [DEFAULT] /ping [player: optional] (Displays the ping of a player in the chat)
-  - [DEFAULT] /spectate [player: optional] (Through a menu or directly through the command- allows players in spectator to teleport to players in other gamemodes)
+  - [DEFAULT] /spectate [player: optional] (Through a menu or directly through the command- allows players in spectator to teleport to players in other gamemodes)  
 
 - Logging Systems
   - Grief Logger
