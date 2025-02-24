@@ -1,0 +1,1 @@
+# Import settings for server to determine logging functionality

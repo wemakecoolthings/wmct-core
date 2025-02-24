@@ -1,5 +1,5 @@
 from endstone import ColorFormat
-from endstone.event import event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent
+from endstone.event import event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent, PlayerCommandEvent, ServerCommandEvent
 from endstone.plugin import Plugin
 from endstone.command import Command, CommandSender
 from endstone_wmctcore.commands import (
@@ -7,6 +7,7 @@ from endstone_wmctcore.commands import (
     preloaded_permissions,
     preloaded_handlers
 )
+from endstone_wmctcore.events.command_processes import handle_command_preprocess
 
 from endstone_wmctcore.utils.prefixUtil import errorLog
 from endstone_wmctcore.utils.dbUtil import UserDB
@@ -52,6 +53,10 @@ class WMCTPlugin(Plugin):
     def on_player_quit(self, ev: PlayerQuitEvent):
         handle_leave_event(self, ev)
 
+    @event_handler()
+    def on_command_preprocess(self: "WMCTPlugin", ev: PlayerCommandEvent) -> None:
+        handle_command_preprocess(self, ev)
+
     def on_load(self):
         plugin_text()
 
@@ -64,7 +69,16 @@ class WMCTPlugin(Plugin):
         self.user_db.close_connection()
 
     def reload_custom_perms(self):
+
         for player in self.server.online_players:
+
+            # Load Plugin Permissions IF Operator
+            if player.is_op:
+                permarray = list(self.permissions)
+                for perm in permarray:
+                    player.add_attachment(self, perm, True)
+
+                return True
 
             # Remove Overwritten Permissions
             player.add_attachment(self, "endstone.command.ban", False)
@@ -72,12 +86,12 @@ class WMCTPlugin(Plugin):
             player.add_attachment(self, "endstone.command.unban", False)
             player.add_attachment(self, "endstone.command.unbanip", False)
             player.add_attachment(self, "endstone.command.banlist", False)
-
             player.recalculate_permissions()
 
     # COMMAND HANDLER
     def on_command(self, sender: CommandSender, command: Command, args: list[str]) -> bool:
         """Handle incoming commands dynamically."""
+
         try:
             if command.name in self.handlers:
                 if any("@" in arg for arg in args):

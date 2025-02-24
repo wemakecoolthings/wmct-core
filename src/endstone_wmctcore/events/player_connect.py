@@ -19,6 +19,7 @@ def handle_join_event(self: "WMCTPlugin", ev: PlayerJoinEvent):
     self.user_db.save_user(ev.player)
 
     # Ban System: ENHANCEMENT
+
     return
 
 def handle_leave_event(self: "WMCTPlugin", ev: PlayerQuitEvent):
