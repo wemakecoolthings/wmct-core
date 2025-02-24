@@ -24,7 +24,8 @@ NOTES:
     - If a player forces the game to stay stuck on the death screen while the immediate respawn gamerule is enabled, they will be automatically kicked or logged depending on settings
 
 - Internal Permissions Information
-  - Internal Ranks: This includes Minecraft's Permissions & WMCT Core's Permissions Systems
+  - Internal Ranks (from highest to lowest): This includes Minecraft's Permissions & WMCT Core's Permissions Systems
+    - Operator: Default Minecraft OP 
     - Admin: Access to ALL permissions without the need for operator
     - Mod: Access to MODERATION permissions without the need for operator
     - Helper: Access to INFO permissions without the need for operator
