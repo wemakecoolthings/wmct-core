@@ -16,7 +16,7 @@ command, permission = create_command(
     ["wmctcore.command.check"]
 )
 
-# PING COMMAND FUNCTIONALITY
+# CHECK COMMAND FUNCTIONALITY
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     player_name = args[0].strip('"')

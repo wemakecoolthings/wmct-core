@@ -21,7 +21,7 @@ command, permission = create_command(
     "true"
 )
 
-# PING COMMAND FUNCTIONALITY
+# SPECTATE COMMAND FUNCTIONALITY
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     if sender.game_mode != GameMode.SPECTATOR:
         sender.send_message(f"{infoLog()}You are not currently a spectator!")

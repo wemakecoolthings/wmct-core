@@ -17,7 +17,7 @@ command, permission = create_command(
     ["wmctcore.command.gma"]
 )
 
-# PING COMMAND FUNCTIONALITY
+# GMA COMMAND FUNCTIONALITY
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     if len(args) == 0:
         if not isinstance(sender, Player):
