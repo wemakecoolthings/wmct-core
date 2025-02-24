@@ -8,7 +8,6 @@ from endstone_wmctcore.utils.dbUtil import UserDB
 if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin
 
-
 def handle_login_event(self: "WMCTPlugin", ev: PlayerLoginEvent):
     # Remove Overwritten Permissions
     self.reload_custom_perms()
@@ -25,9 +24,7 @@ def handle_login_event(self: "WMCTPlugin", ev: PlayerLoginEvent):
 
             if now >= banned_time:  # Ban has expired
                 # Unban the player
-                db.remove_ban(ev.player.xuid)  # Add a method to remove the ban from the database
-                message = f"Your ban has expired. Welcome back, {ev.player.name}!"
-                ev.kick_message = message  # Optionally notify the player
+                db.remove_ban(ev.player.xuid)
             else:  # Ban is still active
                 formatted_expiration = format_time_remaining(mod_log.banned_time)
                 message = ban_message(self.server.level.name, formatted_expiration, mod_log.ban_reason)

@@ -73,11 +73,11 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         # If the player is online, add ban directly
         db.add_ban(target.xuid, int(ban_expiration.timestamp()), reason)
         target.kick(message)
-        sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was banned for {reason} {ColorFormat.GOLD}for {formatted_expiration}")
+        sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was banned for {ColorFormat.YELLOW}\"{reason}\" {ColorFormat.GOLD}for {ColorFormat.YELLOW}{formatted_expiration}")
     else:
         # If the player is offline, use xuid to ban them
         db.add_ban(db.get_xuid_by_name(player_name), int(ban_expiration.timestamp()), reason)
-        sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was banned for {reason} {ColorFormat.GOLD}for {formatted_expiration} {ColorFormat.GRAY}{ColorFormat.ITALIC}(Offline)")
+        sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was banned for {ColorFormat.YELLOW}\"{reason}\" {ColorFormat.GOLD}for {ColorFormat.YELLOW}{formatted_expiration} {ColorFormat.GRAY}{ColorFormat.ITALIC}(Offline)")
 
     db.close_connection()
     return True

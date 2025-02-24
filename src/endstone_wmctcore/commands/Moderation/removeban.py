@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 # Register command
 command, permission = create_command(
     "removeban",
-    "Removes an active ban from a player",
+    "Removes an active ban from a player!",
     ["/removeban <player: player>"],
     ["wmctcore.command.pardon"]
 )

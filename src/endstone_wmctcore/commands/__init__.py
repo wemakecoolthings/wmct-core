@@ -9,6 +9,7 @@ CONFIG_PATH = os.path.join(os.path.dirname(endstone_wmctcore.__file__), '../../.
 
 # Global storage for preloaded commands
 preloaded_commands = {}
+moderation_commands = set() # MOD SYSTEM REQ
 preloaded_permissions = {}
 preloaded_handlers = {}
 
@@ -35,7 +36,7 @@ def save_config(config):
 
 def preload_commands():
     """Preload all command modules before WMCTPlugin is instantiated, respecting the config."""
-    global preloaded_commands, preloaded_permissions, preloaded_handlers
+    global preloaded_commands, preloaded_permissions, preloaded_handlers, moderation_commands
 
     commands_base_path = os.path.join(os.path.dirname(endstone_wmctcore.__file__), 'commands')
     config = load_config()
@@ -62,6 +63,13 @@ def preload_commands():
                     if config["commands"][cmd]["enabled"]:
                         preloaded_commands[cmd] = details
                         preloaded_handlers[cmd] = module.handler
+
+                        # Check if the command belongs to "Moderation"
+                        if package_path.lower() == "moderation":
+                            moderation_commands.add(cmd)  # Add the main command
+                            aliases = details.get("aliases", [])  # Get aliases if available
+                            moderation_commands.update(aliases)  # Add aliases to the set
+
                         grouped_commands[package_path].append((cmd, details.get('description', 'No description')))
                     else:
                         grouped_commands[package_path].append((cmd, "Disabled by config"))
@@ -83,4 +91,4 @@ def preload_commands():
 # Run preload automatically when this file is imported
 preload_commands()
 
-__all__ = [preloaded_commands, preloaded_permissions, preloaded_handlers]
+__all__ = [preloaded_commands, preloaded_permissions, preloaded_handlers, moderation_commands]
