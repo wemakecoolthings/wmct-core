@@ -17,7 +17,7 @@ command, permission = create_command(
     "op"
 )
 
-# PING COMMAND FUNCTIONALITY
+# PERMBAN COMMAND FUNCTIONALITY
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     player_name = args[0].strip('"')
