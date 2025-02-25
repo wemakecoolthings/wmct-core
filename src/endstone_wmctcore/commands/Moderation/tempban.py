@@ -53,7 +53,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         "day": timedelta(days=duration_number),
         "week": timedelta(weeks=duration_number),
         "month": timedelta(days=30 * duration_number),  # Approximation
-        "year": timedelta(days=365 * duration_number)   # Approximation
+        "year": timedelta(days=361 * duration_number)   # Approximation
     }
 
     if duration_unit not in time_units:
