@@ -1,4 +1,6 @@
 import traceback
+
+from endstone import ColorFormat
 from endstone.event import event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent, PlayerCommandEvent, ServerCommandEvent
 from endstone.plugin import Plugin
 from endstone.command import Command, CommandSender
@@ -90,11 +92,14 @@ class WMCTPlugin(Plugin):
                 sender.send_message(f"{errorLog()}Command '{command.name}' not found.")
                 return False
         except Exception as e:
-            # Capture and log the full stack trace
-            error_message = f"\n========\nThis command generated an error -> please report this on our GitHub and provide a copy of the error below!\n========\n\n"
-            # Append stack trace to the error message
-            error_message += f"{e}\n\n" + traceback.format_exc()  # This includes the stack trace
-
+            error_message = (
+                    f"{ColorFormat.RED}========\n"
+                    f"{ColorFormat.GOLD}This command generated an error -> please report this on our GitHub and provide a copy of the error below!\n"
+                    f"{ColorFormat.RED}========\n\n"
+                    f"{ColorFormat.YELLOW}{e}\n\n"
+                    + "\n".join(f"{ColorFormat.YELLOW}{line}" for line in traceback.format_exc().splitlines()) +
+                    f"{ColorFormat.RESET}"
+            )
             sender.send_message(error_message)
 
             if sender.name != "Server":

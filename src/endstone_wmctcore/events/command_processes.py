@@ -17,7 +17,7 @@ def handle_command_preprocess(self: "WMCTPlugin", event: PlayerCommandEvent):
     args = command.split()
 
     # /me Crasher Fix
-    if args and args[0].lstrip("/").lower() == "/me" and command.count("@e") >= 5:
+    if args and args[0].lstrip("/").lower() == "me" and command.count("@e") >= 5:
         event.player.add_attachment(self, "minecraft.command.me", False)
         event.is_cancelled = True
 

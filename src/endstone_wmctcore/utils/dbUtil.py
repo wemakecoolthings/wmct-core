@@ -302,7 +302,9 @@ class UserDB(DatabaseManager):
                 mute_reason=result[4],
                 is_banned=bool(result[5]),
                 banned_time=result[6],
-                ban_reason=result[7]
+                ban_reason=result[7],
+                ip_address=result[8],
+                is_ip_banned=bool(result[9]),
             )
         return None
 
