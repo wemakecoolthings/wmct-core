@@ -1,6 +1,6 @@
 # WMCT Core
 
-**NOTICE: This plugin is currently under development. Do not attempt to utilize this plugin as it is- we will publish releases.**
+**NOTICE: This plugin is currently under development. All of the listed features are just planned features and may not be fully implemented.**
 
 A server management plugin for Minecraft Events & Survival Servers using Endstone -> https://github.com/EndstoneMC/endstone
 
@@ -14,6 +14,7 @@ NOTES:
   - FIX: /me crasher
     - Logs will always fire but you can choose whether to auto-kick or auto-ban as this usually only ever is caused by hacked clients
   - FIX: Sneak-Flight Block Placement
+  - 
   - ENHANCEMENT: Admin protection to prevent higher internal permission levels from getting kicked or banned from lower permission levels
     - Read the Internal Permissions Information section below for more info!
   - ENHANCEMENT: Custom moderation system (This disables Endstone's banning systems)
