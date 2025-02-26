@@ -1,8 +1,14 @@
 import sqlite3
 import time
 from dataclasses import dataclass
-from ipaddress import ip_address
+import pytz
+from datetime import datetime
 from typing import List, Tuple, Any, Dict, Optional
+
+from endstone import ColorFormat
+
+from endstone_wmctcore.utils.modUtil import format_time_remaining
+
 
 class DatabaseManager:
     def __init__(self, db_name: str):
@@ -73,7 +79,6 @@ class User:
     last_leave: int
     internal_rank: str
 
-
 @dataclass
 class ModLog:
     xuid: str
@@ -95,7 +100,6 @@ class GriefAction:
     action: str
     location: str
     timestamp: int
-
 
 class UserDB(DatabaseManager):
     def __init__(self, db_name: str):
@@ -132,6 +136,17 @@ class UserDB(DatabaseManager):
             'is_ip_banned': 'INTEGER'
         }
         self.create_table('mod_logs', moderation_log_columns)
+
+        punishment_log_columns = {
+            'id': 'INTEGER PRIMARY KEY AUTOINCREMENT',
+            'xuid': 'TEXT',
+            'name': 'TEXT',
+            'action_type': 'TEXT',
+            'reason': 'TEXT',
+            'timestamp': 'INTEGER',
+            'duration': 'INTEGER'
+        }
+        self.create_table('punishment_logs', punishment_log_columns)
 
     def save_user(self, player):
         """Checks if a user exists and saves them if not."""
@@ -244,6 +259,17 @@ class UserDB(DatabaseManager):
 
         self.update('mod_logs', updates, condition, params)
 
+        # Log ban action
+        log_data = {
+            'xuid': xuid,
+            'name': self.get_name_by_xuid(xuid),
+            'action_type': 'Ban',
+            'reason': reason,
+            'timestamp': int(time.time()),
+            'duration': expiration
+        }
+        self.insert('punishment_logs', log_data)
+
     def add_mute(self, xuid: str, expiration: int, reason: str):
 
         updates = {
@@ -254,6 +280,17 @@ class UserDB(DatabaseManager):
         condition = 'xuid = ?'
         params = (xuid,)
         self.update('mod_logs', updates, condition, params)
+
+        # Log mute action
+        log_data = {
+            'xuid': xuid,
+            'name': self.get_name_by_xuid(xuid),
+            'action_type': 'Mute',
+            'reason': reason,
+            'timestamp': int(time.time()),
+            'duration': expiration
+        }
+        self.insert('punishment_logs', log_data)
 
     def remove_ban(self, name: str):
         """Bans a player by updating the mod_logs table."""
@@ -267,6 +304,17 @@ class UserDB(DatabaseManager):
         params = (name,)
 
         self.update('mod_logs', updates, condition, params)
+
+        # Log unban action
+        log_data = {
+            'xuid': self.get_xuid_by_name(name),
+            'name': name,
+            'action_type': 'Unban',
+            'reason': 'Ban Removed',
+            'timestamp': int(time.time()),
+            'duration': 0
+        }
+        self.insert('punishment_logs', log_data)
 
     def check_ip_ban(self, ip: str) -> bool:
         """Checks if the given IP address matches a user who is IP banned."""
@@ -289,6 +337,49 @@ class UserDB(DatabaseManager):
         params = (name,)
         self.update('mod_logs', updates, condition, params)
 
+        # Log unmute action
+        log_data = {
+            'xuid': self.get_xuid_by_name(name),
+            'name': name,
+            'action_type': 'Unmute',
+            'reason': 'Mute Removed',
+            'timestamp': int(time.time()),
+            'duration': 0
+        }
+        self.insert('punishment_logs', log_data)
+
+    def get_punishment_history(self, name: str):
+        """Retrieve all punishments for a user, showing active ones first."""
+        query = """
+            SELECT action_type, reason, timestamp, duration
+            FROM punishment_logs WHERE name = ?
+            ORDER BY (CASE WHEN duration > (strftime('%s', 'now') - timestamp) THEN 0 ELSE 1 END), timestamp DESC
+        """
+        self.cursor.execute(query, (name,))
+        result = self.cursor.fetchall()
+
+        if not result:
+            return False
+
+        history = []
+        for row in result:
+            action_type, reason, timestamp, duration = row
+            est = pytz.timezone('America/New_York')
+            time_applied = datetime.fromtimestamp(timestamp, pytz.utc).astimezone(est).strftime(
+                '%Y-%m-%d %I:%M:%S %p %Z')
+
+            status = ""
+            if duration > 0:
+                expires_in = (timestamp + duration) - int(time.time())
+                if expires_in > 0:
+                    status = f"{ColorFormat.GREEN}ACTIVE {ColorFormat.YELLOW}{format_time_remaining(expires_in)}"
+                else:
+                    status = f"{ColorFormat.RED}EXPIRED"
+            history.append(
+                f"{ColorFormat.BLUE}{action_type} {ColorFormat.GRAY}- {ColorFormat.YELLOW}{reason} {ColorFormat.GRAY}({status}{ColorFormat.GRAY})\n{ColorFormat.ITALIC}Date & Time Issued: {ColorFormat.GRAY}{time_applied} - {format_time_remaining(duration)}{ColorFormat.GRAY}{ColorFormat.RESET}{ColorFormat.GRAY}\n")
+
+        return history
+
     def get_xuid_by_name(self, player_name: str) -> str:
         """Fetch the xuid of a player by their name."""
         query = "SELECT xuid FROM mod_logs WHERE name = ?"
@@ -298,6 +389,16 @@ class UserDB(DatabaseManager):
             return result[0]
         else:
             raise ValueError(f"Player {player_name} not found in database.")
+
+    def get_name_by_xuid(self, xuid: str) -> str:
+        """Fetch the xuid of a player by their name."""
+        query = "SELECT name FROM mod_logs WHERE xuid = ?"
+        self.cursor.execute(query, (xuid,))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        else:
+            raise ValueError(f"XUID {xuid} not found in database.")
 
     def get_offline_mod_log(self, name: str) -> Optional[ModLog]:
         """Retrieves a user's moderation log as an object."""
