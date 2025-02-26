@@ -31,7 +31,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     if not mod_log or not mod_log.is_banned:
         # Player is not banned, return an error message
-        sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}is not banned.")
+        sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}is not banned")
         db.close_connection()
         return False
 

@@ -35,7 +35,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         # Check if the player is already banned while online
         if db.get_mod_log(target.xuid).is_banned:
             sender.send_message(
-                f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.RED}is already permanently banned.")
+                f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.RED}is already permanently banned")
             db.close_connection()
             return False
     else:
@@ -43,7 +43,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         mod_log = db.get_offline_mod_log(player_name)
         if mod_log and mod_log.is_banned:
             sender.send_message(
-                f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.RED}is already permanently banned.")
+                f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.RED}is already permanently banned")
             db.close_connection()
             return False
 

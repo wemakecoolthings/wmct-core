@@ -7,7 +7,7 @@ def ban_message(server, expiration, reason) -> str:
 §cPunishment Reason: §6{reason}
 """.strip()
 
-def format_time_remaining(expiration) -> str:
+def format_time_remaining(expiration, is_mute = False) -> str:
     # Convert expiration timestamp to datetime object
     expiration_datetime = datetime.fromtimestamp(expiration)
     now = datetime.now()
@@ -18,6 +18,10 @@ def format_time_remaining(expiration) -> str:
 
     # Check if expiration is more than 100 years
     if remaining.total_seconds() > 100 * 31536000:  # 100 years in seconds
+
+        if is_mute:
+            return "Never"
+
         return "Never - Permanent Ban"
 
     total_seconds = int(remaining.total_seconds())
