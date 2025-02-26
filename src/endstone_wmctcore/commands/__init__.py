@@ -28,7 +28,6 @@ def load_config():
     with open(CONFIG_PATH, "r") as config_file:
         return json.load(config_file)
 
-
 def save_config(config):
     """Save the current config state to disk."""
     with open(CONFIG_PATH, "w") as config_file:

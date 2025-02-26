@@ -85,7 +85,7 @@ class ModLog:
     banned_time: int
     ban_reason: str
     ip_address: str
-    is_ip_banned: int
+    is_ip_banned: bool
 
 
 @dataclass
@@ -231,13 +231,13 @@ class UserDB(DatabaseManager):
             return User(*result)
         return None  # Return None if user not found
 
-    def add_ban(self, xuid: str, expiration: int, reason: str):
+    def add_ban(self, xuid, expiration: int, reason: str, ip_ban: bool = False):
         """Bans a player by updating the mod_logs table."""
-
         updates = {
             'is_banned': 1,
             'banned_time': expiration,
-            'ban_reason': reason
+            'ban_reason': reason,
+            'is_ip_banned': ip_ban
         }
         condition = 'xuid = ?'
         params = (xuid,)
@@ -260,12 +260,24 @@ class UserDB(DatabaseManager):
         updates = {
             'is_banned': 0,
             'banned_time': 0,
-            'ban_reason': "None"
+            'ban_reason': "None",
+            'is_ip_banned': 0
         }
         condition = 'name = ?'
         params = (name,)
 
         self.update('mod_logs', updates, condition, params)
+
+    def check_ip_ban(self, ip: str) -> bool:
+        """Checks if the given IP address matches a user who is IP banned."""
+        # Strip the port if the IP has one
+        ip_base = ip.split(':')[0]
+
+        query = "SELECT 1 FROM mod_logs WHERE ip_address LIKE ? AND is_ip_banned = 1 LIMIT 1"
+        self.cursor.execute(query, (f"{ip_base}%",))  # % is used to match any port number
+        result = self.cursor.fetchone()
+
+        return result is not None  # Return True if a banned user is found, False otherwise
 
     def remove_mute(self,  name: str):
         updates = {

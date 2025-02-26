@@ -8,23 +8,38 @@ from endstone_wmctcore.utils.dbUtil import UserDB
 if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin
 
+
 def handle_login_event(self: "WMCTPlugin", ev: PlayerLoginEvent):
     # Remove Overwritten Permissions
     self.reload_custom_perms()
 
     # Ban System: ENHANCEMENT
     db = UserDB("wmctcore_users.db")
-    mod_log = db.get_mod_log(ev.player.xuid)
 
-    if mod_log:
-        if mod_log.is_banned:
-            # Check if the ban has expired
-            now = datetime.now()
+    player_xuid = ev.player.xuid
+    player_ip = str(ev.player.address)
+
+    mod_log = db.get_mod_log(player_xuid)
+    is_ip_banned = db.check_ip_ban(player_ip)
+    now = datetime.now()
+
+    # Handle IP Ban
+    if is_ip_banned:
+        banned_time = datetime.fromtimestamp(mod_log.banned_time)
+        if now >= banned_time:  # IP Ban has expired
+            db.remove_ban(player_ip)
+        else:  # IP Ban is still active
+            formatted_expiration = format_time_remaining(mod_log.banned_time)
+            message = ban_message(self.server.level.name, formatted_expiration, "IP Ban - " + mod_log.ban_reason)
+            ev.kick_message = message
+            ev.is_cancelled = True  # Prevent login
+
+    # Handle XUID Ban
+    elif mod_log:
+        if mod_log.is_banned:  # Only proceed if the player is banned
             banned_time = datetime.fromtimestamp(mod_log.banned_time)
-
             if now >= banned_time:  # Ban has expired
-                # Unban the player
-                db.remove_ban(ev.player.xuid)
+                db.remove_ban(player_xuid)
             else:  # Ban is still active
                 formatted_expiration = format_time_remaining(mod_log.banned_time)
                 message = ban_message(self.server.level.name, formatted_expiration, mod_log.ban_reason)
@@ -33,7 +48,6 @@ def handle_login_event(self: "WMCTPlugin", ev: PlayerLoginEvent):
 
     db.close_connection()
     return
-
 
 def handle_join_event(self: "WMCTPlugin", ev: PlayerJoinEvent):
 
