@@ -28,15 +28,19 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     player_name = args[0].strip('"')
     target = self.server.get_player(player_name)
 
+    db = UserDB("wmctcore_users.db")
     if not target:
         # If the player is offline, look them up by name in the database
-        db = UserDB("wmctcore_users.db")
         mod_log = db.get_offline_mod_log(player_name)
         if not mod_log:
-            sender.send_message(f"{errorLog()}Player '{player_name}' not found.")
+            sender.send_message(f"{errorLog()}Player {ColorFormat.YELLOW}{player_name} not found.")
             db.close_connection()
             return False
-        db.close_connection()
+        # Check if the player is already banned
+        if mod_log.is_banned:
+            sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} is already banned.")
+            db.close_connection()
+            return False
 
     try:
         duration_number = int(args[1])
@@ -68,15 +72,23 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     formatted_expiration = format_time_remaining(int(ban_expiration.timestamp()))
     message = ban_message(self.server.level.name, formatted_expiration, reason)
 
-    db = UserDB("wmctcore_users.db")
     if target:
         # If the player is online, add ban directly
+        if db.get_mod_log(target.xuid).is_banned:  # Check if the player is already banned
+            sender.send_message(f"{errorLog()}Player {ColorFormat.YELLOW}{player_name} is already banned.")
+            db.close_connection()
+            return False
         db.add_ban(target.xuid, int(ban_expiration.timestamp()), reason)
         target.kick(message)
         sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was banned for {ColorFormat.YELLOW}\"{reason}\" {ColorFormat.GOLD}for {ColorFormat.YELLOW}{formatted_expiration}")
     else:
         # If the player is offline, use xuid to ban them
-        db.add_ban(db.get_xuid_by_name(player_name), int(ban_expiration.timestamp()), reason)
+        xuid = db.get_xuid_by_name(player_name)
+        if db.get_mod_log(xuid).is_banned:  # Check if the player is already banned
+            sender.send_message(f"{errorLog()}Player {ColorFormat.YELLOW}{player_name} is already banned.")
+            db.close_connection()
+            return False
+        db.add_ban(xuid, int(ban_expiration.timestamp()), reason)
         sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was banned for {ColorFormat.YELLOW}\"{reason}\" {ColorFormat.GOLD}for {ColorFormat.YELLOW}{formatted_expiration} {ColorFormat.GRAY}{ColorFormat.ITALIC}(Offline)")
 
     db.close_connection()
