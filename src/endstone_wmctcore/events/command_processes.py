@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from endstone_wmctcore.utils.dbUtil import UserDB
 from endstone_wmctcore.utils.internalPermissionsUtil import check_internal_rank
-from endstone_wmctcore.utils.prefixUtil import modLog
+from endstone_wmctcore.utils.prefixUtil import modLog, errorLog
 from endstone_wmctcore.commands import moderation_commands
 
 if TYPE_CHECKING:
@@ -30,12 +30,18 @@ def handle_command_preprocess(self: "WMCTPlugin", event: PlayerCommandEvent):
     if (args and args[0].lstrip("/").lower() in moderation_commands
     or args[0].lstrip("/").lower() == "kick"): # Edge case for /kick
 
+        if any("@" in arg for arg in args):
+            player.send_message(f"{errorLog()}Invalid argument: @ symbols are not allowed for managed commands")
+            event.is_cancelled = True
+            return False
+
         target = self.server.get_player(args[1])
         if target and self.server.get_player(target.name).is_op:
-            event.is_cancelled = True
-            event.player.send_message(
-                f"{modLog()}Player {ColorFormat.YELLOW}{target.name} {ColorFormat.GOLD}has higher permissions")
-            return True
+            if target.xuid != player.xuid: # Allow you to punish OR remove a punishment from yourself
+                event.is_cancelled = True
+                event.player.send_message(
+                    f"{modLog()}Player {ColorFormat.YELLOW}{target.name} {ColorFormat.GOLD}has higher permissions")
+                return True
 
         elif target:
             db = UserDB("wmctcore_users.db")

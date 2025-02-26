@@ -1,7 +1,7 @@
 import traceback
 
 from endstone import ColorFormat
-from endstone.event import event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent, PlayerCommandEvent, ServerCommandEvent
+from endstone.event import event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent, PlayerCommandEvent, PlayerChatEvent
 from endstone.plugin import Plugin
 from endstone.command import Command, CommandSender
 
@@ -10,6 +10,7 @@ from endstone_wmctcore.commands import (
     preloaded_permissions,
     preloaded_handlers
 )
+from endstone_wmctcore.events.chat_events import handle_chat_event
 
 from endstone_wmctcore.events.command_processes import handle_command_preprocess
 
@@ -58,6 +59,10 @@ class WMCTPlugin(Plugin):
     def on_command_preprocess(self: "WMCTPlugin", ev: PlayerCommandEvent) -> None:
         handle_command_preprocess(self, ev)
 
+    @event_handler()
+    def on_player_chat(self: "WMCTPlugin", ev: PlayerChatEvent):
+        handle_chat_event(self, ev)
+
     def on_load(self):
         plugin_text()
 
@@ -83,7 +88,7 @@ class WMCTPlugin(Plugin):
         try:
             if command.name in self.handlers:
                 if any("@" in arg for arg in args):
-                    sender.send_message(f"{errorLog()}Invalid argument: @ symbols are not allowed.")
+                    sender.send_message(f"{errorLog()}Invalid argument: @ symbols are not allowed for managed commands.")
                     return False
                 else:
                     handler_func = self.handlers[command.name]  # Get the handler function
