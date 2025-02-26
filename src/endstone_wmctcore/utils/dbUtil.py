@@ -8,6 +8,7 @@ from typing import List, Tuple, Any, Dict, Optional
 from endstone import ColorFormat
 
 from endstone_wmctcore.utils.modUtil import format_time_remaining
+from endstone_wmctcore.utils.prefixUtil import modLog
 
 
 class DatabaseManager:
@@ -92,6 +93,15 @@ class ModLog:
     ip_address: str
     is_ip_banned: bool
 
+@dataclass
+class PunishmentLog:
+    id: int
+    xuid: str
+    name: str
+    action_type: str
+    reason: str
+    timestamp: int
+    duration: Optional[int]
 
 @dataclass
 class GriefAction:
@@ -246,6 +256,11 @@ class UserDB(DatabaseManager):
             return User(*result)
         return None  # Return None if user not found
 
+    def get_all_players(self) -> list:
+        """Fetches a list of all players from the database."""
+        self.cursor.execute("SELECT DISTINCT name FROM punishment_logs")
+        return [row[0] for row in self.cursor.fetchall()]
+
     def add_ban(self, xuid, expiration: int, reason: str, ip_ban: bool = False):
         """Bans a player by updating the mod_logs table."""
         updates = {
@@ -348,12 +363,42 @@ class UserDB(DatabaseManager):
         }
         self.insert('punishment_logs', log_data)
 
-    def get_punishment_history(self, name: str):
-        """Retrieve all punishments for a user, showing active ones first."""
+    def print_punishment_history(self, name: str, page: int = 1):
+        """Retrieve all punishments for a user, showing active ones (ban/mute) first and paginate the results."""
+
+        # Query the mod_logs table to check if the player is banned or muted
+        query_mod_log = """
+            SELECT is_muted, mute_time, mute_reason, is_banned, banned_time, ban_reason 
+            FROM mod_logs 
+            WHERE name = ?
+        """
+        self.cursor.execute(query_mod_log, (name,))
+        mod_log_result = self.cursor.fetchone()
+
+        if not mod_log_result:
+            return False
+
+        is_muted, mute_time, mute_reason, is_banned, banned_time, ban_reason = mod_log_result
+
+        # Prepare the active punishments list
+        active_punishments = []
+
+        if is_banned:
+            ban_expires_in = format_time_remaining((banned_time + mute_time) - int(time.time()))
+            active_punishments.append(
+                f"{ColorFormat.RED}Ban {ColorFormat.GRAY}- {ColorFormat.YELLOW}{ban_reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{ban_expires_in}{ColorFormat.GRAY})\n{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{datetime.fromtimestamp(banned_time, pytz.utc).strftime('%Y-%m-%d %I:%M:%S %p %Z')}{ColorFormat.RESET}")
+
+        if is_muted:
+            mute_expires_in = format_time_remaining(mute_time - int(time.time()))
+            active_punishments.append(
+                f"{ColorFormat.BLUE}Mute {ColorFormat.GRAY}- {ColorFormat.YELLOW}{mute_reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{mute_expires_in}{ColorFormat.GRAY})\n{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{datetime.fromtimestamp(mute_time, pytz.utc).strftime('%Y-%m-%d %I:%M:%S %p %Z')}{ColorFormat.RESET}")
+
+        # Query to fetch all other punishments
         query = """
-            SELECT action_type, reason, timestamp, duration
-            FROM punishment_logs WHERE name = ?
-            ORDER BY (CASE WHEN duration > (strftime('%s', 'now') - timestamp) THEN 0 ELSE 1 END), timestamp DESC
+            SELECT action_type, reason, timestamp, duration 
+            FROM punishment_logs 
+            WHERE name = ? 
+            ORDER BY timestamp DESC
         """
         self.cursor.execute(query, (name,))
         result = self.cursor.fetchall()
@@ -361,24 +406,100 @@ class UserDB(DatabaseManager):
         if not result:
             return False
 
-        history = []
+        past_punishments = []
+
         for row in result:
             action_type, reason, timestamp, duration = row
             est = pytz.timezone('America/New_York')
             time_applied = datetime.fromtimestamp(timestamp, pytz.utc).astimezone(est).strftime(
                 '%Y-%m-%d %I:%M:%S %p %Z')
 
-            status = ""
-            if duration > 0:
-                expires_in = (timestamp + duration) - int(time.time())
-                if expires_in > 0:
-                    status = f"{ColorFormat.GREEN}ACTIVE {ColorFormat.YELLOW}{format_time_remaining(expires_in)}"
-                else:
-                    status = f"{ColorFormat.RED}EXPIRED"
-            history.append(
-                f"{ColorFormat.BLUE}{action_type} {ColorFormat.GRAY}- {ColorFormat.YELLOW}{reason} {ColorFormat.GRAY}({status}{ColorFormat.GRAY})\n{ColorFormat.ITALIC}Date & Time Issued: {ColorFormat.GRAY}{time_applied} - {format_time_remaining(duration)}{ColorFormat.GRAY}{ColorFormat.RESET}{ColorFormat.GRAY}\n")
+            time_status = f"EXPIRED"
 
-        return history
+            punishment_entry = f"{ColorFormat.BLUE}{action_type} {ColorFormat.GRAY}- {ColorFormat.YELLOW}{reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{time_status}{ColorFormat.GRAY})\n{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{time_applied}{ColorFormat.RESET}"
+
+            # Only add past punishments that aren't active
+            if not (action_type == "Ban" and is_banned) and not (action_type == "Mute" and is_muted):
+                past_punishments.append(punishment_entry)
+
+        # Paginate (5 per page)
+        per_page = 5
+        total_pages = (len(past_punishments) + per_page - 1) // per_page
+        start = (page - 1) * per_page
+        end = start + per_page
+        paginated_history = past_punishments[start:end]
+
+        # Build response
+        msg = [f"{modLog()}Punishment Information\n---------------"]
+
+        if active_punishments:
+            msg.append(
+                f"{ColorFormat.GREEN}Active {ColorFormat.GOLD}Punishments for {ColorFormat.YELLOW}{name}{ColorFormat.GOLD}:")
+            for entry in active_punishments:
+                msg.append(f"§7- {entry}")
+
+        msg.append(f"{ColorFormat.GOLD}---------------")
+
+        msg.append(
+            f"{ColorFormat.DARK_RED}Past {ColorFormat.GOLD}Punishments for {ColorFormat.YELLOW}{name}{ColorFormat.GOLD}:§r")
+
+        for entry in paginated_history:
+            msg.append(f"§7- {entry}")
+
+        msg.append(f"{ColorFormat.GOLD}---------------")
+
+        # Show navigation hint
+        if page < total_pages:
+            msg.append(f"§8Use §e/punishments {name} {page + 1} §8for more.")
+
+        return "\n".join(msg)
+
+    def get_punishment_logs(self, name: str) -> Optional[List[PunishmentLog]]:
+        """Fetches all punishment logs for a given player based on their name."""
+        query = "SELECT * FROM punishment_logs WHERE name = ?"
+        self.cursor.execute(query, (name,))
+        results = self.cursor.fetchall()  # Use fetchall() to get all results
+
+        if results:
+            punishment_logs = []
+            for result in results:
+                punishment_logs.append(
+                    PunishmentLog(
+                        id=result[0],
+                        xuid=result[1],
+                        name=result[2],
+                        action_type=result[3],
+                        reason=result[4],
+                        timestamp=result[5],
+                        duration=result[6] if result[6] is not None else None
+                    )
+                )
+            return punishment_logs
+        return None
+
+    def delete_all_punishment_logs_by_name(self, name: str):
+        """Deletes all punishment logs for a specific player by name."""
+        query = "DELETE FROM punishment_logs WHERE name = ?"
+        self.cursor.execute(query, (name,))
+        self.conn.commit()
+
+        # Check if the deletion was successful
+        if self.cursor.rowcount > 0:
+            return True
+        else:
+            return False
+
+    def remove_punishment_log_by_id(self, name: str, log_id: int):
+        """Removes a punishment log for a specific player based on its ID (position)."""
+        query = "DELETE FROM punishment_logs WHERE name = ? AND id = ?"
+        self.cursor.execute(query, (name, log_id))
+        self.conn.commit()
+
+        # Check if the deletion was successful
+        if self.cursor.rowcount > 0:
+            return True
+        else:
+            return False
 
     def get_xuid_by_name(self, player_name: str) -> str:
         """Fetch the xuid of a player by their name."""

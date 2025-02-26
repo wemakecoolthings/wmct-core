@@ -105,9 +105,16 @@ class WMCTPlugin(Plugin):
                     + "\n".join(f"{ColorFormat.YELLOW}{line}" for line in traceback.format_exc().splitlines()) +
                     f"{ColorFormat.RESET}"
             )
+            error_message_console = (
+                    f"========\n"
+                    f"his command generated an error -> please report this on our GitHub and provide a copy of the error below!\n"
+                    f"========\n\n"
+                    f"{e}\n\n"
+                    + "\n".join(f"{line}" for line in traceback.format_exc().splitlines())
+            )
             sender.send_message(error_message)
 
             if sender.name != "Server":
-                print(error_message)
+                print(error_message_console)
 
             return False
