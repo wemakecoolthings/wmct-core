@@ -13,6 +13,7 @@ from endstone_wmctcore.commands import (
 from endstone_wmctcore.events.chat_events import handle_chat_event
 
 from endstone_wmctcore.events.command_processes import handle_command_preprocess
+from endstone_wmctcore.utils.dbUtil import UserDB
 
 from endstone_wmctcore.utils.prefixUtil import errorLog
 
@@ -73,6 +74,11 @@ class WMCTPlugin(Plugin):
     def reload_custom_perms(self):
 
         for player in self.server.online_players:
+
+            # Update Internal DB
+            db = UserDB("wmctcore_users.db")
+            db.save_user(player)
+            db.close_connection()
 
             # Remove Overwritten Permissions
             player.add_attachment(self, "endstone.command.ban", False)
