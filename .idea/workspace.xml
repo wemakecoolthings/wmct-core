@@ -5,12 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f5fd6630-a202-4725-bfac-b315f4cd2d56" name="Changes" comment="tes">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.1.dev0.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.1.dev0.tar.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/check.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/check.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/events/player_connect.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/events/player_connect.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/dbUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/dbUtil.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/internalPermissionsUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/internalPermissionsUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/events/command_processes.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/events/command_processes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
