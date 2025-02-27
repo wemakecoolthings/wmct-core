@@ -1,6 +1,10 @@
+from datetime import datetime
+
+import pytz
 from endstone import Player, ColorFormat
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
+from endstone_wmctcore.utils.dbUtil import UserDB
 from endstone_wmctcore.utils.prefixUtil import infoLog, trailLog, errorLog
 
 from typing import TYPE_CHECKING
@@ -12,33 +16,74 @@ if TYPE_CHECKING:
 command, permission = create_command(
     "check",
     "Checks a player's client info!",
-    ["/check <player: player>", "/check (all)<selector: All>"],
+    ["/check <player: player>"],
     ["wmctcore.command.check"]
 )
 
 # CHECK COMMAND FUNCTIONALITY
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
-
     player_name = args[0].strip('"')
+    target = sender.server.get_player(player_name)
 
-    if player_name.lower() == "all":
-        players = self.server.online_players
-        if not players:
-            sender.send_message(f"{infoLog()}No players are online.")
-            return True
-        else:
+    db = UserDB("wmctcore_users.db")
 
-            return True
+    if target is None:
+        # Check Offline DB
+        user = db.get_offline_user(player_name)
+        if user is None:
+            sender.send_message(
+                f"{errorLog()}Player {ColorFormat.YELLOW}{player_name}{ColorFormat.RED} not found in database.")
+            db.close_connection()
+            return False
+
+        xuid = user.xuid
+        uuid = user.uuid
+        name = user.name
+        ping = user.ping
+        device = user.device_os
+        version = user.client_ver
+        rank = user.internal_rank
+        last_join = user.last_join
+        last_leave = user.last_leave
+        status = f"{ColorFormat.RED}Offline"
 
     else:
-        target = sender.server.get_player(player_name)
-        if target is None:
+        # Fetch Online Data
+        user = db.get_online_user(target.xuid)
+        xuid = target.xuid
+        uuid = target.unique_id
+        name = target.name
+        ping = target.ping
+        device = target.device_os
+        version = target.game_version
+        rank = user.internal_rank
+        last_join = user.last_join
+        last_leave = user.last_leave
+        status = f"{ColorFormat.GREEN}Online"
 
-            # Check Offline DB
+    db.close_connection()
 
-            return True
+    est = pytz.timezone('America/New_York')
+    join_time = datetime.fromtimestamp(last_join, pytz.utc).astimezone(est).strftime(
+                '%Y-%m-%d %I:%M:%S %p %Z')
+    leave_time = datetime.fromtimestamp(last_leave, pytz.utc).astimezone(est).strftime(
+        '%Y-%m-%d %I:%M:%S %p %Z')
 
-        sender.send_message(f"test")
+    # Format and send the message
+    sender.send_message(f"""{infoLog()}{ColorFormat.AQUA}Player Information:
+{ColorFormat.DARK_GRAY}---------------
+{ColorFormat.YELLOW}Name: {ColorFormat.WHITE}{name} {ColorFormat.GRAY}[{status}{ColorFormat.GRAY}]
+{ColorFormat.YELLOW}XUID: {ColorFormat.WHITE}{xuid}
+{ColorFormat.YELLOW}UUID: {ColorFormat.WHITE}{uuid}
+{ColorFormat.YELLOW}Internal Rank: {ColorFormat.WHITE}{rank}
+{ColorFormat.YELLOW}Device OS: {ColorFormat.WHITE}{device}
+{ColorFormat.YELLOW}Game Version: {ColorFormat.WHITE}{version}
+{ColorFormat.YELLOW}Ping: {ColorFormat.WHITE}{ping}ms
+{ColorFormat.YELLOW}Last Join: {ColorFormat.WHITE}{join_time}
+{ColorFormat.YELLOW}Last Leave: {ColorFormat.WHITE}{leave_time}
+{ColorFormat.DARK_GRAY}---------------
+""")
 
     return True
+
 
