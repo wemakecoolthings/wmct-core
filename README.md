@@ -62,7 +62,8 @@ NOTES:
       - Player Ping List (sorted from highest to lowest)
   - [OP] /check [player] (Displays all client info associated with the player)
   - [OP] /reloadscripts (Reloads only the Script API, ignoring plugins and other external data)
-  - [OP] /reloadpacks (Automatically increments resource pack version ID: REQUIRES RESTART AFTER)
+  - [OP] /updatepacks (Dynamically allows you to increment resource pack versions & update behavior pack dependencies REQUIRES RESTART AFTER)
+    - This allows you to update resource packs for forced redownloads as well as update behavior packs in-game on title updates
   - [OP] /saveleveldb [ID] (Saves scoreboards and player data to an external DB)
   - [OP] /loadleveldb [ID] (Loads scoreboards and player data to the world if saved data was found)
   - [OP] /bossbar [ID] [player] [text] [color] [progress] (Creates a custom bossbar that can be set to only display to certain players)
