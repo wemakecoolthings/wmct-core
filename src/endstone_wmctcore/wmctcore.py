@@ -72,6 +72,7 @@ class WMCTPlugin(Plugin):
         for player in self.server.online_players:
             self.reload_custom_perms(player)
 
+    # Permissions Handler
     def reload_custom_perms(self, player: Player):
 
         # Update Internal DB
