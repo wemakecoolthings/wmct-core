@@ -10,8 +10,6 @@ if TYPE_CHECKING:
 
 
 def handle_login_event(self: "WMCTPlugin", ev: PlayerLoginEvent):
-    # Remove Overwritten Permissions
-    self.reload_custom_perms()
 
     # Ban System: ENHANCEMENT
     db = UserDB("wmctcore_users.db")
@@ -55,6 +53,7 @@ def handle_join_event(self: "WMCTPlugin", ev: PlayerJoinEvent):
     db = UserDB("wmctcore_users.db")
     db.save_user(ev.player)
     db.update_user_join_data(ev.player.name)
+    self.reload_custom_perms(ev.player)
 
     # Ban System: ENHANCEMENT
     mod_log = db.get_mod_log(ev.player.xuid)

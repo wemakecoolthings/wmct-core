@@ -1,5 +1,5 @@
 from endstone import ColorFormat
-from endstone.event import event_handler, PlayerCommandEvent, ServerCommandEvent
+from endstone.event import PlayerCommandEvent, ServerCommandEvent
 from typing import TYPE_CHECKING
 
 from endstone_wmctcore.utils.dbUtil import UserDB
@@ -10,23 +10,10 @@ from endstone_wmctcore.commands import moderation_commands
 if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin
 
-def handle_console_command_preprocess(self: "WMCTPlugin", event: ServerCommandEvent):
-    command = event.command
-    args = command.split()
-
-    if args and args[0].lstrip("/").lower() in {"op", "deop"}:
-        target = self.server.get_player(args[1])
-        self.reload_custom_perms(target)
-
 def handle_command_preprocess(self: "WMCTPlugin", event: PlayerCommandEvent):
     command = event.command
     player = event.player
     args = command.split()
-
-    # Permission Recalc Enhancement
-    if args and args[0].lstrip("/").lower() in {"op", "deop"}:
-        target = self.server.get_player(args[1])
-        self.reload_custom_perms(target)
 
     # /me Crasher Fix
     if args and args[0].lstrip("/").lower() == "me" and command.count("@e") >= 5:
