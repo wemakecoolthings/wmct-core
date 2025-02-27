@@ -1,11 +1,11 @@
 from datetime import datetime
 
 import pytz
-from endstone import Player, ColorFormat
+from endstone import ColorFormat
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
 from endstone_wmctcore.utils.dbUtil import UserDB
-from endstone_wmctcore.utils.prefixUtil import infoLog, trailLog, errorLog
+from endstone_wmctcore.utils.prefixUtil import infoLog, errorLog
 
 from typing import TYPE_CHECKING
 
@@ -39,7 +39,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         xuid = user.xuid
         uuid = user.uuid
         name = user.name
-        ping = user.ping
+        ping = f"{user.ping}ms {ColorFormat.GRAY}[Last Recorded{ColorFormat.GRAY}]"
         device = user.device_os
         version = user.client_ver
         rank = user.internal_rank
@@ -53,7 +53,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         xuid = target.xuid
         uuid = target.unique_id
         name = target.name
-        ping = target.ping
+        ping = f"{target.ping}ms"
         device = target.device_os
         version = target.game_version
         rank = user.internal_rank
@@ -77,8 +77,8 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 {ColorFormat.YELLOW}UUID: {ColorFormat.WHITE}{uuid}
 {ColorFormat.YELLOW}Internal Rank: {ColorFormat.WHITE}{rank}
 {ColorFormat.YELLOW}Device OS: {ColorFormat.WHITE}{device}
-{ColorFormat.YELLOW}Game Version: {ColorFormat.WHITE}{version}
-{ColorFormat.YELLOW}Ping: {ColorFormat.WHITE}{ping}ms
+{ColorFormat.YELLOW}Client Version: {ColorFormat.WHITE}{version}
+{ColorFormat.YELLOW}Ping: {ColorFormat.WHITE}{ping}
 {ColorFormat.YELLOW}Last Join: {ColorFormat.WHITE}{join_time}
 {ColorFormat.YELLOW}Last Leave: {ColorFormat.WHITE}{leave_time}
 {ColorFormat.DARK_GRAY}---------------

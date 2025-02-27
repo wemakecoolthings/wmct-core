@@ -79,10 +79,11 @@ def preload_commands():
 
     # Print grouped commands
     for category, commands in grouped_commands.items():
-        print(f"\n[{category if category else 'Root'}]")
-        for cmd, desc in commands:
-            status = "✓" if "Disabled by config" not in desc else "✗"
-            print(f"{status} {cmd} - {desc}")
+        if category or commands:  # Only print "Root" if it has commands
+            print(f"\n[{category if category else 'Root'}]")
+            for cmd, desc in commands:
+                status = "✓" if "Disabled by config" not in desc else "✗"
+                print(f"{status} {cmd} - {desc}")
 
     print("\n")
     save_config(config)
