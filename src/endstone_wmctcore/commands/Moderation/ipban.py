@@ -38,19 +38,19 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     if target:
         # If the player is online, check the ban status in the database
         if db.get_mod_log(target.xuid).is_banned:
-            sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.RED}is already IP-banned.")
+            sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.RED}is already IP-banned")
             db.close_connection()
             return False
     else:
         # If the player is offline, check their mod log for an existing IP ban
         mod_log = db.get_offline_mod_log(player_name)
         if mod_log and mod_log.is_ip_banned:
-            sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.RED}is already IP-banned.")
+            sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.RED}is already IP-banne.")
             db.close_connection()
             return False
 
         if not mod_log:
-            sender.send_message(f"{errorLog()}Player '{player_name}' not found.")
+            sender.send_message(f"{errorLog()}Player '{player_name}' not found")
             db.close_connection()
             return False
 
@@ -62,14 +62,14 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         reason = " ".join(args[2:]) if len(args) > 2 else reason
     else:
         if len(args) < 3:
-            sender.send_message(f"{errorLog()}Invalid duration format. Use an integer followed by a time unit.")
+            sender.send_message(f"{errorLog()}Invalid duration format. Use an integer followed by a time unit")
             return False
 
         try:
             duration_number = int(args[1])
             duration_unit = args[2].lower()
         except ValueError:
-            sender.send_message(f"{errorLog()}Invalid duration format. Use an integer followed by a time unit.")
+            sender.send_message(f"{errorLog()}Invalid duration format. Use an integer followed by a time unit")
             return False
 
         # Supported time units
@@ -84,7 +84,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         }
 
         if duration_unit not in time_units:
-            sender.send_message(f"{errorLog()}Invalid time unit. Use: second, minute, hour, day, week, month, year.")
+            sender.send_message(f"{errorLog()}Invalid time unit. Use: second, minute, hour, day, week, month, year")
             return False
 
         ban_duration = time_units[duration_unit]
@@ -92,13 +92,13 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         reason = " ".join(args[3:]) if len(args) > 3 else reason
 
     # Convert datetime to timestamp for format_time_remaining
-    formatted_expiration = "Permanent" if permanent else format_time_remaining(int(ban_expiration.timestamp()))
+    formatted_expiration = "Never - Permanent Ban" if permanent else format_time_remaining(int(ban_expiration.timestamp()))
     message = ban_message(self.server.level.name, formatted_expiration, "IP Ban - " + reason)
 
     target_user = target if target else db.get_offline_mod_log(player_name)
 
     if not target_user:
-        sender.send_message(f"{modLog()}Could not retrieve IP for '{player_name}'.")
+        sender.send_message(f"{modLog()}Could not retrieve IP for '{player_name}'")
         db.close_connection()
         return False
 
@@ -108,20 +108,20 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         target.kick(message)
         if permanent:
             sender.send_message(
-                f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was permanently IP banned for {ColorFormat.YELLOW}'{reason}' {ColorFormat.GOLD}. {ColorFormat.GRAY}{ColorFormat.ITALIC}(Permanent IP Banned)."
+                f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was permanently IP banned for {ColorFormat.YELLOW}'{reason}' {ColorFormat.GRAY}{ColorFormat.ITALIC}(Permanent IP Banned)"
             )
         else:
             sender.send_message(
-                f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was IP banned for {ColorFormat.YELLOW}'{reason}' {ColorFormat.GOLD}for {formatted_expiration} {ColorFormat.GRAY}{ColorFormat.ITALIC}(IP Banned)."
+                f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was IP banned for {ColorFormat.YELLOW}'{reason}' {ColorFormat.GOLD}for {formatted_expiration} {ColorFormat.GRAY}{ColorFormat.ITALIC}(IP Banned)"
             )
     else:
         if permanent:
             sender.send_message(
-                f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was permanently IP banned for {ColorFormat.YELLOW}'{reason}' {ColorFormat.GOLD}. {ColorFormat.GRAY}{ColorFormat.ITALIC}(Offline, Permanent IP Banned)."
+                f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was permanently IP banned for {ColorFormat.YELLOW}'{reason}' {ColorFormat.GRAY}{ColorFormat.ITALIC}(Offline, Permanent IP Banned)"
             )
         else:
             sender.send_message(
-                f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was IP banned for {ColorFormat.YELLOW}'{reason}' {ColorFormat.GOLD}for {formatted_expiration} {ColorFormat.GRAY}{ColorFormat.ITALIC}(Offline, IP Banned)."
+                f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was IP banned for {ColorFormat.YELLOW}'{reason}' {ColorFormat.GOLD}for {formatted_expiration} {ColorFormat.GRAY}{ColorFormat.ITALIC}(Offline, IP Banned)"
             )
 
     db.close_connection()

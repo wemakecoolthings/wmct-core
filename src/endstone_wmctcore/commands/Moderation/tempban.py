@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 command, permission = create_command(
     "tempban",
     "Temporarily bans a player from the server!",
-    ["/tempban <player: player> <duration_number: int> (second|minute|hour|day|week|month|year)<duration_length: length> [reason: message]"],
+    ["/tempban <player: player> <duration_number: int> (second|minute|hour|day|week|month|year)<duration_length: ban_length> [reason: message]"],
     ["wmctcore.command.tempban"]
 )
 
