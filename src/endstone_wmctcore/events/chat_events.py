@@ -22,7 +22,7 @@ def handle_chat_event(self: "WMCTPlugin", ev: PlayerChatEvent):
                 ev.player.send_message(f"{modLog()}You are permanently muted for {ColorFormat.YELLOW}{mod_log.mute_reason}")
             else:
                 formatted_expiration = format_time_remaining(mod_log.mute_time)
-                ev.player.send_message(f"{modLog()}You are muted for {mod_log.mute_reason} for {formatted_expiration}")
+                ev.player.send_message(f"{modLog()}You are muted for {ColorFormat.YELLOW}\"{mod_log.mute_reason}\" {ColorFormat.GOLD}which expires in {ColorFormat.YELLOW}{formatted_expiration}")
             ev.is_cancelled = True
             return False
 
