@@ -380,20 +380,40 @@ class UserDB(DatabaseManager):
 
         is_muted, mute_time, mute_reason, is_banned, banned_time, ban_reason = mod_log_result
 
-        # Prepare the active punishments list
-        active_punishments = []
+        # Query punishment_logs to get timestamps of active punishments
+        query_active_punishments = """
+            SELECT action_type, timestamp 
+            FROM punishment_logs 
+            WHERE name = ? AND (action_type = 'Ban' OR action_type = 'Mute') 
+            ORDER BY timestamp DESC
+        """
+        self.cursor.execute(query_active_punishments, (name,))
+        active_punishment_logs = self.cursor.fetchall()
 
-        if is_banned:
-            ban_expires_in = format_time_remaining((banned_time + mute_time) - int(time.time()))
-            active_punishments.append(
-                f"{ColorFormat.RED}Ban {ColorFormat.GRAY}- {ColorFormat.YELLOW}{ban_reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{ban_expires_in}{ColorFormat.GRAY})\n{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{datetime.fromtimestamp(banned_time, pytz.utc).strftime('%Y-%m-%d %I:%M:%S %p %Z')}{ColorFormat.RESET}")
+        active_punishments = {}
+        active_timestamps = set()
 
-        if is_muted:
-            mute_expires_in = format_time_remaining(mute_time - int(time.time()))
-            active_punishments.append(
-                f"{ColorFormat.BLUE}Mute {ColorFormat.GRAY}- {ColorFormat.YELLOW}{mute_reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{mute_expires_in}{ColorFormat.GRAY})\n{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{datetime.fromtimestamp(mute_time, pytz.utc).strftime('%Y-%m-%d %I:%M:%S %p %Z')}{ColorFormat.RESET}")
+        est = pytz.timezone('America/New_York')
+        for action_type, timestamp in active_punishment_logs:
+            if action_type == "Ban" and is_banned and timestamp < banned_time and "Ban" not in active_punishments:
+                ban_expires_in = format_time_remaining(banned_time)
+                active_punishments["Ban"] = (
+                    timestamp,
+                    f"{ColorFormat.RED}Ban {ColorFormat.GRAY}- {ColorFormat.YELLOW}{ban_reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{ban_expires_in}{ColorFormat.GRAY})\n"
+                    f"{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{datetime.fromtimestamp(timestamp, est).strftime('%Y-%m-%d %I:%M:%S %p %Z')}{ColorFormat.RESET}"
+                )
+                active_timestamps.add(timestamp)
 
-        # Query to fetch all other punishments
+            elif action_type == "Mute" and is_muted and timestamp < mute_time and "Mute" not in active_punishments:
+                mute_expires_in = format_time_remaining(mute_time, True)
+                active_punishments["Mute"] = (
+                    timestamp,
+                    f"{ColorFormat.BLUE}Mute {ColorFormat.GRAY}- {ColorFormat.YELLOW}{mute_reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{mute_expires_in}{ColorFormat.GRAY})\n"
+                    f"{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{datetime.fromtimestamp(timestamp, est).strftime('%Y-%m-%d %I:%M:%S %p %Z')}{ColorFormat.RESET}"
+                )
+                active_timestamps.add(timestamp)
+
+        # Query to fetch all past punishments
         query = """
             SELECT action_type, reason, timestamp, duration 
             FROM punishment_logs 
@@ -410,16 +430,16 @@ class UserDB(DatabaseManager):
 
         for row in result:
             action_type, reason, timestamp, duration = row
-            est = pytz.timezone('America/New_York')
             time_applied = datetime.fromtimestamp(timestamp, pytz.utc).astimezone(est).strftime(
                 '%Y-%m-%d %I:%M:%S %p %Z')
 
-            time_status = f"EXPIRED"
+            time_status = "EXPIRED"
 
-            punishment_entry = f"{ColorFormat.BLUE}{action_type} {ColorFormat.GRAY}- {ColorFormat.YELLOW}{reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{time_status}{ColorFormat.GRAY})\n{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{time_applied}{ColorFormat.RESET}"
+            punishment_entry = f"{ColorFormat.BLUE}{action_type} {ColorFormat.GRAY}- {ColorFormat.YELLOW}{reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{time_status}{ColorFormat.GRAY})\n" \
+                               f"{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{time_applied}{ColorFormat.RESET}"
 
-            # Only add past punishments that aren't active
-            if not (action_type == "Ban" and is_banned) and not (action_type == "Mute" and is_muted):
+            # Only add past punishments that do not match the timestamp of an active one
+            if timestamp not in active_timestamps:
                 past_punishments.append(punishment_entry)
 
         # Paginate (5 per page)
@@ -434,14 +454,15 @@ class UserDB(DatabaseManager):
 
         if active_punishments:
             msg.append(
-                f"{ColorFormat.GREEN}Active {ColorFormat.GOLD}Punishments for {ColorFormat.YELLOW}{name}{ColorFormat.GOLD}:")
-            for entry in active_punishments:
+                f"{ColorFormat.GREEN}Active {ColorFormat.GOLD}Punishments for {ColorFormat.YELLOW}{name}{ColorFormat.GOLD}:"
+            )
+            for _, entry in active_punishments.values():
                 msg.append(f"§7- {entry}")
-
-        msg.append(f"{ColorFormat.GOLD}---------------")
+            msg.append(f"{ColorFormat.GOLD}---------------")
 
         msg.append(
-            f"{ColorFormat.DARK_RED}Past {ColorFormat.GOLD}Punishments for {ColorFormat.YELLOW}{name}{ColorFormat.GOLD}:§r")
+            f"{ColorFormat.DARK_RED}Past {ColorFormat.GOLD}Punishments for {ColorFormat.YELLOW}{name}{ColorFormat.GOLD}:§r"
+        )
 
         for entry in paginated_history:
             msg.append(f"§7- {entry}")
