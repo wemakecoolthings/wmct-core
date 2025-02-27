@@ -54,6 +54,7 @@ def handle_join_event(self: "WMCTPlugin", ev: PlayerJoinEvent):
     # Update Saved Data
     db = UserDB("wmctcore_users.db")
     db.save_user(ev.player)
+    db.update_user_join_data(ev.player.name)
 
     # Ban System: ENHANCEMENT
     mod_log = db.get_mod_log(ev.player.xuid)
@@ -69,7 +70,7 @@ def handle_leave_event(self: "WMCTPlugin", ev: PlayerQuitEvent):
     # Update Data On Leave
     db = UserDB("wmctcore_users.db")
     db.save_user(ev.player)
-    db.update_user_leave_data(ev.player.xuid)
+    db.update_user_leave_data(ev.player.name)
 
     # Ban System: ENHANCEMENT
     mod_log = db.get_mod_log(ev.player.xuid)

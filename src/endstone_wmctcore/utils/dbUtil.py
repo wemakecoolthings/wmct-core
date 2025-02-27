@@ -170,6 +170,9 @@ class UserDB(DatabaseManager):
         last_leave = 0
         ip = str(player.address)
 
+        # Determine rank
+        internal_rank = "Operator" if player.is_op else "Default"
+
         self.cursor.execute("SELECT * FROM users WHERE xuid = ?", (xuid,))
         user = self.cursor.fetchone()
 
@@ -183,7 +186,7 @@ class UserDB(DatabaseManager):
                 'client_ver': client_ver,
                 'last_join': last_join,
                 'last_leave': last_leave,
-                'internal_rank': 'Default'
+                'internal_rank': internal_rank
             }
 
             mod_data = {
@@ -211,7 +214,7 @@ class UserDB(DatabaseManager):
                 'ping': ping,
                 'device_os': device,
                 'client_ver': client_ver,
-                'last_join': int(time.time()),
+                'internal_rank': internal_rank  # Update rank if needed
             }
             self.update('users', updates, condition, params)
             return True
@@ -562,6 +565,13 @@ class UserDB(DatabaseManager):
                 is_ip_banned=bool(result[9]),
             )
         return None
+
+    def update_user_join_data(self, name: str):
+        """Updates the leave time for an existing user in the 'users' table."""
+        condition = 'name = ?'
+        params = (name,)
+        updates = {'last_join': int(time.time())}
+        self.update('users', updates, condition, params)
 
     def update_user_leave_data(self, name: str):
         """Updates the leave time for an existing user in the 'users' table."""
