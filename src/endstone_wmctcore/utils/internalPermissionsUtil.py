@@ -6,7 +6,8 @@ PERMISSIONS = {
     "Default": [],
     "Helper": [],
     "Mod": [],
-    "Admin": []
+    "Admin": [],
+    "Operator": []
 }
 
 def get_permissions(rank: str) -> list:
