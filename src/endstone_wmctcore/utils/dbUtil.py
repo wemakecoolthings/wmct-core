@@ -368,7 +368,7 @@ class UserDB(DatabaseManager):
 
         # Query the mod_logs table to check if the player is banned or muted
         query_mod_log = """
-            SELECT is_muted, mute_time, mute_reason, is_banned, banned_time, ban_reason 
+            SELECT is_muted, mute_time, mute_reason, is_banned, banned_time, ban_reason, is_ip_banned 
             FROM mod_logs 
             WHERE name = ?
         """
@@ -378,7 +378,7 @@ class UserDB(DatabaseManager):
         if not mod_log_result:
             return False
 
-        is_muted, mute_time, mute_reason, is_banned, banned_time, ban_reason = mod_log_result
+        is_muted, mute_time, mute_reason, is_banned, banned_time, ban_reason, is_ip_banned = mod_log_result
 
         # Query punishment_logs to get timestamps of active punishments
         query_active_punishments = """
@@ -397,9 +397,14 @@ class UserDB(DatabaseManager):
         for action_type, timestamp in active_punishment_logs:
             if action_type == "Ban" and is_banned and timestamp < banned_time and "Ban" not in active_punishments:
                 ban_expires_in = format_time_remaining(banned_time)
+
+                ip_ban_status = ""
+                if is_ip_banned:
+                    ip_ban_status = "IP "
+
                 active_punishments["Ban"] = (
                     timestamp,
-                    f"{ColorFormat.RED}Ban {ColorFormat.GRAY}- {ColorFormat.YELLOW}{ban_reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{ban_expires_in}{ColorFormat.GRAY})\n"
+                    f"{ColorFormat.RED}{ip_ban_status}Ban {ColorFormat.GRAY}- {ColorFormat.YELLOW}{ban_reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{ban_expires_in}{ColorFormat.GRAY})\n"
                     f"{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{datetime.fromtimestamp(timestamp, est).strftime('%Y-%m-%d %I:%M:%S %p %Z')}{ColorFormat.RESET}"
                 )
                 active_timestamps.add(timestamp)

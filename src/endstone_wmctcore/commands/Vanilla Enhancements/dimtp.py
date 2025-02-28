@@ -52,7 +52,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     current_x, current_y, current_z = int(player.location.x), int(player.location.y), int(player.location.z)
 
     # Determine new coordinates
-    if len(args) >= 4:
+    if len(args) >= 1:
         # Player provided specific coordinates
         try:
             new_x, new_y, new_z = int(args[1]), int(args[2]), int(args[3])
@@ -73,5 +73,5 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     new_y = max(-64, min(new_y, height_limits[target_dim]))
 
     # Execute teleport command
-    player.perform_command(f"execute in {target_dim.lower()} run tp {player.name} {new_x} {new_y} {new_z}")
+    player.perform_command(f"execute in {target_dim.lower()} run tp \"{player.name}\" {new_x} {new_y} {new_z}")
     return True
