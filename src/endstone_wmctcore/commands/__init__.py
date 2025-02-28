@@ -7,21 +7,31 @@ from endstone_wmctcore.utils.configUtil import load_config, save_config
 from collections import defaultdict
 
 # Global storage for preloaded commands
-preloaded_commands = {}
 moderation_commands = set() # MOD SYSTEM REQ
+preloaded_commands = {}
 preloaded_permissions = {}
 preloaded_handlers = {}
 
 def preload_settings():
-    """Preload all plugin settings."""
+    """Preload all plugin settings with defaults if missing."""
     config = load_config()
-    modules = {}
 
-    for module in modules:
+    # Define default modules and settings
+    default_modules = {
+        "spectator": {"check_tags": False, "tags": []},
+    }
+
+    # Ensure 'modules' key exists in config
+    if "modules" not in config:
+        config["modules"] = {}
+
+    # Add missing modules with default settings
+    for module, settings in default_modules.items():
         if module not in config["modules"]:
-            config["modules"][module] = {"enabled": True}
+            config["modules"][module] = settings
 
     save_config(config)
+
 
 def preload_commands():
     """Preload all command modules before WMCTPlugin is instantiated, respecting the config."""

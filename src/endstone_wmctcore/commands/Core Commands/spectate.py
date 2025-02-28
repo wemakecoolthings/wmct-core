@@ -7,6 +7,7 @@ from endstone_wmctcore.utils.formWrapperUtil import (
     ActionFormResponse,
 )
 
+from endstone_wmctcore.utils.configUtil import load_config
 from endstone_wmctcore.utils.prefixUtil import infoLog
 
 if TYPE_CHECKING:
