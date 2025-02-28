@@ -24,6 +24,7 @@ NOTES:
   - ENHANCEMENT: Custom moderation system (This disables Endstone's banning systems)
   - ENHANCEMENT: Additional movement commands (/top /bottom)
   - ENHANCEMENT: Aliases for gamemode commands
+  - ENHANCEMENT: AFK Detection
   - ENHANCEMENT: Prolonged death screen detection
     - If a player forces the game to stay stuck on the death screen while the immediate respawn gamerule is enabled, they will be automatically kicked or logged depending on settings
 
@@ -42,6 +43,7 @@ NOTES:
   - [OP] /settings (A menu for all plugin settings)
     - Logging Settings
     - Spectator Module Settings
+    - Custom Combat Settings
     - Prolonged Death Screen Settings
     - Level DB Storage Settings
     - Grief Log DB Storage Settings
