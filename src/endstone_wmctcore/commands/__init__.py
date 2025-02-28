@@ -18,7 +18,18 @@ def preload_settings():
 
     # Define default modules and settings
     default_modules = {
-        "spectator": {"check_tags": False, "tags": []},
+        "discord_logging": {
+            "commands": {"enabled": False, "webhook": ""},
+            "moderation": {"enabled": False, "webhook": ""},
+            "chat": {"enabled": False, "webhook": ""},
+            "griefing": {"enabled": False, "webhook": ""}
+        },
+        "spectator_check": {"check_tags": False, "tags": []},
+        "custom_combat": {"enabled": False, "kb_delay": 10, "hkb_mult": 1, "vkb_mult": 1, "sprint_mult": 1},
+        "me_crasher_patch": {"enabled": True, "ban": False},
+        "grieflog_storage_auto_delete": {"enabled": True, "removal_time_in_seconds": 1209600},
+        "check_prolonged_death_screen": {"enabled": True},
+        "check_afk": {"enabeled": True}
     }
 
     # Ensure 'modules' key exists in config
