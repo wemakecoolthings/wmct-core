@@ -43,7 +43,6 @@ def preload_settings():
 
     save_config(config)
 
-
 def preload_commands():
     """Preload all command modules before WMCTPlugin is instantiated, respecting the config."""
     global preloaded_commands, preloaded_permissions, preloaded_handlers, moderation_commands
