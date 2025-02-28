@@ -8,9 +8,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.1.dev0.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.1.dev0.tar.gz" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/bossbar.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/bossbar.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/dimtp.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/dimtp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/dbUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/dbUtil.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/internalPermissionsUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/internalPermissionsUtil.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
