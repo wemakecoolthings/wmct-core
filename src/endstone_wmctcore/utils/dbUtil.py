@@ -5,6 +5,7 @@ import pytz
 from datetime import datetime
 from typing import List, Tuple, Any, Dict, Optional
 from endstone import ColorFormat
+import endstone_wmctcore
 from endstone_wmctcore.utils.modUtil import format_time_remaining
 from endstone_wmctcore.utils.prefixUtil import modLog
 
@@ -51,6 +52,7 @@ class GriefAction:
     location: str
     timestamp: int
 
+# DB
 class DatabaseManager:
     def __init__(self, db_name: str):
         """Initialize the database connection."""
@@ -582,7 +584,6 @@ class UserDB(DatabaseManager):
         updates = {'last_leave': int(time.time())}
         self.update('users', updates, condition, params)
 
-# CURRENTLY NOT IN USE BUT IN PROGRESS OF BEING MADE
 class GriefLog(DatabaseManager):
     """Handles actions related to grief logs."""
     def __init__(self, db_name: str):

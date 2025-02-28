@@ -1,11 +1,10 @@
 import importlib
 import pkgutil
 import os
-import json
-from collections import defaultdict
 import endstone_wmctcore
 
-CONFIG_PATH = os.path.join(os.path.dirname(endstone_wmctcore.__file__), '../../../../wmctcore-config.json')
+from endstone_wmctcore.utils.configUtil import load_config, save_config
+from collections import defaultdict
 
 # Global storage for preloaded commands
 preloaded_commands = {}
@@ -13,25 +12,16 @@ moderation_commands = set() # MOD SYSTEM REQ
 preloaded_permissions = {}
 preloaded_handlers = {}
 
-def load_config():
-    """Load or create a configuration file to enable/disable commands."""
-    if not os.path.exists(CONFIG_PATH):
-        print("[CONFIG] No config found, generating default config...\n")
-        default_config = {
-            "commands": {}  # Will be populated dynamically
-        }
-        with open(CONFIG_PATH, "w") as config_file:
-            json.dump(default_config, config_file, indent=4)
-    else:
-        print("[CONFIG] Loading existing config...\n")
+def preload_settings():
+    """Preload all plugin settings."""
+    config = load_config()
+    modules = {}
 
-    with open(CONFIG_PATH, "r") as config_file:
-        return json.load(config_file)
+    for module in modules:
+        if module not in config["modules"]:
+            config["modules"][module] = {"enabled": True}
 
-def save_config(config):
-    """Save the current config state to disk."""
-    with open(CONFIG_PATH, "w") as config_file:
-        json.dump(config, config_file, indent=4)
+    save_config(config)
 
 def preload_commands():
     """Preload all command modules before WMCTPlugin is instantiated, respecting the config."""
@@ -90,5 +80,6 @@ def preload_commands():
 
 # Run preload automatically when this file is imported
 preload_commands()
+preload_module_settings()
 
 __all__ = [preloaded_commands, preloaded_permissions, preloaded_handlers, moderation_commands]
