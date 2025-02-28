@@ -577,67 +577,6 @@ class UserDB(DatabaseManager):
         updates = {'last_leave': int(time.time())}
         self.update('users', updates, condition, params)
 
-class ServerDB(DatabaseManager):
-    def __init__(self, db_name: str):
-        """Initialize the database connection and create tables."""
-        super().__init__(db_name)
-        self.db_name = db_name
-        self.create_tables()
-
-    def create_tables(self):
-        """Create tables if they don't exist."""
-        bossbar_columns = {
-            'id': 'TEXT PRIMARY KEY',
-            'color': 'TEXT',
-            'progress': 'TEXT',
-            'affected_player_names': 'TEXT'
-        }
-        self.create_table('bossbar_data', bossbar_columns)
-
-    def save_bossbar(self, id: str, color: str, progress: str, affected_player_names: list) -> None:
-        """Save a new bossbar or update an existing one."""
-        affected_player_names_str = ",".join(affected_player_names)  # Convert list to string
-        cursor = self.conn.cursor()
-
-        # Try to insert or update the bossbar
-        cursor.execute("""
-            INSERT INTO bossbar_data (id, color, progress, affected_player_names)
-            VALUES (?, ?, ?, ?)
-            ON CONFLICT(id) DO UPDATE SET
-                color = excluded.color,
-                progress = excluded.progress,
-                affected_player_names = excluded.affected_player_names;
-        """, (id, color, progress, affected_player_names_str))
-
-        self.conn.commit()
-        cursor.close()
-
-    def get_bossbar_by_id(self, id: str):
-        """Get a bossbar by its ID and return as a dictionary with affected_player_names as a list."""
-        cursor = self.conn.cursor()
-        cursor.execute("SELECT * FROM bossbar_data WHERE id = ?", (id,))
-        row = cursor.fetchone()
-        cursor.close()
-
-        if row:
-            # Convert the affected_player_names string back into a list
-            affected_player_names = row[3].split(",")  # Assuming affected_player_names is the 4th column
-            return {
-                'id': row[0],
-                'color': row[1],
-                'progress': row[2],
-                'affected_player_names': affected_player_names
-            }
-        else:
-            return None  # Return None if the bossbar is not found
-
-    def delete_bossbar_by_id(self, id: str) -> None:
-        """Delete a bossbar by its ID."""
-        cursor = self.conn.cursor()
-        cursor.execute("DELETE FROM bossbar_data WHERE id = ?", (id,))
-        self.conn.commit()
-        cursor.close()
-
 # CURRENTLY NOT IN USE BUT IN PROGRESS OF BEING MADE
 class GriefLog(DatabaseManager):
     """Handles actions related to grief logs."""
