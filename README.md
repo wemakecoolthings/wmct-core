@@ -96,6 +96,7 @@ NOTES:
       - Block Interact
       - Item Use
   - [DEFAULT] /ping [player: optional] (Displays the ping of a player in the chat)
+  - [DEFAULT] /refresh (Updates player permissions & commands - to avoid relogging incidents with OP updates)
   - [DEFAULT] /spectate [player: optional] (Through a menu or directly through the command- allows players in spectator to teleport to players in other gamemodes)  
 
 - Logging Systems
