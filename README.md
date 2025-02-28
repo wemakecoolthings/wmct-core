@@ -22,7 +22,6 @@ NOTES:
   - ENHANCEMENT: Admin protection to prevent higher internal permission levels from getting kicked or banned from lower permission levels
     - Read the Internal Permissions Information section below for more info!
   - ENHANCEMENT: Custom moderation system (This disables Endstone's banning systems)
-  - ENHANCEMENT: AFK Detection (optional public log & OP log)
   - ENHANCEMENT: Aliases for gamemode commands
   - ENHANCEMENT: Prolonged death screen detection
     - If a player forces the game to stay stuck on the death screen while the immediate respawn gamerule is enabled, they will be automatically kicked or logged depending on settings
@@ -40,14 +39,8 @@ NOTES:
   
 - Commands
   - [OP] /settings (A menu for all plugin settings)
-    - Set discord webhook (per logging system)
-    - Toggle chat logging
-    - Toggle discord logging
-    - Toggle grief logging
-    - Toggle mod logging
-    - Toggle command logging
-    - Toggle game patches (sub menu)
-    - AFK Detection Settings
+    - Logging Settings
+    - Spectator Module Settings
     - Prolonged Death Screen Settings
     - Level DB Storage Settings
     - Grief Log DB Storage Settings
@@ -66,7 +59,7 @@ NOTES:
     - This allows you to update resource packs for forced redownloads as well as update behavior packs in-game on title updates
   - [OP] /saveleveldb [ID] (Saves scoreboards and player data to an external DB)
   - [OP] /loadleveldb [ID] (Loads scoreboards and player data to the world if saved data was found)
-  - [OP] /bossbar [ID] [player] [text] [color] [progress] (Creates a custom bossbar that can be set to only display to certain players)
+  - [OP] /bossbar [player] [text] [color] [progress] (Creates a custom bossbar that can be set to only display to certain players)
   - [OP] /activity [player] [list number: optional] (Lists out session information and the total time playing on the server)
   - [OP] /activitylist (Lists all of the player's total session logs in a menu)
   - [OP] /viewscriptprofiles (Views script profiler outputs)
