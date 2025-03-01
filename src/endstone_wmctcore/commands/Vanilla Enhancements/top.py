@@ -23,7 +23,7 @@ command, permission = create_command(
 # TOP COMMAND FUNCTIONALITY
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     if not isinstance(sender, Player):
-        sender.send_error_message(f"{errorLog()} This command can only be executed by a player.")
+        sender.send_error_message(f"{errorLog()}This command can only be executed by a player.")
         return False
 
     player = self.server.get_player(sender.name)
@@ -64,7 +64,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     # If no valid solid block is found, return an error
     if highest_y is None:
-        sender.send_message(f"{errorLog()} No valid open-air block found at this X, Z position.")
+        sender.send_message(f"{errorLog()}No valid open-air block found at this X, Z position.")
         return False
 
     # Teleport player to the **first open air space above** the highest solid block
