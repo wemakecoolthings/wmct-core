@@ -5,9 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f5fd6630-a202-4725-bfac-b315f4cd2d56" name="Changes" comment="tes">
+      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/bottom.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.1.dev0.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.1.dev0.tar.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/bossbar.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/bossbar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/check.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/check.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/spectate.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/spectate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/dimtp.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/dimtp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/top.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/top.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/configUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/configUtil.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

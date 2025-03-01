@@ -1,4 +1,5 @@
 import json
+import os
 import endstone_wmctcore
 
 CONFIG_PATH = os.path.join(os.path.dirname(endstone_wmctcore.__file__), '../../../../wmctcore-config.json')

@@ -24,7 +24,7 @@ def preload_settings():
             "chat": {"enabled": False, "webhook": ""},
             "griefing": {"enabled": False, "webhook": ""}
         },
-        "spectator_check": {"check_tags": False, "tags": []},
+        "spectator_check": {"check_gamemode": True, "check_tags": False, "tags": [], "ignore_tags": []},
         "custom_combat": {"enabled": False, "kb_delay": 10, "hkb_mult": 1, "vkb_mult": 1, "sprint_mult": 1},
         "me_crasher_patch": {"enabled": True, "ban": False},
         "grieflog_storage_auto_delete": {"enabled": True, "removal_time_in_seconds": 1209600},
@@ -99,7 +99,7 @@ def preload_commands():
     save_config(config)
 
 # Run preload automatically when this file is imported
+preload_settings()
 preload_commands()
-preload_module_settings()
 
 __all__ = [preloaded_commands, preloaded_permissions, preloaded_handlers, moderation_commands]
