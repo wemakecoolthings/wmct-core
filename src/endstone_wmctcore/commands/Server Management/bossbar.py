@@ -17,9 +17,9 @@ command, permission = create_command(
     "Sets or removes a client-sided bossbar display!",
     [
         "/bossbar <player: player> (red|blue|green|yellow|pink|purple|rebecca_purple|white)<color: set_color> <progress: float> (solid|segmented_6|segmented_10|segmented_12|segmented_20)<style: set_style> <title: string> [is_dark: bool]",
-        "/bossbar (all)<selector: add_all_bars> (red|blue|green|yellow|pink|purple|rebecca_purple|white)<color: set_all_color> <progress: float> (solid|segmented_6|segmented_10|segmented_12|segmented_20)<style: set_all_style> <title: string> [is_dark: bool]",
+        "/bossbar (all)<selector: All> (red|blue|green|yellow|pink|purple|rebecca_purple|white)<color: set_all_color> <progress: float> (solid|segmented_6|segmented_10|segmented_12|segmented_20)<style: set_all_style> <title: string> [is_dark: bool]",
         "/bossbar <player: player> (remove)<remove_boss_bar: remove_boss_bar>",
-        "/bossbar (all)<selector: remove_all_bars> (remove)<remove_boss_bar: remove_all_boss_bar>"
+        "/bossbar (all)<selector: All> (remove)<remove_boss_bar: remove_all_boss_bar>"
     ],
     ["wmctcore.command.bossbar"]
 )
