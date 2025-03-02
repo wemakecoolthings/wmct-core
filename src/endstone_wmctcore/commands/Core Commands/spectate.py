@@ -62,7 +62,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             form.body("Select a player to spectate!")
 
             for player in players_to_spectate:
-                form.button(player.name)
+                form.button(player.name_tag)
 
             def submit(player: Player, result: ActionFormResponse):
                 if not result.canceled:
@@ -95,4 +95,4 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 def warp_player(sender: Player, target: Player):
     """Warp the sender to the target player."""
     sender.teleport(target.location)
-    sender.send_message(f"{infoLog()}Now spectating {target.name}")
+    sender.send_message(f"{infoLog()}Now spectating {target.name_tag}")

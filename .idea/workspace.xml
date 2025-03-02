@@ -5,15 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f5fd6630-a202-4725-bfac-b315f4cd2d56" name="Changes" comment="tes">
-      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/bottom.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/nick.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/sendpopup.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/sendtip.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/sendtoast.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server Management/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server Management/dimtoggle.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server Management/setrank.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.1.dev0.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.1.dev0.tar.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/check.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/check.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/bossbar.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server Management/bossbar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/refresh.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server Management/refresh.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/reloadscripts.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server Management/reloadscripts.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/spectate.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/spectate.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/dimtp.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/dimtp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/top.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/top.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/updatepacks.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server Management/updatepacks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/bottom.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/bottom.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/top.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core Commands/top.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/configUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/configUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/commandUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/utils/commandUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,10 +80,10 @@
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\Core Commands" />
+      <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\Server Management" />
+      <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\Vanilla Enhancements" />
       <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands" />
       <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\vanilla_additions" />
-      <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\moderation" />
-      <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\utils" />
     </key>
   </component>
   <component name="SharedIndexes">
