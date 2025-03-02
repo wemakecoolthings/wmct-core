@@ -27,7 +27,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     config = load_config()
     check_gamemode = config["modules"]["spectator_check"].get("check_gamemode", True)
     check_tags = config["modules"]["spectator_check"].get("check_tags", False)
-    dead_tags = config["modules"]["spectator_check"].get("tags", [])
+    dead_tags = config["modules"]["spectator_check"].get("allow_tags", [])
     ignore_tags = config["modules"]["spectator_check"].get("ignore_tags", [])
 
     if not isinstance(sender, Player):

@@ -21,7 +21,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     if args[0] == "all":
         for player in self.server.online_players:
-            player.send_tip(args[1])
+            player.send_popup(args[1])
         sender.send_message(f"{infoLog()}A popup packet was sent to all players")
     else:
         player = self.server.get_player(args[0])

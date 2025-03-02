@@ -24,7 +24,7 @@ def preload_settings():
             "chat": {"enabled": False, "webhook": ""},
             "griefing": {"enabled": False, "webhook": ""}
         },
-        "spectator_check": {"check_gamemode": True, "check_tags": False, "tags": [], "ignore_tags": []},
+        "spectator_check": {"check_gamemode": True, "check_tags": False, "allow_tags": [], "ignore_tags": []},
         "custom_combat": {"enabled": False, "kb_delay": 10, "hkb_mult": 1, "vkb_mult": 1, "sprint_mult": 1},
         "me_crasher_patch": {"enabled": True, "ban": False},
         "dim_toggle": {
