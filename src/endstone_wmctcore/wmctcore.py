@@ -26,7 +26,7 @@ WMCT Core Loaded!
     )
 
 # EVENT IMPORTS
-from endstone.event import event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent, PlayerCommandEvent, ServerCommandEvent, PlayerChatEvent
+from endstone.event import event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent, PlayerCommandEvent, PlayerChatEvent, BlockBreakEvent
 from endstone_wmctcore.events.chat_events import handle_chat_event
 from endstone_wmctcore.events.command_processes import handle_command_preprocess
 from endstone_wmctcore.events.player_connect import handle_login_event, handle_join_event, handle_leave_event

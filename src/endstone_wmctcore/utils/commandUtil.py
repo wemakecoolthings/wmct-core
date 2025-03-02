@@ -10,6 +10,10 @@ def create_command(command_name: str, description: str, usages: list, permission
             allArgCount += 1
             modified_usage = usage.replace("(all)[selector: All]", f"(all)[selector: All_{allArgCount}]")
             new_usages.append(modified_usage)
+        elif "(all)<selector: All>" in usage:
+            allArgCount += 1
+            modified_usage = usage.replace("(all)<selector: All>", f"(all)<selector: All_{allArgCount}>")
+            new_usages.append(modified_usage)
         else:
             new_usages.append(usage)
 
