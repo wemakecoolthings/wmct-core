@@ -74,6 +74,9 @@ NOTES:
     - Ability Nodes
       - Flight
       - Flight Speed
+  - [OP] /sendpopup [player] [text] (Sends a custom popup message)
+  - [OP] /sendtip [player] [text] (Sends a custom tip message)
+  - [OP] /sendtoast [player] [title] [text] (Sends a custom toast message)
   - [OP] /mute [player] [reason: optional] (A moderation command that blocks chat messages)
   - [OP] /unmute [player] [reason: optional] (Unmutes a muted player)
   - [OP] /tempmute [player] [duration number] [duration string] [reason: optional] (A moderation command that blocks chat messages)
