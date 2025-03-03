@@ -7,7 +7,7 @@ A server management plugin for Minecraft Events & Survival Servers using Endston
 NOTES: 
 - All features are disabled by default for performance. Use /settings to enable modules in-game or via the config file.
 - This plugin does not support the use of command selectors. Rather, you specify a player name or specify the term "ALL" if applicable.
-- All custom commands that target players supports offline players!
+- All custom commands that target players will attempt to target offline players!
 
 **FEATURES**
 - Game Patches & Enhancements
@@ -68,7 +68,6 @@ NOTES:
   - [OP] /viewscriptprofiles (Views script profiler outputs)
   - [OP] /logtag [add | remove] [tag] (Adds or removes a tag to be used when sending log notifications)
   - [OP] /logs [true | false] (Enables or disables whether you should recieve logs at all)
-  - [OP] /dimtoggle [DIM] [true | false] (Enables OR disables world dimensions)
   - [OP] /dimtp [player] [DIM] [coords: optional] (Warps player(s) to another dimension at the same or specified coordiantes)
   - [OP] /attribute [player] [ability node] [ability settings: optional] (Sets a player's ability nodes such as flight and flight speed) 
     - Ability Nodes
@@ -77,6 +76,8 @@ NOTES:
   - [OP] /sendpopup [player] [text] (Sends a custom popup message)
   - [OP] /sendtip [player] [text] (Sends a custom tip message)
   - [OP] /sendtoast [player] [title] [text] (Sends a custom toast message)
+  - [OP] /top [min_y] (Sends the player to the topmost block)
+  - [OP] /bottom [max_y] (Sends the player to the first air pocket below them)
   - [OP] /mute [player] [reason: optional] (A moderation command that blocks chat messages)
   - [OP] /unmute [player] [reason: optional] (Unmutes a muted player)
   - [OP] /tempmute [player] [duration number] [duration string] [reason: optional] (A moderation command that blocks chat messages)
