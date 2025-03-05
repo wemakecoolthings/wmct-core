@@ -105,7 +105,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             sender.send_message(f"{errorLog()}Player {args[0]} not found!")
             return False
 
-    if sender is not "Server":
+    if sender != "Server":
         sender.send_message(f"{infoLog()}{ColorFormat.AQUA}Bossbar Set For {args[0]}:\n"
                             f"{ColorFormat.DARK_GRAY}---------------\n"
                             f"{ColorFormat.YELLOW}Color: {ColorFormat.RESET}{args[1]}\n"
