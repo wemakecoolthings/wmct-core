@@ -1,21 +1,31 @@
 # Define ranks in order of hierarchy
-RANKS = ["Default", "Helper", "Mod", "Admin", "Operator"]
+RANKS = ["Default", "Helper", "Mod", "Operator"]
 
 # Define permissions associated with each rank
 PERMISSIONS = {
-    "Default": [],
-    "Helper": [],
-    "Mod": [],
-    "Admin": [],
-    "Operator": []
+    "Default": ["wmctcore.command.spectate", "wmctcore.command.ping"],
+    "Helper": ["wmctcore.command.check", "wmctcore.command.monitor"],
+    "Mod": ["wmctcore.command.ipban", "wmctcore.command.mute", "wmctcore.command.permban", "wmctcore.command.punishments",
+            "wmctcore.command.removeban", "wmctcore.command.tempban", "wmctcore.command.tempmute", "wmctcore.command.unmute",
+            "wmctcore.command.nick", "wmctcore.command.logs"],
+    "Operator": ["*"]
 }
 
-def get_permissions(rank: str) -> list:
-    """
-    Returns a list of permissions associated with a given rank.
-    If the rank is invalid, returns an empty list.
-    """
-    return PERMISSIONS.get(rank, [])
+def get_permissions(rank: str) -> list[str]:
+    """Returns a list of all permissions for a given rank, including inherited ones."""
+    inherited_permissions = []
+    rank_order = ["Default", "Helper", "Mod", "Operator"]
+
+    for r in rank_order:
+        inherited_permissions.extend(PERMISSIONS.get(r, []))
+        if r == rank:
+            break  # Stop once we reach the requested rank
+
+    return inherited_permissions
+
+def has_log_perms(rank: str) -> bool:
+    """Returns True if the rank has logging permissions (Mod or higher), otherwise False."""
+    return rank in RANKS[RANKS.index("Mod"):]
 
 def check_internal_rank(user1_rank: str, user2_rank: str) -> bool:
     """
