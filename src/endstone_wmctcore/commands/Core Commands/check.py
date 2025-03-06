@@ -1,7 +1,6 @@
-import json
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
-import pytz
 from endstone import ColorFormat
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
@@ -64,11 +63,15 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     db.close_connection()
 
-    est = pytz.timezone('America/New_York')
-    join_time = datetime.fromtimestamp(last_join, pytz.utc).astimezone(est).strftime(
+    est = ZoneInfo("America/New_York")
+    join_time = datetime.fromtimestamp(last_join, tz=ZoneInfo("UTC")).astimezone(est).strftime(
                 '%Y-%m-%d %I:%M:%S %p %Z')
-    leave_time = datetime.fromtimestamp(last_leave, pytz.utc).astimezone(est).strftime(
-        '%Y-%m-%d %I:%M:%S %p %Z')
+    leave_time = datetime.fromtimestamp(last_leave, tz=ZoneInfo("UTC")).astimezone(est)
+
+    if leave_time.year < 2000:
+        leave_time_str = "N/A"
+    else:
+        leave_time_str = leave_time.strftime('%Y-%m-%d %I:%M:%S %p %Z')
 
     # Format and send the message
     sender.send_message(f"""{infoLog()}{ColorFormat.AQUA}Player Information:
@@ -81,7 +84,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 {ColorFormat.YELLOW}Client Version: {ColorFormat.WHITE}{version}
 {ColorFormat.YELLOW}Ping: {ColorFormat.WHITE}{ping}
 {ColorFormat.YELLOW}Last Join: {ColorFormat.WHITE}{join_time}
-{ColorFormat.YELLOW}Last Leave: {ColorFormat.WHITE}{leave_time}
+{ColorFormat.YELLOW}Last Leave: {ColorFormat.WHITE}{leave_time_str}
 {ColorFormat.DARK_GRAY}---------------
 """)
 
