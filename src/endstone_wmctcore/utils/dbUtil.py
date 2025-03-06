@@ -1,11 +1,10 @@
 import sqlite3
 import time
 from dataclasses import dataclass
-import pytz
+from zoneinfo import ZoneInfo
 from datetime import datetime
 from typing import List, Tuple, Any, Dict, Optional
 from endstone import ColorFormat
-import endstone_wmctcore
 from endstone_wmctcore.utils.modUtil import format_time_remaining
 from endstone_wmctcore.utils.prefixUtil import modLog
 
@@ -115,6 +114,7 @@ class UserDB(DatabaseManager):
     def __init__(self, db_name: str):
         """Initialize the database connection and create tables."""
         super().__init__(db_name)
+        self.player_data_cache = {}
         self.db_name = db_name
         self.create_tables()
 
@@ -160,7 +160,7 @@ class UserDB(DatabaseManager):
         self.create_table('punishment_logs', punishment_log_columns)
 
     def save_user(self, player):
-        """Checks if a user exists and saves them if not."""
+        """Checks if a user exists and saves them if not, updating cache."""
         xuid = player.xuid
         uuid = str(player.unique_id)
         name = player.name
@@ -174,8 +174,13 @@ class UserDB(DatabaseManager):
         # Determine rank
         internal_rank = "Operator" if player.is_op else "Default"
 
-        self.cursor.execute("SELECT * FROM users WHERE xuid = ?", (xuid,))
-        user = self.cursor.fetchone()
+        # Check cache first
+        user = self.player_data_cache.get(xuid)
+
+        if not user:
+            # Fetch from DB if not in cache
+            self.cursor.execute("SELECT * FROM users WHERE xuid = ?", (xuid,))
+            user = self.cursor.fetchone()
 
         if not user:
             data = {
@@ -206,6 +211,9 @@ class UserDB(DatabaseManager):
 
             self.insert('users', data)
             self.insert('mod_logs', mod_data)
+
+            # Cache new user data
+            self.player_data_cache[xuid] = data
             return True
         else:
             condition = 'xuid = ?'
@@ -217,16 +225,22 @@ class UserDB(DatabaseManager):
                 'device_os': device,
                 'client_ver': client_ver
             }
+
             self.update('users', updates, condition, params)
+
+            # Update cache
+            if xuid in self.player_data_cache:
+                self.player_data_cache[xuid].update(updates)
             return True
 
     def get_mod_log(self, xuid: str) -> Optional[ModLog]:
+        """Retrieve moderation log for a user, using cache when available."""
         query = "SELECT * FROM mod_logs WHERE xuid = ?"
         self.cursor.execute(query, (xuid,))
         result = self.cursor.fetchone()
 
         if result:
-            return ModLog(
+            mod_log = ModLog(
                 xuid=result[0],
                 name=result[1],
                 is_muted=bool(result[2]),
@@ -238,27 +252,44 @@ class UserDB(DatabaseManager):
                 ip_address=result[8],
                 is_ip_banned=bool(result[9]),
             )
+
+            # Store in cache
+            if xuid in self.player_data_cache:
+                self.player_data_cache[xuid]["mod_log"] = mod_log
+
+            return mod_log
         return None
 
     def get_online_user(self, xuid: str) -> Optional[User]:
-        """Retrieves all user data as an object."""
+        """Retrieves all user data as an object, checking cache first."""
+        if xuid in self.player_data_cache:
+            return User(**self.player_data_cache[xuid])
+
         query = "SELECT * FROM users WHERE xuid = ?"
         self.cursor.execute(query, (xuid,))
         result = self.cursor.fetchone()
 
         if result:
-            return User(*result)
-        return None  # Return None if user not found
+            user = User(*result)
+            self.player_data_cache[xuid] = user.__dict__  # Store in cache
+            return user
+        return None
 
     def get_offline_user(self, name: str) -> Optional[User]:
-        """Retrieves all user data as an object."""
+        """Retrieves all user data as an object, checking cache first."""
+        for xuid, data in self.player_data_cache.items():
+            if data.get("name") == name:
+                return User(**data)
+
         query = "SELECT * FROM users WHERE name = ?"
         self.cursor.execute(query, (name,))
         result = self.cursor.fetchone()
 
         if result:
-            return User(*result)
-        return None  # Return None if user not found
+            user = User(*result)
+            self.player_data_cache[user.xuid] = user.__dict__  # Store in cache
+            return user
+        return None
 
     def get_all_players(self) -> list:
         """Fetches a list of all players from the database."""
@@ -405,7 +436,7 @@ class UserDB(DatabaseManager):
         active_punishments = {}
         active_timestamps = set()
 
-        est = pytz.timezone('America/New_York')
+        est = ZoneInfo("America/New_York")
         for action_type, timestamp in active_punishment_logs:
             if action_type == "Ban" and is_banned and timestamp < banned_time and "Ban" not in active_punishments:
                 ban_expires_in = format_time_remaining(banned_time)
@@ -447,7 +478,7 @@ class UserDB(DatabaseManager):
 
         for row in result:
             action_type, reason, timestamp, duration = row
-            time_applied = datetime.fromtimestamp(timestamp, pytz.utc).astimezone(est).strftime(
+            time_applied = datetime.fromtimestamp(timestamp, tz=ZoneInfo("EST")).astimezone(est).strftime(
                 '%Y-%m-%d %I:%M:%S %p %Z')
 
             time_status = "EXPIRED"
@@ -581,7 +612,7 @@ class UserDB(DatabaseManager):
         return None
 
     def update_user_data(self, name: str, column: str, value):
-        """Updates a specific column for an existing user in the 'users' table."""
+        """Updates a specific column for an existing user in the 'users' table and updates cache."""
         if column not in ['xuid', 'uuid', 'name', 'ping', 'device_os', 'client_ver',
                           'last_join', 'last_leave', 'internal_rank', 'enabled_logs']:
             raise ValueError(f"Invalid column name: {column}")
@@ -590,6 +621,16 @@ class UserDB(DatabaseManager):
         params = (name,)
         updates = {column: value}
         self.update('users', updates, condition, params)
+
+        # Update cache if user exists in cache
+        for xuid, data in self.player_data_cache.items():
+            if data.get("name") == name:
+                self.player_data_cache[xuid][column] = value
+                # Handle name change (to keep cache consistent)
+                if column == "name":
+                    self.player_data_cache[value] = self.player_data_cache.pop(xuid)
+                break  # Exit loop early after finding user
+
 
 class GriefLog(DatabaseManager):
     """Handles actions related to grief logs."""
@@ -634,7 +675,3 @@ class GriefLog(DatabaseManager):
         condition = 'timestamp < ?'
         params = (cutoff_timestamp,)
         db.delete('actions_log', condition, params)
-
-    def close_connection(self):
-        """Closes the database connection."""
-        self.close()
