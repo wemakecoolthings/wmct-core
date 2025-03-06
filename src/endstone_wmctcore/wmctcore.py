@@ -1,5 +1,4 @@
 import traceback
-
 from endstone import ColorFormat, Player
 from endstone.plugin import Plugin
 from endstone.command import Command, CommandSender
