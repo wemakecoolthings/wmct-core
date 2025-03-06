@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from endstone_wmctcore.utils.dbUtil import UserDB
 from endstone_wmctcore.utils.internalPermissionsUtil import check_internal_rank
-from endstone_wmctcore.utils.prefixUtil import modLog, errorLog
+from endstone_wmctcore.utils.prefixUtil import modLog, errorLog, infoLog
 from endstone_wmctcore.commands import moderation_commands
 
 if TYPE_CHECKING:
@@ -25,9 +25,15 @@ def handle_command_preprocess(self: "WMCTPlugin", event: PlayerCommandEvent):
         # Kick the player
         player.kick("Crasher Detected")
 
+
     # Internal Permissions Handler
-    if (args and args[0].lstrip("/").lower() in moderation_commands
-    or args[0].lstrip("/").lower() == "kick"): # Edge case for /kick
+    if args and len(args) > 0 and args[0].lstrip("/").lower() in moderation_commands \
+            or (len(args) > 0 and args[0].lstrip("/").lower() == "kick"): # Edge case for kick
+
+        if len(args) < 2:
+            player.send_message(f"{errorLog()}Invalid usage: Not enough arguments")
+            event.is_cancelled = True
+            return False
 
         if any("@" in arg for arg in args):
             player.send_message(f"{errorLog()}Invalid argument: @ symbols are not allowed for managed commands")
@@ -68,3 +74,19 @@ def handle_command_preprocess(self: "WMCTPlugin", event: PlayerCommandEvent):
                         f"{modLog()}Player {ColorFormat.YELLOW}{target.name} {ColorFormat.GOLD}has higher permissions")
 
             db.close_connection()
+
+    elif args and args[0].lstrip("/").lower() == "ban" or args[0].lstrip("/").lower() == "unban" or args[0].lstrip("/").lower() == "pardon":
+        player.send_message(f"{errorLog()}Hardcoded Endstone Moderation Commands are disabled by wmctcore")
+        event.is_cancelled = True
+        return False
+
+def handle_server_command_preprocess(self: "WMCTPlugin", event: ServerCommandEvent):
+    command = event.command
+    player = event.sender
+    args = command.split()
+
+    if args and args[0].lstrip("/").lower() == "ban" or args[0].lstrip("/").lower() == "unban" or args[0].lstrip(
+            "/").lower() == "pardon":
+        player.send_message(f"{errorLog()}Hardcoded Endstone Moderation Commands are disabled by wmctcore\n{infoLog()}Please use \"permban\" or \"removeban\"")
+        event.is_cancelled = True
+        return False

@@ -24,13 +24,14 @@ def preload_settings():
             "chat": {"enabled": False, "webhook": ""},
             "griefing": {"enabled": False, "webhook": ""}
         },
+        "game_logging": {
+            "custom_tags": [],
+            "moderation": {"enabled": True},
+            "commands": {"enabled": False}
+        },
         "spectator_check": {"check_gamemode": True, "check_tags": False, "allow_tags": [], "ignore_tags": []},
         "custom_combat": {"enabled": False, "kb_delay": 10, "hkb_mult": 1, "vkb_mult": 1, "sprint_mult": 1},
         "me_crasher_patch": {"enabled": True, "ban": False},
-        "dim_toggle": {
-            "nether": True,
-            "the_end": True
-        },
         "grieflog_storage_auto_delete": {"enabled": True, "removal_time_in_seconds": 1209600},
         "check_prolonged_death_screen": {"enabled": True},
         "check_afk": {"enabeled": True}

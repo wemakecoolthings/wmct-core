@@ -20,6 +20,7 @@ class User:
     last_join: int
     last_leave: int
     internal_rank: str
+    enabled_logs: str
 
 @dataclass
 class ModLog:
@@ -128,7 +129,8 @@ class UserDB(DatabaseManager):
             'client_ver': 'TEXT',
             'last_join': 'INTEGER',
             'last_leave': 'INTEGER',
-            'internal_rank': 'TEXT'
+            'internal_rank': 'TEXT',
+            'enabled_logs': 'INTEGER'
         }
         self.create_table('users', user_info_columns)
 
@@ -185,7 +187,8 @@ class UserDB(DatabaseManager):
                 'client_ver': client_ver,
                 'last_join': last_join,
                 'last_leave': last_leave,
-                'internal_rank': internal_rank
+                'internal_rank': internal_rank,
+                'enabled_logs': 1
             }
 
             mod_data = {
@@ -261,6 +264,14 @@ class UserDB(DatabaseManager):
         """Fetches a list of all players from the database."""
         self.cursor.execute("SELECT DISTINCT name FROM punishment_logs")
         return [row[0] for row in self.cursor.fetchall()]
+
+    def enabled_logs(self, xuid: str) -> bool:
+        """Checks if logging is enabled for a user by their XUID."""
+        query = "SELECT enabled_logs FROM users WHERE xuid = ?"
+        self.cursor.execute(query, (xuid,))
+        result =  self.cursor.fetchone()
+
+        return result is not None and result[0] == 1  # True if enabled_logs is 1
 
     def add_ban(self, xuid, expiration: int, reason: str, ip_ban: bool = False):
         """Bans a player by updating the mod_logs table."""
@@ -569,25 +580,15 @@ class UserDB(DatabaseManager):
             )
         return None
 
-    def update_user_rank_data(self, name: str, new_rank: str):
-        """Updates the internal_rank for an existing user in the 'users' table."""
-        condition = 'name = ?'
-        params = (name,)
-        updates = {'internal_rank': str(new_rank)}
-        self.update('users', updates, condition, params)
+    def update_user_data(self, name: str, column: str, value):
+        """Updates a specific column for an existing user in the 'users' table."""
+        if column not in ['xuid', 'uuid', 'name', 'ping', 'device_os', 'client_ver',
+                          'last_join', 'last_leave', 'internal_rank', 'enabled_logs']:
+            raise ValueError(f"Invalid column name: {column}")
 
-    def update_user_join_data(self, name: str):
-        """Updates the leave time for an existing user in the 'users' table."""
         condition = 'name = ?'
         params = (name,)
-        updates = {'last_join': int(time.time())}
-        self.update('users', updates, condition, params)
-
-    def update_user_leave_data(self, name: str):
-        """Updates the leave time for an existing user in the 'users' table."""
-        condition = 'name = ?'
-        params = (name,)
-        updates = {'last_leave': int(time.time())}
+        updates = {column: value}
         self.update('users', updates, condition, params)
 
 class GriefLog(DatabaseManager):

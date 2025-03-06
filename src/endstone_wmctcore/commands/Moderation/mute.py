@@ -1,7 +1,9 @@
 from endstone import ColorFormat
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
+from endstone_wmctcore.utils.configUtil import load_config
 from endstone_wmctcore.utils.dbUtil import UserDB
+from endstone_wmctcore.utils.loggingUtil import log
 from endstone_wmctcore.utils.modUtil import format_time_remaining, ban_message
 from endstone_wmctcore.utils.prefixUtil import errorLog, modLog
 from datetime import timedelta, datetime
@@ -56,6 +58,12 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         db.add_mute(db.get_xuid_by_name(player_name), int(mute_expiration.timestamp()), reason)
         sender.send_message(
             f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was muted for {ColorFormat.YELLOW}\"{reason}\" {ColorFormat.GOLD}which expires {ColorFormat.YELLOW}{formatted_expiration} {ColorFormat.GRAY}{ColorFormat.ITALIC}(Offline)")
+
+    config = load_config()
+    mod_log_enabled = config["modules"]["game_logging"]["moderation"]["enabled"]
+    print(mod_log_enabled)
+    if mod_log_enabled:
+        log(self, f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was muted by {ColorFormat.YELLOW}{sender.name} {ColorFormat.GOLD}for {ColorFormat.YELLOW}\"{reason}\" {ColorFormat.GOLD}until {ColorFormat.YELLOW}{formatted_expiration}")
 
     db.close_connection()
     return True

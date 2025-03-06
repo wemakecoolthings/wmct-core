@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 command, permission = create_command(
     "setrank",
     "Sets the internal permissions for a player!",
-    ["/setrank <player: player> (default|helper|mod|admin|operator)<rank: rank>"],
+    ["/setrank <player: player> (default|helper|mod|operator)<rank: rank>"],
     ["wmctcore.command.setrank"]
 )
 
@@ -38,7 +38,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         # Update the user's rank in the database
         for rank in RANKS:
             if rank.lower() == new_rank:
-                db.update_user_rank_data(player_name, rank)
+                db.update_user_data(player_name, 'internal_rank', rank)
 
                 # Reload permissions if the player is online
                 online_target = self.server.get_player(player_name)

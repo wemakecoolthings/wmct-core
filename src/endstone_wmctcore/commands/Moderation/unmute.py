@@ -1,7 +1,9 @@
 from endstone import ColorFormat
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
+from endstone_wmctcore.utils.configUtil import load_config
 from endstone_wmctcore.utils.dbUtil import UserDB
+from endstone_wmctcore.utils.loggingUtil import log
 from endstone_wmctcore.utils.prefixUtil import modLog
 
 from typing import TYPE_CHECKING
@@ -41,4 +43,10 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     # Notify the sender that the mute has been removed
     sender.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}has been unmuted")
+
+    config = load_config()
+    mod_log_enabled = config["modules"]["game_logging"]["moderation"]["enabled"]
+    if mod_log_enabled:
+        log(self, f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was unmuted by {ColorFormat.YELLOW}{sender.name}")
+
     return True

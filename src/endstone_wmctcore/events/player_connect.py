@@ -1,3 +1,5 @@
+import time
+
 from endstone.event import PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent
 from typing import TYPE_CHECKING
 
@@ -52,7 +54,7 @@ def handle_join_event(self: "WMCTPlugin", ev: PlayerJoinEvent):
     # Update Saved Data
     db = UserDB("wmctcore_users.db")
     db.save_user(ev.player)
-    db.update_user_join_data(ev.player.name)
+    db.update_user_data(ev.player.name, 'last_join', int(time.time()))
     self.reload_custom_perms(ev.player)
 
     # Ban System: ENHANCEMENT
@@ -69,7 +71,7 @@ def handle_leave_event(self: "WMCTPlugin", ev: PlayerQuitEvent):
     # Update Data On Leave
     db = UserDB("wmctcore_users.db")
     db.save_user(ev.player)
-    db.update_user_leave_data(ev.player.name)
+    db.update_user_data(ev.player.name, 'last_leave', int(time.time()))
 
     # Ban System: ENHANCEMENT
     mod_log = db.get_mod_log(ev.player.xuid)
