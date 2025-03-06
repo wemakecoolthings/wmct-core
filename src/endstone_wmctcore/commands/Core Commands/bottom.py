@@ -1,8 +1,7 @@
 from endstone import Player
-from endstone.util import Vector
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
-from endstone_wmctcore.utils.prefixUtil import infoLog, errorLog
+from endstone_wmctcore.utils.prefixUtil import errorLog
 
 from typing import TYPE_CHECKING
 
