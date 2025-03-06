@@ -10,10 +10,11 @@ if TYPE_CHECKING:
 
 # Register command
 command, permission = create_command(
-    "nick",
+    "nickname",
     "Sets a display nickname!",
-    ["/nick [nick: string]", "/nick (remove)[remove_nick:remove_nick]"],
-    ["wmctcore.command.nick"]
+    ["/nickname [nick: string]", "/nickname (remove)[remove_nick:remove_nick]"],
+    ["wmctcore.command.nickname"],
+    ["nick"]
 )
 
 # NICK COMMAND FUNCTIONALITY
