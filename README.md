@@ -30,8 +30,7 @@ NOTES:
 
 - Internal Permissions Information
   - Internal Ranks (from highest to lowest): This includes Minecraft's Permissions & WMCT Core's Permissions Systems
-    - Operator: Default Minecraft OP 
-    - Admin: Access to ALL permissions without the need for operator
+    - Operator: Default Minecraft OP + All Plugin Permissions
     - Mod: Access to MODERATION permissions without the need for operator
     - Helper: Access to INFO permissions without the need for operator
     - Default: Regular permissions based on Minecraft's internal level: visitor or regular
@@ -85,7 +84,7 @@ NOTES:
   - [OP] /removeban [player] [reason: optional]
   - [OP] /tempban [player] [duration number] [duration string] [reason: optional]
   - [OP] /punishments [player] (Displays past and current moderation actions taken on the player)
-  - [OP] /setrank [player] [Default | Helper | Mod | Admin] (Applies an internal permission setting to the player without operator)
+  - [OP] /setrank [player] [Default | Helper | Mod | Operator] (Applies an internal permission setting to the player without operator)
   - [OP] /inspect (Toggles inspect mode where interacting or breaking a block will return any related grief logs)
   - [OP] /grieflog [player] [radius] [filter: optional] (Returns grief logs in the specified area)
     - Supported Logs
