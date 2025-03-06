@@ -65,7 +65,6 @@ NOTES:
   - [OP] /activity [player] [list number: optional] (Lists out session information and the total time playing on the server)
   - [OP] /activitylist (Lists all of the player's total session logs in a menu)
   - [OP] /viewscriptprofiles (Views script profiler outputs)
-  - [OP] /logtag [add | remove] [tag] (Adds or removes a tag to be used when sending log notifications)
   - [OP] /logs [true | false] (Enables or disables whether you should recieve logs at all)
   - [OP] /dimtp [player] [DIM] [coords: optional] (Warps player(s) to another dimension at the same or specified coordiantes)
   - [OP] /attribute [player] [ability node] [ability settings: optional] (Sets a player's ability nodes such as flight and flight speed) 
