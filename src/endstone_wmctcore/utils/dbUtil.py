@@ -212,8 +212,7 @@ class UserDB(DatabaseManager):
                 'name': name,
                 'ping': ping,
                 'device_os': device,
-                'client_ver': client_ver,
-                'internal_rank': internal_rank  # Update rank if needed
+                'client_ver': client_ver
             }
             self.update('users', updates, condition, params)
             return True
@@ -569,6 +568,13 @@ class UserDB(DatabaseManager):
                 is_ip_banned=bool(result[9]),
             )
         return None
+
+    def update_user_rank_data(self, name: str, new_rank: str):
+        """Updates the internal_rank for an existing user in the 'users' table."""
+        condition = 'name = ?'
+        params = (name,)
+        updates = {'internal_rank': str(new_rank)}
+        self.update('users', updates, condition, params)
 
     def update_user_join_data(self, name: str):
         """Updates the leave time for an existing user in the 'users' table."""

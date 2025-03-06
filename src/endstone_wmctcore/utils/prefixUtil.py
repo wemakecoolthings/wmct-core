@@ -15,5 +15,8 @@ def modLog():
 def griefLog():
     return f"{ColorFormat.BOLD}{ColorFormat.DARK_GRAY}[{ColorFormat.GOLD}GL{ColorFormat.DARK_GRAY}] {ColorFormat.RESET}"
 
+def noticeLog():
+    return f"{ColorFormat.BOLD}{ColorFormat.DARK_GRAY}[{ColorFormat.RED}!{ColorFormat.DARK_GRAY}] {ColorFormat.RESET}{ColorFormat.RED}"
+
 def errorLog():
     return f"{ColorFormat.BOLD}{ColorFormat.DARK_GRAY}[{ColorFormat.RED}X{ColorFormat.DARK_GRAY}] {ColorFormat.RESET}{ColorFormat.RED}"
