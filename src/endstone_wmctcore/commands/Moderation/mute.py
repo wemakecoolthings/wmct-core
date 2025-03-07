@@ -61,7 +61,6 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     config = load_config()
     mod_log_enabled = config["modules"]["game_logging"]["moderation"]["enabled"]
-    print(mod_log_enabled)
     if mod_log_enabled:
         log(self, f"{modLog()}Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was muted by {ColorFormat.YELLOW}{sender.name} {ColorFormat.GOLD}for {ColorFormat.YELLOW}\"{reason}\" {ColorFormat.GOLD}until {ColorFormat.YELLOW}{formatted_expiration}")
 
