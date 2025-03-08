@@ -14,6 +14,7 @@ command, permission = create_command(
     "Sets a display nickname!",
     ["/nickname [nick: string]", "/nickname (remove)[remove_nick:remove_nick]"],
     ["wmctcore.command.nickname"],
+    "op",
     ["nick"]
 )
 

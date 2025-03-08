@@ -7,7 +7,7 @@ PERMISSIONS = {
     "Helper": ["wmctcore.command.check", "wmctcore.command.monitor", "wmctcore.command.vsc"],
     "Mod": ["wmctcore.command.ipban", "wmctcore.command.mute", "wmctcore.command.permban", "wmctcore.command.punishments",
             "wmctcore.command.removeban", "wmctcore.command.tempban", "wmctcore.command.tempmute", "wmctcore.command.unmute",
-            "wmctcore.command.nick", "wmctcore.command.logs"],
+            "wmctcore.command.nickname", "wmctcore.command.logs"],
     "Operator": ["*"]
 }
 
