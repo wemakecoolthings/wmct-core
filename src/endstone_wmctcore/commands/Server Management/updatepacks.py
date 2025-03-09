@@ -19,10 +19,8 @@ command, permission = create_command(
 
 # RELOADPACKS FUNCTIONALITY
 def handler(self, sender: CommandSender, args: list[str]) -> bool:
-    
-    # Fix the path to the resource and behavior packs
     current_dir = os.path.dirname(endstone_wmctcore.__file__)
-    for _ in range(4):
+    while not os.path.exists(os.path.join(current_dir, 'worlds')):
         current_dir = os.path.dirname(current_dir)
 
     RP_PATH = os.path.join(current_dir, 'worlds', self.server.level.name, 'resource_packs')

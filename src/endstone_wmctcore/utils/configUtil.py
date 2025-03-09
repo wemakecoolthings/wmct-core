@@ -2,12 +2,11 @@ import json
 import os
 import endstone_wmctcore
 
-
 current_dir = os.path.dirname(os.path.abspath(__file__))
-for _ in range(4):
+while not (os.path.exists(os.path.join(current_dir, 'plugins')) and os.path.exists(os.path.join(current_dir, 'worlds'))):
     current_dir = os.path.dirname(current_dir)
 
-CONFIG_PATH = os.path.join(current_dir, 'wmctcore-config.json')
+CONFIG_PATH = os.path.join(current_dir, 'plugins', 'wmctcore-config.json')
 
 def load_config():
     """Load or create a configuration file to enable/disable commands."""
