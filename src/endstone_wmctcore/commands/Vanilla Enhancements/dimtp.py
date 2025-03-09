@@ -18,7 +18,8 @@ DIM_SCALE = {
 command, permission = create_command(
     "dimtp",
     "Teleports a player across dimensions!",
-    ["/dimtp (overworld|nether|the_end) <DIM: dim> [pos: pos]"],
+    ["/dimtp <player: player> (overworld|nether|the_end) <DIM: dim> [pos: pos]",
+            "/dimtp (overworld|nether|the_end) <DIM: dim> [pos: pos]"],
     ["wmctcore.command.dimtp"]
 )
 
@@ -29,10 +30,14 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         return False
 
     if not args:
-        sender.send_error_message(f"{errorLog()} Usage: /dimtp (overworld|nether|the_end) [x y z]")
+        sender.send_error_message(f"{errorLog()} Usage: /dimtp <player> (overworld|nether|the_end) [x y z]")
         return False
 
-    player = self.server.get_player(sender.name)
+    if args[0] == "overworld" or args[0] == "nether" or args[0] == "the_end":
+        player = self.server.get_player(sender.name)
+    else:
+        player = self.server.get_player(args[0])
+
     current_dim = player.dimension.name.upper()
     target_dim = args[0].upper()
 
