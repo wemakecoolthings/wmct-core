@@ -30,6 +30,9 @@ def handle_command_preprocess(self: "WMCTPlugin", event: PlayerCommandEvent):
     if args and len(args) > 0 and args[0].lstrip("/").lower() in moderation_commands \
             or (len(args) > 0 and args[0].lstrip("/").lower() == "kick"): # Edge case for kick
 
+        if args[0].lstrip("/").lower() == "punishments":
+            return True
+
         if len(args) < 2:
             player.send_message(f"{errorLog()}Invalid usage: Not enough arguments")
             event.is_cancelled = True
