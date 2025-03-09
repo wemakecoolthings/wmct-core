@@ -57,7 +57,7 @@ class DatabaseManager:
     def __init__(self, db_name: str):
         """Initialize the database connection."""
         self.db_name = db_name
-        self.conn = sqlite3.connect(self.db_name)
+        self.conn = sqlite3.connect(self.db_name, check_same_thread=False)
         self.cursor = self.conn.cursor()
 
     def create_table(self, table_name: str, columns: Dict[str, str]):
@@ -630,7 +630,6 @@ class UserDB(DatabaseManager):
                 if column == "name":
                     self.player_data_cache[value] = self.player_data_cache.pop(xuid)
                 break  # Exit loop early after finding user
-
 
 class GriefLog(DatabaseManager):
     """Handles actions related to grief logs."""
