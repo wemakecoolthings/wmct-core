@@ -70,7 +70,6 @@ def handle_leave_event(self: "WMCTPlugin", ev: PlayerQuitEvent):
 
     # Update Data On Leave
     db = UserDB("wmctcore_users.db")
-    db.save_user(ev.player)
     db.update_user_data(ev.player.name, 'last_leave', int(time.time()))
 
     # Ban System: ENHANCEMENT

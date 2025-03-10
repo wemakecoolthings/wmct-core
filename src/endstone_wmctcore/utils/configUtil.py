@@ -1,6 +1,5 @@
 import json
 import os
-import endstone_wmctcore
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 while not (os.path.exists(os.path.join(current_dir, 'plugins')) and os.path.exists(os.path.join(current_dir, 'worlds'))):
@@ -19,12 +18,10 @@ def load_config():
 
     with open(CONFIG_PATH, "r") as config_file:
         # Log in the console where the config is loaded from
-        print(f"[WMCT CORE] [DEBUG] Loaded config from {CONFIG_PATH}")
         return json.load(config_file)
 
 def save_config(config):
     """Save the current config state to disk."""
     with open(CONFIG_PATH, "w") as config_file:
         # Log in the console  where the config saved
-        print(f"[WMCT CORE] [DEBUG] Saved config to {CONFIG_PATH}")
         json.dump(config, config_file, indent=4)

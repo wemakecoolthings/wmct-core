@@ -7,6 +7,8 @@ if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin
 
 def log(self: "WMCTPlugin", message):
+
+    discordRelay(message)
     config = load_config()
     admin_tags = set(config["modules"]["game_logging"].get("custom_tags", []))
 
@@ -14,7 +16,7 @@ def log(self: "WMCTPlugin", message):
 
     for player in self.server.online_players:
         user = db.get_online_user(player.xuid)
-        if has_log_perms(user.internal_rank) or admin_tags.intersection(set(player.scoreboard_tags)):
+        if has_log_perms(user.internal_rank) or admin_tags.intersection(set(player.scoreboard_tags) or player.is_op):
             if db.enabled_logs(player.xuid):
                 player.send_message(message)
                 return True
@@ -22,3 +24,7 @@ def log(self: "WMCTPlugin", message):
     db.close_connection()
 
     return False
+
+def discordRelay(message):
+
+    return True

@@ -1,5 +1,6 @@
 from datetime import datetime
-from zoneinfo import ZoneInfo
+
+from endstone_wmctcore.utils.timeUtil import TimezoneUtils
 
 from endstone import ColorFormat
 from endstone.command import CommandSender
@@ -63,15 +64,15 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     db.close_connection()
 
-    est = ZoneInfo("America/New_York")
-    join_time = datetime.fromtimestamp(last_join, tz=ZoneInfo("UTC")).astimezone(est).strftime(
-                '%Y-%m-%d %I:%M:%S %p %Z')
-    leave_time = datetime.fromtimestamp(last_leave, tz=ZoneInfo("UTC")).astimezone(est)
+    join_time = TimezoneUtils.convert_to_timezone(last_join, "EST")
 
-    if leave_time.year < 2000:
+    dt = datetime.fromtimestamp(last_leave)
+    year = dt.year
+
+    if year < 2000:
         leave_time_str = "N/A"
     else:
-        leave_time_str = leave_time.strftime('%Y-%m-%d %I:%M:%S %p %Z')
+        leave_time_str = TimezoneUtils.convert_to_timezone(last_leave, "EST")
 
     # Format and send the message
     sender.send_message(f"""{infoLog()}{ColorFormat.AQUA}Player Information:

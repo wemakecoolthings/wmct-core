@@ -1,12 +1,12 @@
 import sqlite3
 import time
 from dataclasses import dataclass
-from zoneinfo import ZoneInfo
 from datetime import datetime
 from typing import List, Tuple, Any, Dict, Optional
 from endstone import ColorFormat
 from endstone_wmctcore.utils.modUtil import format_time_remaining
 from endstone_wmctcore.utils.prefixUtil import modLog
+from endstone_wmctcore.utils.timeUtil import TimezoneUtils
 
 @dataclass
 class User:
@@ -436,19 +436,18 @@ class UserDB(DatabaseManager):
         active_punishments = {}
         active_timestamps = set()
 
-        est = ZoneInfo("America/New_York")
         for action_type, timestamp in active_punishment_logs:
+            formatted_time = TimezoneUtils.convert_to_timezone(timestamp, 'EST')
+
             if action_type == "Ban" and is_banned and timestamp < banned_time and "Ban" not in active_punishments:
                 ban_expires_in = format_time_remaining(banned_time)
 
-                ip_ban_status = ""
-                if is_ip_banned:
-                    ip_ban_status = "IP "
-
+                ip_ban_status = "IP " if is_ip_banned else ""
                 active_punishments["Ban"] = (
                     timestamp,
-                    f"{ColorFormat.RED}{ip_ban_status}Ban {ColorFormat.GRAY}- {ColorFormat.YELLOW}{ban_reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{ban_expires_in}{ColorFormat.GRAY})\n"
-                    f"{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{datetime.fromtimestamp(timestamp, est).strftime('%Y-%m-%d %I:%M:%S %p %Z')}{ColorFormat.RESET}"
+                    f"{ColorFormat.RED}{ip_ban_status}Ban {ColorFormat.GRAY}- {ColorFormat.YELLOW}{ban_reason} "
+                    f"{ColorFormat.GRAY}({ColorFormat.YELLOW}{ban_expires_in}{ColorFormat.GRAY})\n"
+                    f"{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{formatted_time}{ColorFormat.RESET}"
                 )
                 active_timestamps.add(timestamp)
 
@@ -456,8 +455,9 @@ class UserDB(DatabaseManager):
                 mute_expires_in = format_time_remaining(mute_time, True)
                 active_punishments["Mute"] = (
                     timestamp,
-                    f"{ColorFormat.BLUE}Mute {ColorFormat.GRAY}- {ColorFormat.YELLOW}{mute_reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{mute_expires_in}{ColorFormat.GRAY})\n"
-                    f"{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{datetime.fromtimestamp(timestamp, est).strftime('%Y-%m-%d %I:%M:%S %p %Z')}{ColorFormat.RESET}"
+                    f"{ColorFormat.BLUE}Mute {ColorFormat.GRAY}- {ColorFormat.YELLOW}{mute_reason} "
+                    f"{ColorFormat.GRAY}({ColorFormat.YELLOW}{mute_expires_in}{ColorFormat.GRAY})\n"
+                    f"{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{formatted_time}{ColorFormat.RESET}"
                 )
                 active_timestamps.add(timestamp)
 
@@ -478,13 +478,14 @@ class UserDB(DatabaseManager):
 
         for row in result:
             action_type, reason, timestamp, duration = row
-            time_applied = datetime.fromtimestamp(timestamp, tz=ZoneInfo("EST")).astimezone(est).strftime(
-                '%Y-%m-%d %I:%M:%S %p %Z')
+            formatted_time = TimezoneUtils.convert_to_timezone(timestamp, 'EST')
 
             time_status = "EXPIRED"
-
-            punishment_entry = f"{ColorFormat.BLUE}{action_type} {ColorFormat.GRAY}- {ColorFormat.YELLOW}{reason} {ColorFormat.GRAY}({ColorFormat.YELLOW}{time_status}{ColorFormat.GRAY})\n" \
-                               f"{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{time_applied}{ColorFormat.RESET}"
+            punishment_entry = (
+                f"{ColorFormat.BLUE}{action_type} {ColorFormat.GRAY}- {ColorFormat.YELLOW}{reason} "
+                f"{ColorFormat.GRAY}({ColorFormat.YELLOW}{time_status}{ColorFormat.GRAY})\n"
+                f"{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{formatted_time}{ColorFormat.RESET}"
+            )
 
             # Only add past punishments that do not match the timestamp of an active one
             if timestamp not in active_timestamps:

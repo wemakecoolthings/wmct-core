@@ -18,8 +18,8 @@ DIM_SCALE = {
 command, permission = create_command(
     "dimtp",
     "Teleports a player across dimensions!",
-    ["/dimtp <player: player> (overworld|nether|the_end) <DIM: dim> [pos: pos]",
-            "/dimtp (overworld|nether|the_end) <DIM: dim> [pos: pos]"],
+    ["/dimtp <player: player> (overworld|nether|the_end) <DIM: dim_0> [pos: pos]",
+            "/dimtp (overworld|nether|the_end) <DIM: dim_1> [pos: pos]"],
     ["wmctcore.command.dimtp"]
 )
 

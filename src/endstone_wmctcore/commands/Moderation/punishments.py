@@ -1,5 +1,4 @@
-from datetime import datetime
-from zoneinfo import ZoneInfo
+from endstone_wmctcore.utils.timeUtil import TimezoneUtils
 
 from endstone import ColorFormat, Player
 from endstone.command import CommandSender
@@ -90,10 +89,13 @@ def remove_punishment_by_id(self: "WMCTPlugin", sender: CommandSender, target_na
     form.title("Punishment Removal")
     form.button("Cancel")
 
-    # Add each punishment to the form with its index
-    est = ZoneInfo("America/New_York")
     for punishment in punish_log:
-        punishment_text = f"{punishment.action_type}: {punishment.reason}\n{ColorFormat.DARK_GRAY}({ColorFormat.YELLOW}{datetime.fromtimestamp(punishment.timestamp, est).strftime('%Y-%m-%d %I:%M:%S %p %Z')}{ColorFormat.DARK_GRAY})"
+        punishment_text = (
+            f"{punishment.action_type}: {punishment.reason}\n"
+            f"{ColorFormat.DARK_GRAY}("
+            f"{ColorFormat.YELLOW}{TimezoneUtils.convert_to_timezone(punishment.timestamp, 'EST')}"
+            f"{ColorFormat.DARK_GRAY})"
+        )
         form.button(f"§c{punishment_text}")
 
     # Handle the player's selection
