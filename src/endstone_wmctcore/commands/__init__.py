@@ -32,8 +32,8 @@ def preload_settings():
         "spectator_check": {"check_gamemode": True, "check_tags": False, "allow_tags": [], "ignore_tags": []},
         "me_crasher_patch": {"enabled": True, "ban": False},
         "grieflog_storage_auto_delete": {"enabled": True, "removal_time_in_seconds": 1209600},
-        "check_prolonged_death_screen": {"enabled": True, "kick": True, "time_in_seconds": 10},
-        "check_afk": {"enabled": True, "kick": True, "time_in_seconds": 180}
+        "check_prolonged_death_screen": {"enabled": False, "kick": False, "time_in_seconds": 10},
+        "check_afk": {"enabled": False, "kick": False, "time_in_seconds": 180}
     }
 
     # Ensure 'modules' key exists in config

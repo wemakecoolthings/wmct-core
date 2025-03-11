@@ -8,12 +8,14 @@ from endstone_wmctcore.commands import (
     preloaded_permissions,
     preloaded_handlers
 )
-from endstone_wmctcore.events.intervalChecks import interval_function
+from endstone_wmctcore.events.intervalChecks import interval_function, stop_interval
+from endstone_wmctcore.commands.Server_Management.monitor import clear_all_intervals
 from endstone_wmctcore.utils.configUtil import load_config
 
 from endstone_wmctcore.utils.dbUtil import UserDB
-from endstone_wmctcore.utils.internalPermissionsUtil import get_permissions, PERMISSIONS
-from endstone_wmctcore.utils.prefixUtil import errorLog
+from endstone_wmctcore.utils.internalPermissionsUtil import get_permissions
+from endstone_wmctcore.utils.prefixUtil import errorLog, infoLog
+
 
 def plugin_text():
     print(
@@ -81,7 +83,13 @@ class WMCTPlugin(Plugin):
 
         config = load_config()
         if config["modules"]["check_prolonged_death_screen"]["enabled"] or config["modules"]["check_afk"]["enabled"]:
+            if config["modules"]["check_prolonged_death_screen"]["enabled"]:
+                print(f"[CONFIG] doimmediaterespawn gamerule is now set to true since prolonged deathscreen check is enabled")
             interval_function(self)
+
+    def on_disable(self):
+        clear_all_intervals()
+        stop_interval()
 
     # PERMISSIONS HANDLER
     def reload_custom_perms(self, player: Player):
