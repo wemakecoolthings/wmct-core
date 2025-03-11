@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Tuple, Any, Dict, Optional
 from endstone import ColorFormat
+from endstone.util import Vector
 from endstone_wmctcore.utils.modUtil import format_time_remaining
 from endstone_wmctcore.utils.prefixUtil import modLog
 from endstone_wmctcore.utils.timeUtil import TimezoneUtils
@@ -633,7 +634,8 @@ class UserDB(DatabaseManager):
                 break  # Exit loop early after finding user
 
 class GriefLog(DatabaseManager):
-    """Handles actions related to grief logs."""
+    """Handles actions related to grief logs and session tracking."""
+
     def __init__(self, db_name: str):
         """Initialize the database connection and create tables."""
         super().__init__(db_name)
@@ -649,29 +651,203 @@ class GriefLog(DatabaseManager):
             'location': 'TEXT',
             'timestamp': 'INTEGER'
         }
+        session_log_columns = {
+            'id': 'INTEGER PRIMARY KEY AUTOINCREMENT',
+            'xuid': 'TEXT',
+            'name': 'TEXT',
+            'start_time': 'INTEGER',
+            'end_time': 'INTEGER'
+        }
+        user_toggle_columns = {
+            'id': 'INTEGER PRIMARY KEY AUTOINCREMENT',
+            'xuid': 'TEXT',
+            'name': 'TEXT',
+            'inspect_mode': 'BOOLEAN'
+        }
         self.create_table('actions_log', action_log_columns)
+        self.create_table('sessions_log', session_log_columns)
+        self.create_table('user_toggles', user_toggle_columns)  # New table for user-specific toggles
 
-    def log_action(db, xuid: str, name: str, action: str, location: str, timestamp: int):
-        """Logs an action performed by a player."""
+    def set_user_toggle(self, xuid: str, name: str, inspect_mode: bool):
+        """Sets the inspect mode toggle for a player."""
+        data = {
+            'xuid': xuid,
+            'name': name,
+            'inspect_mode': inspect_mode
+        }
+        self.insert('user_toggles', data)
+
+    def get_logs_by_coordinates(self, x: float, y: float, z: float, player_name: str = None) -> list[dict]:
+        """Returns logs based on coordinates and an optional player name filter."""
+        query = "SELECT * FROM actions_log WHERE location LIKE ?"
+        params = [f"%{x},{y},{z}%"]  # Searching for coordinates in the location field
+
+        if player_name:
+            query += " AND name = ?"
+            params.append(player_name)
+
+        self.cursor.execute(query, tuple(params))
+        logs = self.cursor.fetchall()
+
+        result = []
+        for log in logs:
+            result.append({
+                'id': log[0],
+                'xuid': log[1],
+                'name': log[2],
+                'action': log[3],
+                'location': log[4],
+                'timestamp': log[5]
+            })
+        return result
+
+    def get_logs_by_player(self, player_name: str) -> list[dict]:
+        """Returns all logs for a given player name."""
+        query = "SELECT * FROM actions_log WHERE name = ?"
+        self.cursor.execute(query, (player_name,))
+        logs = self.cursor.fetchall()
+
+        result = []
+        for log in logs:
+            result.append({
+                'id': log[0],
+                'xuid': log[1],
+                'name': log[2],
+                'action': log[3],
+                'location': log[4],
+                'timestamp': log[5]
+            })
+        return result
+
+    def get_logs_within_radius(self, x: float, y: float, z: float, radius: float) -> list[dict]:
+        """Returns logs within a defined radius of the given coordinates."""
+        query = "SELECT * FROM actions_log"
+        self.cursor.execute(query)
+        logs = self.cursor.fetchall()
+
+        result = []
+        for log in logs:
+            location = log[4]  # Assuming the location is stored as "x,y,z"
+            loc_x, loc_y, loc_z = map(float, location.split(','))
+
+            # Calculate distance using the Euclidean formula
+            distance = ((x - loc_x) ** 2 + (y - loc_y) ** 2 + (z - loc_z) ** 2) ** 0.5
+            if distance <= radius:
+                result.append({
+                    'id': log[0],
+                    'xuid': log[1],
+                    'name': log[2],
+                    'action': log[3],
+                    'location': log[4],
+                    'timestamp': log[5]
+                })
+
+        return result
+
+    def log_action(self, xuid: str, name: str, action: str, location, timestamp: int):
+        """Logs an action performed by a player. Parses Vec if provided for location."""
+
+        # Parse the location if it's a Vec object (assuming it has x, y, z attributes)
+        if isinstance(location, Vector):
+            location_str = f"{location.x},{location.y},{location.z}"
+        else:
+            # If it's not a Vec, assume it's a string or already formatted location
+            location_str = str(location)
+
         data = {
             'xuid': xuid,
             'name': name,
             'action': action,
-            'location': location,
+            'location': location_str,
             'timestamp': timestamp
         }
-        db.insert('actions_log', data)
+        self.insert('actions_log', data)
 
-    def get_grief_logs(db, name: str) -> list[GriefAction]:
-        """Retrieves all logged actions for a user as a list of objects."""
-        query = "SELECT * FROM actions_log WHERE name = ?"
-        db.cursor.execute(query, (name,))
-        results = db.cursor.fetchall()
+    def start_session(self, xuid: str, name: str, start_time: int):
+        """Logs the start of a player session."""
+        data = {
+            'xuid': xuid,
+            'name': name,
+            'start_time': start_time,
+            'end_time': None
+        }
+        self.insert('sessions_log', data)
 
-        return [GriefAction(*row) for row in results] if results else []
+    def end_session(self, xuid: str, end_time: int):
+        """Logs the end of a player session."""
+        query = """
+            UPDATE sessions_log
+            SET end_time = ?
+            WHERE xuid = ? AND end_time IS NULL
+        """
+        self.cursor.execute(query, (end_time, xuid))
+        self.conn.commit()
 
-    def delete_old_grief_logs(db, cutoff_timestamp: int):
+    def get_total_playtime(self, xuid: str) -> int:
+        """
+        Gets the total playtime of a player in seconds.
+        Automatically calculates ongoing session times if still active.
+        """
+        query = "SELECT start_time, end_time FROM sessions_log WHERE xuid = ?"
+        self.cursor.execute(query, (xuid,))
+        sessions = self.cursor.fetchall()
+
+        total_time = 0
+        for start_time, end_time in sessions:
+            if end_time:
+                total_time += end_time - start_time
+            else:
+                total_time += int(time.time()) - start_time  # Active session
+
+        return total_time
+
+    def get_user_sessions(self, xuid: str) -> list[dict]:
+        """
+        Gets all sessions for a player with start and end times.
+        Automatically calculates the duration for active sessions.
+        """
+        query = "SELECT start_time, end_time FROM sessions_log WHERE xuid = ?"
+        self.cursor.execute(query, (xuid,))
+        sessions = self.cursor.fetchall()
+
+        result = []
+        for start_time, end_time in sessions:
+            if end_time is None:
+                duration = int(time.time()) - start_time
+                end_time_display = None
+            else:
+                duration = end_time - start_time
+                end_time_display = end_time
+
+            result.append({
+                'start_time': start_time,
+                'end_time': end_time_display,
+                'duration': duration
+            })
+        return result
+
+    def get_all_playtimes(self) -> list[dict]:
+        """
+        Gets a list of all users and their total playtimes.
+        Includes active sessions in real-time.
+        This function now searches by player name instead of xuid.
+        """
+        query = "SELECT xuid, name FROM sessions_log GROUP BY name"
+        self.cursor.execute(query)
+        users = self.cursor.fetchall()
+
+        result = []
+        for xuid, name in users:
+            total_playtime = self.get_total_playtime(xuid)
+            result.append({
+                'xuid': xuid,  # Added xuid to the result dictionary
+                'name': name,
+                'total_playtime': total_playtime
+            })
+        return result
+
+    def delete_old_grief_logs(self, cutoff_timestamp: int):
         """Deletes logs older than a given timestamp."""
         condition = 'timestamp < ?'
         params = (cutoff_timestamp,)
-        db.delete('actions_log', condition, params)
+        self.delete('actions_log', condition, params)
