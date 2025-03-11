@@ -10,7 +10,6 @@ from endstone_wmctcore.utils.dbUtil import UserDB
 if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin
 
-
 def handle_login_event(self: "WMCTPlugin", ev: PlayerLoginEvent):
 
     # Ban System: ENHANCEMENT

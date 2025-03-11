@@ -8,6 +8,8 @@ from endstone_wmctcore.commands import (
     preloaded_permissions,
     preloaded_handlers
 )
+from endstone_wmctcore.events.intervalChecks import interval_function
+from endstone_wmctcore.utils.configUtil import load_config
 
 from endstone_wmctcore.utils.dbUtil import UserDB
 from endstone_wmctcore.utils.internalPermissionsUtil import get_permissions, PERMISSIONS
@@ -76,6 +78,10 @@ class WMCTPlugin(Plugin):
 
         for player in self.server.online_players:
             self.reload_custom_perms(player)
+
+        config = load_config()
+        if config["modules"]["check_prolonged_death_screen"]["enabled"] or config["modules"]["check_afk"]["enabled"]:
+            interval_function(self)
 
     # PERMISSIONS HANDLER
     def reload_custom_perms(self, player: Player):

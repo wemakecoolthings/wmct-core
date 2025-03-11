@@ -30,11 +30,10 @@ def preload_settings():
             "commands": {"enabled": False}
         },
         "spectator_check": {"check_gamemode": True, "check_tags": False, "allow_tags": [], "ignore_tags": []},
-        "custom_combat": {"enabled": False, "kb_delay": 10, "hkb_mult": 1, "vkb_mult": 1, "sprint_mult": 1},
         "me_crasher_patch": {"enabled": True, "ban": False},
         "grieflog_storage_auto_delete": {"enabled": True, "removal_time_in_seconds": 1209600},
-        "check_prolonged_death_screen": {"enabled": True},
-        "check_afk": {"enabeled": True}
+        "check_prolonged_death_screen": {"enabled": True, "kick": True, "time_in_seconds": 10},
+        "check_afk": {"enabled": True, "kick": True, "time_in_seconds": 180}
     }
 
     # Ensure 'modules' key exists in config

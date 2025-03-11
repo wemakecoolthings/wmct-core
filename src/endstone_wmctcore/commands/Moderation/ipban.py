@@ -129,7 +129,9 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     config = load_config()
     mod_log_enabled = config["modules"]["game_logging"]["moderation"]["enabled"]
     if mod_log_enabled:
-        log(self, f"Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was IP banned by {ColorFormat.YELLOW}{sender.name} for {ColorFormat.YELLOW}\"{reason}\" until {ColorFormat.YELLOW}{formatted_expiration}")
+        log(self,
+            f"Player {ColorFormat.YELLOW}{player_name} {ColorFormat.GOLD}was IP banned by {ColorFormat.YELLOW}{sender.name} for {ColorFormat.YELLOW}\"{reason}\" until {ColorFormat.YELLOW}{formatted_expiration}",
+            "mod")
 
     db.close_connection()
     return True

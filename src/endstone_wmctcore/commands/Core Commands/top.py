@@ -16,6 +16,7 @@ command, permission = create_command(
     ["wmctcore.command.top"]
 )
 
+
 # TOP COMMAND FUNCTIONALITY
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     if not isinstance(sender, Player):
@@ -37,21 +38,17 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     min_y = int(args[0]) if args else -63  # Default min_y to -63 if not provided
     x, z = int(pos.x), int(pos.z)
 
-    # Use the new API function to get the highest block
-    highest_y = player.dimension.get_highest_block_at(x, z).y
+    # Start from the maximum Y value and go down to find the highest block
+    for y in range(world_height, min_y, -1):
+        block = player.dimension.get_block_at(x, y, z)
+        if block.type != "minecraft:air":
+            # Check for air above the found block
+            if (
+                    player.dimension.get_block_at(x, y + 1, z).type == "minecraft:air" and
+                    player.dimension.get_block_at(x, y + 2, z).type == "minecraft:air"
+            ):
+                player.perform_command(f"tp {x} {y + 1} {z}")
+                return True
 
-    # Ensure the highest block is within the valid Y range
-    if highest_y < min_y:
-        sender.send_message(f"{errorLog()}No valid open-air block found at this X, Z position.")
-        return False
-
-    # Ensure there is air above the highest block (safe teleport)
-    if (
-        player.dimension.get_block_at(x, highest_y + 1, z).type == "minecraft:air"
-        and player.dimension.get_block_at(x, highest_y + 2, z).type == "minecraft:air"
-    ):
-        player.perform_command(f"tp {x} {highest_y + 1} {z}")
-        return True
-    else:
-        sender.send_message(f"{errorLog()}No valid open-air block found at this X, Z position.")
-        return False
+    sender.send_message(f"{errorLog()}No valid open-air block found at this X, Z position.")
+    return False

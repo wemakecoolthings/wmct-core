@@ -1,7 +1,6 @@
 import json
 import os
 import glob
-from zoneinfo import ZoneInfo
 
 from endstone import Player, ColorFormat
 from endstone.command import CommandSender
@@ -13,6 +12,8 @@ from endstone_wmctcore.utils.formWrapperUtil import (
 )
 from typing import TYPE_CHECKING
 from datetime import datetime
+
+from endstone_wmctcore.utils.timeUtil import TimezoneUtils
 
 if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin
@@ -67,7 +68,8 @@ def open_profiles_menu(sender: Player):
     form.body("Select a profile to view:")
 
     for profile in profile_files:
-        modified_time = datetime.fromtimestamp(os.path.getmtime(profile), tz=ZoneInfo("UTC")).astimezone(ZoneInfo("America/New_York")).strftime('%Y-%m-%d %I:%M:%S %p')
+        timestamp = datetime.fromtimestamp(os.path.getmtime(profile))
+        modified_time = TimezoneUtils.convert_to_timezone(timestamp.timestamp(), "EST")
         form.button(f"{ColorFormat.GOLD}CPUPROFILE\n{ColorFormat.RED}{modified_time}")
 
     form.button(f"Close")

@@ -2,9 +2,11 @@ from endstone import ColorFormat
 from endstone.event import PlayerCommandEvent, ServerCommandEvent
 from typing import TYPE_CHECKING
 
+from endstone_wmctcore.utils.configUtil import load_config
 from endstone_wmctcore.utils.dbUtil import UserDB
 from endstone_wmctcore.utils.internalPermissionsUtil import check_internal_rank
-from endstone_wmctcore.utils.prefixUtil import modLog, errorLog, infoLog
+from endstone_wmctcore.utils.loggingUtil import log, discordRelay
+from endstone_wmctcore.utils.prefixUtil import modLog, errorLog, infoLog, noticeLog
 from endstone_wmctcore.commands import moderation_commands
 
 if TYPE_CHECKING:
@@ -15,15 +17,24 @@ def handle_command_preprocess(self: "WMCTPlugin", event: PlayerCommandEvent):
     player = event.player
     args = command.split()
 
+    config = load_config()
+    if config["modules"]["game_logging"]["commands"]["enabled"]:
+        log(self, f"{noticeLog()}{ColorFormat.YELLOW}{player.name} {ColorFormat.GOLD}ran: {ColorFormat.AQUA}{command}", "cmd")
+    if config["modules"]["discord_logging"]["commands"]["enabled"]:
+        discordRelay(f"**{player.name}** ran: {command}", "cmd")
+
     # /me Crasher Fix
     if args and args[0].lstrip("/").lower() == "me" and command.count("@e") >= 5:
         event.player.add_attachment(self, "minecraft.command.me", False)
         event.is_cancelled = True
 
-        # Log the staff message (TBD)
-
-        # Kick the player
-        player.kick("Crasher Detected")
+        # Log the staff message
+        if config["modules"]["me_crasher_patch"]["enabled"]:
+            if config["modules"]["me_crasher_patch"]["ban"]:
+                self.server.dispatch_command(self.server.command_sender, f"tempban {player.name} 7 day Crasher Exploit")
+            else:
+                log(self, f"{modLog()}Player {ColorFormat.YELLOW}{player.name} {ColorFormat.GOLD}was kicked due to {ColorFormat.YELLOW}Crasher Exploit", "mod")
+                player.kick("Crasher Detected")
 
 
     # Internal Permissions Handler
