@@ -14,11 +14,6 @@ NOTES:
   - FIX: /me crasher
     - Logs will always fire but you can choose whether to auto-kick or auto-ban as this usually only ever is caused by hacked clients
   - FIX: Sneak-Flight Block Placement
-  - ENHANCEMENT: Optionally toggle a server-side PvP system
-    - Change hit delay
-    - Change horizontal KB
-    - Change vertical KB
-    - Change sprint multiplier 
   - ENHANCEMENT: Admin protection to prevent higher internal permission levels from getting kicked or banned from lower permission levels
     - Read the Internal Permissions Information section below for more info!
   - ENHANCEMENT: Custom moderation system (This disables Endstone's banning systems)
@@ -42,7 +37,6 @@ NOTES:
   - [OP] /settings (A menu for all plugin settings)
     - Logging Settings
     - Spectator Module Settings
-    - Custom Combat Settings
     - Prolonged Death Screen Settings
     - Level DB Storage Settings
     - Grief Log DB Storage Settings
