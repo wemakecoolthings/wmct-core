@@ -69,6 +69,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             nether_chunks = len(self.server.level.get_dimension("Nether").loaded_chunks)
             the_end_chunks = len(self.server.level.get_dimension("TheEnd").loaded_chunks)
             nearest_chunk = get_nearest_chunk(player, self.server.level)
+            is_laggy = check_entities_in_chunk(self, nearest_chunk.x, nearest_chunk.z)
 
             if player.ping < 100:
                 ping_color = ColorFormat.GREEN
@@ -108,10 +109,15 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             elif player.dimension.name == "TheEnd":
                 dim_color = ColorFormat.MATERIAL_IRON
 
+            if not is_laggy:
+                chunk_lag_str = f"§aO"
+            else:
+                chunk_lag_str = f"§cX"
+
             # FINAL STRINGS
             tps_str = f"{tps_color}{tps_display}.{tps_fraction:1d} {ColorFormat.ITALIC}{ColorFormat.GRAY}({tick_usage:.1f})"
             ping_str = f"{ping_color}{player.ping // 1}ms"
-            mspt_str = f"{mspt_color}{mspt:.1f}ms {ColorFormat.ITALIC}{ColorFormat.GRAY}(avg) {ColorFormat.RESET}{ColorFormat.GRAY}| {mspt_cur_color}{mspt_cur:.1f}ms {ColorFormat.ITALIC}{ColorFormat.GRAY}(current)"
+            mspt_str = f"{mspt_color}{mspt:.1f}ms {ColorFormat.ITALIC}{ColorFormat.GRAY}(avg) {ColorFormat.RESET}{ColorFormat.GRAY}| {mspt_cur_color}{mspt_cur:.1f}ms {ColorFormat.ITALIC}{ColorFormat.GRAY}(cur)"
             entity_str = f"{entity_color}{entity_count}"
             version_str = f"{ColorFormat.GREEN}{server_version}"
             chunk_str = f"{ColorFormat.GREEN}{overworld_chunks} {ColorFormat.GRAY}| {ColorFormat.RED}{nether_chunks} {ColorFormat.GRAY}| {ColorFormat.MATERIAL_IRON}{the_end_chunks}"
@@ -127,7 +133,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
                                 f"{ColorFormat.RESET}Loaded Entities: {entity_str}\n"
                                 f"{ColorFormat.RESET}--------------\n"
                                 f"{ColorFormat.RESET}Your Ping: {ping_str}\n"
-                                f"{ColorFormat.RESET}Current Chunk: {your_chunk_str}\n"
+                                f"{ColorFormat.RESET}Current Chunk: {your_chunk_str}, {chunk_lag_str}\n"
                                 f"{ColorFormat.RESET}Current DIM: {your_dim}")
             elif display == "toast":
                 player.send_toast(
@@ -149,6 +155,24 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     else:
         sender.send_error_message("This command can only be executed by a player")
     return True
+
+def check_entities_in_chunk(self: "WMCTPlugin", target_chunk_x: int, target_chunk_z: int) -> bool:
+    """Checks the number of entities in a specific chunk and returns True if the count exceeds 400."""
+    # Initialize the count of entities in the target chunk
+    entity_count = 0
+
+    # Iterate over all entities to check if they are in the target chunk
+    for entity in self.server.level.actors:
+        # Get the chunk coordinates of the entity
+        entity_chunk_x = entity.location.x // 16
+        entity_chunk_z = entity.location.z // 16
+
+        # Check if the entity is in the target chunk
+        if entity_chunk_x == target_chunk_x and entity_chunk_z == target_chunk_z:
+            entity_count += 1
+
+    # Return True if the entity count exceeds 400
+    return entity_count > 400
 
 def get_nearest_chunk(player: Player, level):
     # Get the player's current chunk position
