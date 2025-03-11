@@ -47,8 +47,7 @@ NOTES:
       - MSPT (Milliseconds Per Tick)
       - Entities
       - CPU Usage
-      - Command Usage Per Second
-      - Player Ping List (sorted from highest to lowest)
+      - Player Ping List
   - [OP] /check [player] (Displays all client info associated with the player)
   - [OP] /reloadscripts (Reloads only the Script API, ignoring plugins and other external data)
   - [OP] /updatepacks (Dynamically allows you to increment resource pack versions & update behavior pack dependencies REQUIRES RESTART AFTER)
