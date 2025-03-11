@@ -86,4 +86,5 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
         sender.send_message(f"{trailLog()}§a{start_time}§7 - §c{end_time} {duration_text}")
 
+    dbgl.close_connection()
     return True

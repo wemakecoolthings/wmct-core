@@ -56,6 +56,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         sender.send_message(
             f"{infoLog()}§rYour Playtime: §f{total_playtime_days}d {total_playtime_hours}h {total_playtime_minutes}m {total_playtime_seconds}s §7§o({player_rank}{rank_suffix})§r")
 
+        dbgl.close_connection()
     elif len(args) == 1 and args[0].lower() == 'true':
         # Display leaderboard
         dbgl = GriefLog("wmctcore_gl.db")
@@ -81,6 +82,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             sender.send_message(
                 f"{trailLog()}§e{rank}{rank_suffix}. §a{player_name} - §f{total_playtime_days}d {total_playtime_hours}h {total_playtime_minutes}m {total_playtime_seconds}s")
 
+        dbgl.close_connection()
     else:
         # If incorrect arguments are passed
         sender.send_message(f"{errorLog()}Usage: /playtime [leaderboard]")

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 # Register command
 command, permission = create_command(
     "activitylist",
-    "Lists players by activity filter (highest, lowest, or recent).",
+    "Lists players by activity filter (highest, lowest, or recent)!",
     ["/activitylist (highest|lowest|recent)[filter: activity_filter]"],
     ["wmctcore.command.activitylist"]
 )
@@ -83,6 +83,8 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     form.show(sender).then(
         lambda player=sender, result=ActionFormResponse: handle_activitylist_response(player, result)
     )
+
+    dbgl.close_connection()
 
     return True
 

@@ -3,11 +3,12 @@ RANKS = ["Default", "Helper", "Mod", "Operator"]
 
 # Define permissions associated with each rank
 PERMISSIONS = {
-    "Default": ["wmctcore.command.spectate", "wmctcore.command.ping"],
-    "Helper": ["wmctcore.command.check", "wmctcore.command.monitor", "wmctcore.command.vsc", "wmctcore.command.activity", "wmctcore.command.activitylist"],
+    "Default": ["wmctcore.command.spectate", "wmctcore.command.ping", "wmctcore.command.playtime"],
+    "Helper": ["wmctcore.command.check", "wmctcore.command.monitor", "wmctcore.command.vsc", "wmctcore.command.activity", "wmctcore.command.activitylist",
+               "wmctcore.command.logs", "wmctcore.command.inspect", "wmctcore.command.grieflog"],
     "Mod": ["wmctcore.command.ipban", "wmctcore.command.mute", "wmctcore.command.permban", "wmctcore.command.punishments",
             "wmctcore.command.removeban", "wmctcore.command.tempban", "wmctcore.command.tempmute", "wmctcore.command.unmute",
-            "wmctcore.command.nickname", "wmctcore.command.logs"],
+            "wmctcore.command.nickname"],
     "Operator": ["*"]
 }
 
@@ -25,7 +26,7 @@ def get_permissions(rank: str) -> list[str]:
 
 def has_log_perms(rank: str) -> bool:
     """Returns True if the rank has logging permissions (Mod or higher), otherwise False."""
-    return rank in RANKS[RANKS.index("Mod"):]
+    return rank in RANKS[RANKS.index("Helper"):]
 
 def check_internal_rank(user1_rank: str, user2_rank: str) -> bool:
     """

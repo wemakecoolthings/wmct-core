@@ -677,6 +677,18 @@ class GriefLog(DatabaseManager):
         }
         self.insert('user_toggles', data)
 
+    def get_user_toggle(self, xuid: str) -> bool:
+        """Gets the inspect mode toggle for a player."""
+        query = "SELECT inspect_mode FROM user_toggles WHERE xuid = ?"
+        self.cursor.execute(query, (xuid,))
+        result = self.cursor.fetchone()
+
+        # If a result is found, return the inspect_mode value, otherwise return False
+        if result:
+            return result[0] == 1  # Assuming inspect_mode is stored as 1 (True) or 0 (False)
+        else:
+            return False  # Default to False if no toggle is found
+
     def get_logs_by_coordinates(self, x: float, y: float, z: float, player_name: str = None) -> list[dict]:
         """Returns logs based on coordinates and an optional player name filter."""
         query = "SELECT * FROM actions_log WHERE location LIKE ?"
