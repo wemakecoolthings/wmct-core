@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from datetime import datetime
 from endstone_wmctcore.utils.modUtil import format_time_remaining, ban_message
-from endstone_wmctcore.utils.dbUtil import UserDB
+from endstone_wmctcore.utils.dbUtil import UserDB, GriefLog
 
 if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin
@@ -20,7 +20,6 @@ def handle_login_event(self: "WMCTPlugin", ev: PlayerLoginEvent):
 
     mod_log = db.get_mod_log(player_xuid)
     is_ip_banned = db.check_ip_ban(player_ip)
-    now = datetime.now()
 
     # Handle IP Ban
     if is_ip_banned:
@@ -61,6 +60,11 @@ def handle_join_event(self: "WMCTPlugin", ev: PlayerJoinEvent):
     if mod_log:
         if mod_log.is_banned:
             ev.join_message = "" # Remove join message
+        else:
+            # User Log
+            dbgl = GriefLog("wmctcore_gl.db")
+            dbgl.start_session(ev.player.xuid, ev.player.name, int(time.time()))
+            dbgl.close_connection()
 
     db.close_connection()
     return
@@ -76,6 +80,11 @@ def handle_leave_event(self: "WMCTPlugin", ev: PlayerQuitEvent):
     if mod_log:
         if mod_log.is_banned:
             ev.quit_message = ""  # Remove join message
+        else:
+            # User Log
+            dbgl = GriefLog("wmctcore_gl.db")
+            dbgl.end_session(ev.player.xuid, int(time.time()))
+            dbgl.close_connection()
 
     db.close_connection()
     return

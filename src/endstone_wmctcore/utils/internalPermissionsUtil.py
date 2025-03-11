@@ -4,7 +4,7 @@ RANKS = ["Default", "Helper", "Mod", "Operator"]
 # Define permissions associated with each rank
 PERMISSIONS = {
     "Default": ["wmctcore.command.spectate", "wmctcore.command.ping"],
-    "Helper": ["wmctcore.command.check", "wmctcore.command.monitor", "wmctcore.command.vsc"],
+    "Helper": ["wmctcore.command.check", "wmctcore.command.monitor", "wmctcore.command.vsc", "wmctcore.command.activity", "wmctcore.command.activitylist"],
     "Mod": ["wmctcore.command.ipban", "wmctcore.command.mute", "wmctcore.command.permban", "wmctcore.command.punishments",
             "wmctcore.command.removeban", "wmctcore.command.tempban", "wmctcore.command.tempmute", "wmctcore.command.unmute",
             "wmctcore.command.nickname", "wmctcore.command.logs"],

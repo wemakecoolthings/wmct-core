@@ -1,3 +1,4 @@
+import os
 import traceback
 from endstone import ColorFormat, Player
 from endstone.plugin import Plugin
@@ -140,23 +141,40 @@ class WMCTPlugin(Plugin):
                 sender.send_message(f"{errorLog()}Command '{command.name}' not found.")
                 return False
         except Exception as e:
+            # Hide file paths by removing drive letters and usernames
+            def clean_traceback(tb):
+                cleaned_lines = []
+                for line in tb.splitlines():
+                    if 'File "' in line:
+                        # Replace file paths with "<hidden>"
+                        path_start = line.find('"') + 1
+                        path_end = line.find('"', path_start)
+                        file_path = line[path_start:path_end]
+                        hidden_path = os.path.basename(file_path)
+                        line = line.replace(file_path, f"<hidden>/{hidden_path}")
+                    cleaned_lines.append(line)
+                return "\n".join(cleaned_lines)
+
+            # Generate the error message
             error_message = (
                     f"{ColorFormat.RED}========\n"
                     f"{ColorFormat.GOLD}This command generated an error -> please report this on our GitHub and provide a copy of the error below!\n"
                     f"{ColorFormat.RED}========\n\n"
                     f"{ColorFormat.YELLOW}{e}\n\n"
-                    + "\n".join(f"{ColorFormat.YELLOW}{line}" for line in traceback.format_exc().splitlines()) +
-                    f"{ColorFormat.RESET}"
+                    + f"{ColorFormat.YELLOW}{clean_traceback(traceback.format_exc())}\n"
+                      f"{ColorFormat.RESET}"
             )
             error_message_console = (
                     f"========\n"
                     f"This command generated an error -> please report this on our GitHub and provide a copy of the error below!\n"
                     f"========\n\n"
                     f"{e}\n\n"
-                    + "\n".join(f"{line}" for line in traceback.format_exc().splitlines())
+                    + clean_traceback(traceback.format_exc())
             )
+
             sender.send_message(error_message)
 
+            # Only log to console if the sender isn't the server itself
             if sender.name != "Server":
                 print(error_message_console)
 
