@@ -9,6 +9,7 @@ from endstone_wmctcore.commands import (
     preloaded_permissions,
     preloaded_handlers
 )
+
 from endstone_wmctcore.events.intervalChecks import interval_function, stop_interval
 from endstone_wmctcore.commands.Server_Management.monitor import clear_all_intervals
 from endstone_wmctcore.utils.configUtil import load_config
@@ -31,11 +32,13 @@ WMCT Core Loaded!
     )
 
 # EVENT IMPORTS
-from endstone.event import (event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent,
-                            ServerCommandEvent, PlayerCommandEvent, PlayerChatEvent, BlockBreakEvent)
+from endstone.event import (EventPriority, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent,
+                            ServerCommandEvent, PlayerCommandEvent, PlayerChatEvent, BlockBreakEvent, BlockPlaceEvent,
+                            PlayerInteractEvent, event_handler)
 from endstone_wmctcore.events.chat_events import handle_chat_event
 from endstone_wmctcore.events.command_processes import handle_command_preprocess, handle_server_command_preprocess
 from endstone_wmctcore.events.player_connect import handle_login_event, handle_join_event, handle_leave_event
+from endstone_wmctcore.events.grieflog_events import handle_block_break, handle_player_interact, handle_block_place
 
 class WMCTPlugin(Plugin):
     api_version = "0.6"
@@ -69,9 +72,21 @@ class WMCTPlugin(Plugin):
     def on_player_server_command_preprocess(self, ev: ServerCommandEvent) -> None:
         handle_server_command_preprocess(self, ev)
 
-    @event_handler()
-    def on_player_chat(self: "WMCTPlugin", ev: PlayerChatEvent):
+    @event_handler(priority=EventPriority.HIGHEST)
+    def on_player_chat(self, ev: PlayerChatEvent):
         handle_chat_event(self, ev)
+
+    @event_handler()
+    def on_block_break(self, ev: BlockBreakEvent):
+        handle_block_break(self, ev)
+
+    @event_handler()
+    def on_block_place(self, ev: BlockPlaceEvent):
+        handle_block_place(self, ev)
+
+    @event_handler()
+    def on_player_int(self, ev: PlayerInteractEvent):
+        handle_player_interact(self, ev)
 
     def on_load(self):
         plugin_text()

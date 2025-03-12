@@ -648,7 +648,9 @@ class GriefLog(DatabaseManager):
             'xuid': 'TEXT',
             'name': 'TEXT',
             'action': 'TEXT',
-            'location': 'TEXT',
+            'x': 'REAL',  # Storing x coordinate as a REAL number
+            'y': 'REAL',  # Storing y coordinate as a REAL number
+            'z': 'REAL',  # Storing z coordinate as a REAL number
             'timestamp': 'INTEGER'
         }
         session_log_columns = {
@@ -668,31 +670,45 @@ class GriefLog(DatabaseManager):
         self.create_table('sessions_log', session_log_columns)
         self.create_table('user_toggles', user_toggle_columns)  # New table for user-specific toggles
 
-    def set_user_toggle(self, xuid: str, name: str, inspect_mode: bool):
-        """Sets the inspect mode toggle for a player."""
-        data = {
-            'xuid': xuid,
-            'name': name,
-            'inspect_mode': inspect_mode
-        }
-        self.insert('user_toggles', data)
+    def set_user_toggle(self, xuid: str, name: str):
+        """Toggles the inspect mode for a player."""
 
-    def get_user_toggle(self, xuid: str) -> bool:
-        """Gets the inspect mode toggle for a player."""
-        query = "SELECT inspect_mode FROM user_toggles WHERE xuid = ?"
+        # Check if the player already has a toggle in the database
+        existing_toggle = self.get_user_toggle(xuid)
+
+        if existing_toggle:
+            # If the toggle exists, invert the current state
+            new_toggle = not existing_toggle[3]  # Assuming 'inspect_mode' is at index 3
+            updates = {'inspect_mode': new_toggle}
+            condition = 'xuid = ?'
+            params = (xuid,)
+
+            try:
+                self.update('user_toggles', updates, condition, params)
+            except Exception as e:
+                print(f"Error updating data: {e}")
+        else:
+            # Insert new toggle if none exists
+            data = {'xuid': xuid, 'name': name, 'inspect_mode': True}
+            try:
+                self.insert('user_toggles', data)
+            except Exception as e:
+                print(f"Error inserting data: {e}")
+
+        self.conn.commit()
+
+    def get_user_toggle(self, xuid: str):
+        """Gets the current inspect mode toggle for a player."""
+        query = "SELECT * FROM user_toggles WHERE xuid = ?"
         self.cursor.execute(query, (xuid,))
         result = self.cursor.fetchone()
 
-        # If a result is found, return the inspect_mode value, otherwise return False
-        if result:
-            return result[0] == 1  # Assuming inspect_mode is stored as 1 (True) or 0 (False)
-        else:
-            return False  # Default to False if no toggle is found
+        return result
 
     def get_logs_by_coordinates(self, x: float, y: float, z: float, player_name: str = None) -> list[dict]:
         """Returns logs based on coordinates and an optional player name filter."""
-        query = "SELECT * FROM actions_log WHERE location LIKE ?"
-        params = [f"%{x},{y},{z}%"]  # Searching for coordinates in the location field
+        query = "SELECT * FROM actions_log WHERE x = ? AND y = ? AND z = ?"
+        params = [x, y, z]  # Searching for exact coordinates
 
         if player_name:
             query += " AND name = ?"
@@ -708,8 +724,8 @@ class GriefLog(DatabaseManager):
                 'xuid': log[1],
                 'name': log[2],
                 'action': log[3],
-                'location': log[4],
-                'timestamp': log[5]
+                'location': f"{log[4]},{log[5]},{log[6]}",  # Rebuilding the location string
+                'timestamp': log[7]
             })
         return result
 
@@ -733,44 +749,41 @@ class GriefLog(DatabaseManager):
 
     def get_logs_within_radius(self, x: float, y: float, z: float, radius: float) -> list[dict]:
         """Returns logs within a defined radius of the given coordinates."""
-        query = "SELECT * FROM actions_log"
-        self.cursor.execute(query)
+        query = """
+        SELECT * FROM actions_log
+        WHERE SQRT(POWER(x - ?, 2) + POWER(y - ?, 2) + POWER(z - ?, 2)) <= ?
+        """
+        self.cursor.execute(query, (x, y, z, radius))
         logs = self.cursor.fetchall()
 
         result = []
         for log in logs:
-            location = log[4]  # Assuming the location is stored as "x,y,z"
-            loc_x, loc_y, loc_z = map(float, location.split(','))
-
-            # Calculate distance using the Euclidean formula
-            distance = ((x - loc_x) ** 2 + (y - loc_y) ** 2 + (z - loc_z) ** 2) ** 0.5
-            if distance <= radius:
-                result.append({
-                    'id': log[0],
-                    'xuid': log[1],
-                    'name': log[2],
-                    'action': log[3],
-                    'location': log[4],
-                    'timestamp': log[5]
-                })
-
+            result.append({
+                'id': log[0],
+                'xuid': log[1],
+                'name': log[2],
+                'action': log[3],
+                'location': f"{log[4]},{log[5]},{log[6]}",  # Rebuilding the location string
+                'timestamp': log[7]
+            })
         return result
 
     def log_action(self, xuid: str, name: str, action: str, location, timestamp: int):
-        """Logs an action performed by a player. Parses Vec if provided for location."""
-
+        """Logs an action performed by a player. Stores x, y, z as separate coordinates."""
         # Parse the location if it's a Vec object (assuming it has x, y, z attributes)
         if isinstance(location, Vector):
-            location_str = f"{location.x},{location.y},{location.z}"
+            x, y, z = location.x, location.y, location.z
         else:
             # If it's not a Vec, assume it's a string or already formatted location
-            location_str = str(location)
+            x, y, z = map(float, location.split(','))
 
         data = {
             'xuid': xuid,
             'name': name,
             'action': action,
-            'location': location_str,
+            'x': x,
+            'y': y,
+            'z': z,
             'timestamp': timestamp
         }
         self.insert('actions_log', data)

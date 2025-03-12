@@ -23,19 +23,23 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         dbgl = GriefLog("wmctcore_gl.db")
         player = self.server.get_player(sender.name)
 
-        toggle = dbgl.get_user_toggle(player.xuid)
-        new_toggle = not toggle
+        # Get the current toggle value (True or False)
+        toggle = dbgl.get_user_toggle(player.xuid)[3]
+        toggle = not toggle
 
-        dbgl.set_user_toggle(player.xuid, player.name, new_toggle)
+        # Update the toggle in the database
+        dbgl.set_user_toggle(player.xuid, player.name)
 
-        if new_toggle:
-            sender.send_message(f"{griefLog()}Inspect mode {ColorFormat.GREEN}ON")
+        # Send a message based on the new toggle state
+        if toggle:
+            sender.send_message(f"{griefLog()}Inspect mode {ColorFormat.GREEN}Enabled")
         else:
-            sender.send_message(f"{griefLog()}Inspect mode {ColorFormat.RED}OFF")
+            sender.send_message(f"{griefLog()}Inspect mode {ColorFormat.RED}Disabled")
 
         dbgl.close_connection()
 
     else:
         sender.send_error_message("This command can only be executed by a player")
+
     return True
 
