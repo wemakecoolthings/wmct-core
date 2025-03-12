@@ -33,7 +33,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     page = int(args[1]) if len(args) > 1 else 1
 
     if page < 1:
-        sender.send_message(f"{errorLog()} Page must be 1 or higher.")
+        sender.send_message(f"{errorLog()}Page must be 1 or higher")
         return True
 
     dbgl = GriefLog("wmctcore_gl.db")
@@ -44,7 +44,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     # Handle no sessions found
     if not sessions:
-        sender.sendMessage(f"{errorLog()} No session history found for {player_name}.")
+        sender.send_message(f"{errorLog()}No session history found for {player_name}")
         return True
 
     # Calculate total combined playtime (including active sessions)

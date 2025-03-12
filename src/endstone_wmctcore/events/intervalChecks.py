@@ -1,4 +1,3 @@
-import threading
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
@@ -15,10 +14,17 @@ afk_tracker = {}
 death_tracker = {}
 confirmed_afk = set()
 confirmed_death = set()
-interval_thread: Optional[threading.Timer] = None
+
+# This will hold the task ID for canceling if needed
+interval_task_id: Optional[int] = None
 
 def interval_function(self: "WMCTPlugin"):
-    global interval_thread
+    # Reschedule the task to run again in 1 second
+    global interval_task_id
+    task = self.server.scheduler.run_task(self, lambda: run_checks(self), delay=20)
+    interval_task_id = task.task_id
+
+def run_checks(self: "WMCTPlugin"):
     now = datetime.now()
     config = load_config()
 
@@ -66,14 +72,11 @@ def interval_function(self: "WMCTPlugin"):
                     confirmed_afk.remove(player)
                 afk_tracker[player] = (player.location, now)
 
-    interval_thread = threading.Timer(1, lambda: interval_function(self))
-    interval_thread.start()
-
-def stop_interval():
-    global interval_thread
-    if interval_thread:
-        interval_thread.cancel()
-        interval_thread = None
+def stop_interval(self: "WMCTPlugin"):
+    global interval_task_id
+    if interval_task_id:
+        self.server.scheduler.cancel_task(interval_task_id)
+        interval_task_id = None
 
 def remove_from_saved_areas(self: "WMCTPlugin", player: Player):
     if player in death_tracker:

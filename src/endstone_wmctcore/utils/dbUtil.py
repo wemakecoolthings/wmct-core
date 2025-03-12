@@ -674,7 +674,7 @@ class GriefLog(DatabaseManager):
         """Toggles the inspect mode for a player."""
 
         # Check if the player already has a toggle in the database
-        existing_toggle = self.get_user_toggle(xuid)
+        existing_toggle = self.get_user_toggle(xuid, name)
 
         if existing_toggle:
             # If the toggle exists, invert the current state
@@ -697,11 +697,27 @@ class GriefLog(DatabaseManager):
 
         self.conn.commit()
 
-    def get_user_toggle(self, xuid: str):
-        """Gets the current inspect mode toggle for a player."""
+    def get_user_toggle(self, xuid: str, name: str):
+        """Gets the current inspect mode toggle for a player.
+        If no result exists, insert a new default value with name and inspect_mode.
+        """
         query = "SELECT * FROM user_toggles WHERE xuid = ?"
         self.cursor.execute(query, (xuid,))
         result = self.cursor.fetchone()
+
+        # If no result, create a new default entry
+        if result is None:
+            default_value = 0  # Or False for inspect_mode
+            insert_query = """
+                INSERT INTO user_toggles (xuid, name, inspect_mode) 
+                VALUES (?, ?, ?)
+            """
+            self.cursor.execute(insert_query, (xuid, name, default_value))
+            self.conn.commit()
+
+            # Fetch the newly inserted data to return it
+            self.cursor.execute(query, (xuid,))
+            result = self.cursor.fetchone()
 
         return result
 

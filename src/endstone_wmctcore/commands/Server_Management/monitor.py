@@ -1,10 +1,9 @@
-from endstone import Player, ColorFormat
+from endstone import Player, ColorFormat, Server
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
 from endstone_wmctcore.utils.prefixUtil import infoLog, errorLog
 
 from typing import TYPE_CHECKING
-import threading
 
 if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin
@@ -30,7 +29,9 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         if specification.lower() == 'off':
             # Clear any active intervals for this player
             if sender.name in active_intervals:
-                active_intervals[sender.name].set()
+                # Cancel the active task
+                task_id = active_intervals[sender.name]
+                self.server.scheduler.cancel_task(task_id)
                 del active_intervals[sender.name]  # Remove from the active intervals dictionary
                 sender.send_message(f"{infoLog()}Monitoring has been turned off")
             else:
@@ -39,20 +40,16 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
         # If the player wants to enable or re-enable monitoring, clear existing intervals
         if sender.name in active_intervals:
-            active_intervals[sender.name].set()
+            task_id = active_intervals[sender.name]
+            self.server.scheduler.cancel_task(task_id)  # Cancel the existing task
+            del active_intervals[sender.name]  # Remove from active intervals
 
         # Parse the specification and time arguments
         time = int(args[1]) if len(args) > 1 else 1  # Default time interval if not provided
         display = args[2] if len(args) > 2 else "tip"
 
-        # Create a threading event to control loop
-        stop_event = threading.Event()
-
-        # Create a monitor function that calls itself recursively
+        # Create a monitor function that calls itself recursively using the scheduler
         def monitor_interval():
-            if stop_event.is_set():  # If stop_event is set, stop the loop
-                return
-
             player = self.server.get_player(sender.name)
 
             # INFO PREP
@@ -124,6 +121,13 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             your_chunk_str = f"{ColorFormat.GREEN}x={nearest_chunk.x}, z={nearest_chunk.z}"
             your_dim = f"{dim_color}{player.dimension.name}"
 
+            if player.ping < 100:
+                ping_color = ColorFormat.GREEN
+            elif 100 <= player.ping <= 200:
+                ping_color = ColorFormat.YELLOW
+            else:
+                ping_color = ColorFormat.RED
+
             if display == "tip":
                 player.send_tip(f"{ColorFormat.AQUA}Server Monitor{ColorFormat.RESET}\n"
                                 f"{ColorFormat.RESET}Level: {self.server.level.name} {ColorFormat.ITALIC}{ColorFormat.GRAY}(ver. {version_str}{ColorFormat.GRAY})\n"
@@ -141,14 +145,16 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
                     f"{ColorFormat.RESET}TPS: {tps_str} {ColorFormat.GRAY}| {ColorFormat.RESET}Chunks: {chunk_str} {ColorFormat.GRAY}| {ColorFormat.RESET}Entities: {entity_str}"
                 )
 
-            # Call monitor_interval recursively after the time delay
-            threading.Timer(time, monitor_interval).start()
+            # Re-run the monitor_interval using the scheduler after the time delay
+            task_id = self.server.scheduler.run_task(
+                self, monitor_interval, delay=time*20  # time*20 for 1 tick = 1 second
+            )
 
-        # Start the interval loop
+            # Store the task id for future cancellation
+            active_intervals[sender.name] = task_id.task_id
+
+        # Start the interval loop using the scheduler
         monitor_interval()
-
-        # Save the stop_event to control the loop
-        active_intervals[sender.name] = stop_event
 
         sender.send_message(f"{infoLog()}Started monitoring on an interval of {time} seconds")
         return True
@@ -200,9 +206,9 @@ def get_nearest_chunk(player: Player, level):
 
     return closest_chunk
 
-def clear_all_intervals():
+def clear_all_intervals(self: "WMCTPlugin"):
     """Clear all active intervals."""
     global active_intervals
-    for player_name, stop_event in active_intervals.items():
-        stop_event.set()  # Stop each interval by setting the event
+    for player_name, task_id in active_intervals.items():
+        self.server.scheduler.cancel_task(task_id)  # Cancel each task using its ID
     active_intervals.clear()  # Clear the dictionary of active intervals

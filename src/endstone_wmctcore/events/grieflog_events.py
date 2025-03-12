@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 def handle_block_break(self: "WMCTPlugin", ev: BlockBreakEvent):
     dbgl = GriefLog("wmctcore_gl.db")
 
-    if dbgl.get_user_toggle(ev.player.xuid)[3]:
+    if dbgl.get_user_toggle(ev.player.xuid, ev.player.name)[3]:
         logs = dbgl.get_logs_by_coordinates(ev.block.x, ev.block.y, ev.block.z)
         sendGriefLog(logs, ev.player)
         ev.is_cancelled = True
@@ -26,7 +26,7 @@ def handle_block_break(self: "WMCTPlugin", ev: BlockBreakEvent):
 def handle_block_place(self: "WMCTPlugin", ev: BlockPlaceEvent):
     dbgl = GriefLog("wmctcore_gl.db")
 
-    if dbgl.get_user_toggle(ev.player.xuid)[3]:
+    if dbgl.get_user_toggle(ev.player.xuid, ev.player.name)[3]:
         logs = dbgl.get_logs_by_coordinates(ev.block.x, ev.block.y, ev.block.z)
         sendGriefLog(logs, ev.player)
         ev.is_cancelled = True
@@ -48,7 +48,7 @@ def handle_player_interact(self: "WMCTPlugin", ev: PlayerInteractEvent):
 
     last_interaction_time[ev.player.xuid] = current_time
 
-    if dbgl.get_user_toggle(ev.player.xuid)[3]:
+    if dbgl.get_user_toggle(ev.player.xuid, ev.player.name)[3]:
         logs = dbgl.get_logs_by_coordinates(ev.block.x, ev.block.y, ev.block.z)
         sendGriefLog(logs, ev.player)
         ev.is_cancelled = True

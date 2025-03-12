@@ -104,8 +104,8 @@ class WMCTPlugin(Plugin):
             interval_function(self)
 
     def on_disable(self):
-        clear_all_intervals()
-        stop_interval()
+        clear_all_intervals(self)
+        stop_interval(self)
 
     # PERMISSIONS HANDLER
     def reload_custom_perms(self, player: Player):

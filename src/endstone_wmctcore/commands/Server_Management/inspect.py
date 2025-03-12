@@ -24,7 +24,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         player = self.server.get_player(sender.name)
 
         # Get the current toggle value (True or False)
-        toggle = dbgl.get_user_toggle(player.xuid)[3]
+        toggle = dbgl.get_user_toggle(player.xuid, player.name)[3]
         toggle = not toggle
 
         # Update the toggle in the database

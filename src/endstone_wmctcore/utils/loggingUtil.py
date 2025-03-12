@@ -59,9 +59,9 @@ def discordRelay(message, type):
     payload = {
         "embeds": [
             {
-                "title": "Logger",
+                "title": discord_logging["embed"]["title"],
                 "description": message,
-                "color": 8388736,
+                "color": discord_logging["embed"]["color"],
                 "footer": {
                     "text": f"Logged at {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}"
                 }

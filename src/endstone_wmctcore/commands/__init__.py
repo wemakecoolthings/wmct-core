@@ -19,6 +19,7 @@ def preload_settings():
     # Define default modules and settings
     default_modules = {
         "discord_logging": {
+            "embed": {"color": 781919, "title": "Logger"},
             "commands": {"enabled": False, "webhook": ""},
             "moderation": {"enabled": False, "webhook": ""},
             "chat": {"enabled": False, "webhook": ""},
