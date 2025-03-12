@@ -47,7 +47,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         if check_gamemode and player.game_mode == GameMode.SPECTATOR:
             return False
         if check_tags:
-            if not any(tag in player.scoreboard_tags for tag in dead_tags):
+            if any(tag in player.scoreboard_tags for tag in dead_tags):
                 return False
             if any(tag in player.scoreboard_tags for tag in ignore_tags):
                 return False
