@@ -21,7 +21,7 @@ interval_task_id: Optional[int] = None
 def interval_function(self: "WMCTPlugin"):
     # Reschedule the task to run again in 1 second
     global interval_task_id
-    task = self.server.scheduler.run_task(self, lambda: run_checks(self), delay=20)
+    task = self.server.scheduler.run_task(self, lambda: run_checks(self), delay=20, period=20)
     interval_task_id = task.task_id
 
 def run_checks(self: "WMCTPlugin"):
@@ -36,8 +36,8 @@ def run_checks(self: "WMCTPlugin"):
                 time_dead = (now - death_tracker[player]).total_seconds()
                 if time_dead >= config["modules"]["check_prolonged_death_screen"]["time_in_seconds"] and \
                         config["modules"]["check_prolonged_death_screen"]["enabled"]:
-                    self.server.dispatch_command(self.server.command_sender, "gamerule doimmediaterespawn true")
                     if player not in confirmed_death:
+                        self.server.dispatch_command(self.server.command_sender, "gamerule doimmediaterespawn true")
                         if config["modules"]["check_prolonged_death_screen"]["kick"]:
                             log(self, f"{modLog()}Player {ColorFormat.YELLOW}{player.name} {ColorFormat.GOLD}was kicked for Prolonged Death Screen", "mod")
                             player.kick(f"{ColorFormat.RED}Detected: Prolonged Death Screen Exploit")

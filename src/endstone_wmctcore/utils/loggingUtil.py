@@ -11,6 +11,7 @@ from endstone_wmctcore.utils.formWrapperUtil import ActionFormData, ActionFormRe
 from endstone_wmctcore.utils.internalPermissionsUtil import has_log_perms
 from endstone_wmctcore.utils.configUtil import load_config
 from endstone_wmctcore.utils.prefixUtil import infoLog, griefLog
+from endstone_wmctcore.utils.timeUtil import TimezoneUtils
 
 if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin
@@ -80,7 +81,6 @@ def discordRelay(message, type):
 
 def sendGriefLog(logs: list[dict], sender):
     if not logs:  # Check if logs are empty
-        print(logs)
         sender.send_message(f"{griefLog()}No grief logs found.")
         return True
 
@@ -88,7 +88,7 @@ def sendGriefLog(logs: list[dict], sender):
 
     # Split logs into pages of 15 entries each
     logs_per_page = 15
-    total_pages = (len(logs) + logs_per_page - 1) // logs_per_page  # Calculate total number of pages
+    total_pages = (len(logs) + logs_per_page - 1) // logs_per_page  # Calculate total number of pages, fixed calculation
     current_page = 1
     show_page(current_page, logs, total_pages, sender, logs_per_page)
 
@@ -96,25 +96,39 @@ def sendGriefLog(logs: list[dict], sender):
 
 def show_page(current_page, logs, total_pages, sender, logs_per_page):
     form = ActionFormData()
-    form.title(f"Grief Log Activity ({current_page}/{total_pages-1})")
+    form.title(f"Grief Log Activity ({current_page}/{total_pages})")  # Display total pages correctly
 
     # Ensure the page number is within valid bounds
-    start_idx = current_page * logs_per_page
-    end_idx = min(start_idx + logs_per_page, len(logs))
+    start_idx = (current_page - 1) * logs_per_page  # Start index for the current page
+    end_idx = min(start_idx + logs_per_page, len(logs))  # End index for the current page
 
-    location = logs[0]['location']  # Get location for uniform display
-    log_text = f"{ColorFormat.YELLOW}Actions at coordinates {location}\n\n"
+    log_text = f"{ColorFormat.YELLOW}Found logs:\n\n"
 
     # Format logs for the current page
     for log in logs[start_idx:end_idx]:
         player_name = log['name']
         action = log['action']
         timestamp = log['timestamp']
-        formatted_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(timestamp))  # Format the timestamp
+        location = log['location']
+        formatted_time = TimezoneUtils.convert_to_timezone(timestamp, 'EST')
 
-        log_text += f"{ColorFormat.AQUA}{player_name}\n{ColorFormat.GREEN}{action}\n{ColorFormat.RED}{formatted_time}\n\n"
+        # Start building the log text
+        log_text += f"{ColorFormat.RESET}User: {ColorFormat.AQUA}{player_name}\n{ColorFormat.RESET}Action: {ColorFormat.GREEN}{action}\n{ColorFormat.RESET}Location: {ColorFormat.YELLOW}{location}\n{ColorFormat.RESET}Time: {ColorFormat.RED}{formatted_time}\n"
+
+        # Check if block_type exists and append it if present
+        if 'block_type' in log:
+            block_type = log['block_type']
+            log_text += f"{ColorFormat.RESET}Block Type: {ColorFormat.BLUE}{block_type}\n"
+
+        # Check if block_state exists and append it if present
+        if 'block_state' in log:
+            block_state = log['block_state']
+            log_text += f"{ColorFormat.RESET}Block State: {ColorFormat.LIGHT_PURPLE}{block_state}\n"
+
+        log_text += "\n"
 
     form.body(log_text)
+    discordRelay(log_text, "grief")
 
     # Add navigation buttons
     form.button("Next Page")
@@ -126,14 +140,24 @@ def show_page(current_page, logs, total_pages, sender, logs_per_page):
     )
 
 def handle_grieflog_response(player, result, current_page, logs, total_pages, sender, logs_per_page):
+    if result.canceled or result.selection is None:
+        return  # User canceled or didn't select anything
+
+    # Next Page
     if result.selection == 0:  # Next button
-        if current_page < total_pages - 1:
-            show_page(current_page + 1, logs, total_pages, sender, logs_per_page)
+        if current_page < total_pages:
+            current_page += 1
         else:
-            show_page(1, logs, total_pages, sender, logs_per_page)
+            current_page = 1  # Loop back to the first page if at the end
+
+    # Previous Page
     elif result.selection == 1:  # Previous button
         if current_page > 1:
-            show_page(current_page - 1, logs, total_pages, sender, logs_per_page)
+            current_page -= 1
         else:
-            show_page(total_pages-1, logs, total_pages, sender, logs_per_page)
+            current_page = total_pages  # Loop back to the last page if at the beginning
+
+    # Show the updated page
+    show_page(current_page, logs, total_pages, sender, logs_per_page)
+
 

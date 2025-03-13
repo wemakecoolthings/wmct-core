@@ -72,10 +72,25 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     for entry in sorted_playtimes:
         player_name = entry['name']
         total_playtime_seconds = entry['total_playtime']
-        total_playtime_hours = total_playtime_seconds // 3600
-        total_playtime_minutes = (total_playtime_seconds % 3600) // 60
-        total_playtime_text = f"{total_playtime_hours}h {total_playtime_minutes}m"
-        form.button(f"{ColorFormat.AQUA}{player_name}\n{ColorFormat.RED}{total_playtime_text}")
+
+        # Calculate days, hours, minutes, and seconds
+        days = total_playtime_seconds // 86400  # 1 day = 86400 seconds
+        hours = (total_playtime_seconds % 86400) // 3600  # 1 hour = 3600 seconds
+        minutes = (total_playtime_seconds % 3600) // 60  # 1 minute = 60 seconds
+        seconds = total_playtime_seconds % 60  # Remaining seconds
+
+        # Construct the playtime string
+        playtime_str = ""
+        if days > 0:
+            playtime_str += f"{days}d "
+        if hours > 0 or days > 0:
+            playtime_str += f"{hours}h "
+        if minutes > 0 or hours > 0 or days > 0:
+            playtime_str += f"{minutes}m "
+        playtime_str += f"{seconds}s"
+
+        # Add button with formatted player playtime
+        form.button(f"{ColorFormat.AQUA}{player_name}\n{ColorFormat.RED}{playtime_str}")
 
     # Add Cancel Button
     form.button("Cancel")

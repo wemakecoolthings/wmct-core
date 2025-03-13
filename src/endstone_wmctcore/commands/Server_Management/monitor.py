@@ -65,7 +65,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             overworld_chunks = len(self.server.level.get_dimension("Overworld").loaded_chunks)
             nether_chunks = len(self.server.level.get_dimension("Nether").loaded_chunks)
             the_end_chunks = len(self.server.level.get_dimension("TheEnd").loaded_chunks)
-            nearest_chunk = get_nearest_chunk(player, self.server.level)
+            nearest_chunk, player_chunk_x, player_chunk_z = get_nearest_chunk(player, self.server.level)
             is_laggy = check_entities_in_chunk(self, nearest_chunk.x, nearest_chunk.z)
 
             if player.ping < 100:
@@ -118,7 +118,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             entity_str = f"{entity_color}{entity_count}"
             version_str = f"{ColorFormat.GREEN}{server_version}"
             chunk_str = f"{ColorFormat.GREEN}{overworld_chunks} {ColorFormat.GRAY}| {ColorFormat.RED}{nether_chunks} {ColorFormat.GRAY}| {ColorFormat.MATERIAL_IRON}{the_end_chunks}"
-            your_chunk_str = f"{ColorFormat.GREEN}x={nearest_chunk.x}, z={nearest_chunk.z}"
+            your_chunk_str = f"{ColorFormat.GREEN}x={player_chunk_x}, z={player_chunk_z}"
             your_dim = f"{dim_color}{player.dimension.name}"
 
             if player.ping < 100:
@@ -181,30 +181,38 @@ def check_entities_in_chunk(self: "WMCTPlugin", target_chunk_x: int, target_chun
     return entity_count > 400
 
 def get_nearest_chunk(player: Player, level):
-    # Get the player's current chunk position
-    player_chunk_x = player.location.x // 16
-    player_chunk_z = player.location.z // 16
+    # Convert player location to chunk coordinates, defaulting to 0 if None
+    player_chunk_x = int(player.location.x) // 16 if player.location and player.location.x is not None else 0
+    player_chunk_z = int(player.location.z) // 16 if player.location and player.location.z is not None else 0
 
-    # Get all loaded chunks for the level
-    loaded_chunks = level.get_dimension(player.dimension.name).loaded_chunks
+    # Get all loaded chunks
+    loaded_chunks = level.get_dimension(player.dimension.name).loaded_chunks if level else []
 
-    # Initialize the closest chunk and minimum distance
+    if not loaded_chunks:
+        return 0, player_chunk_x, player_chunk_z  # Default chunk (0,0)
+
+    # Initialize closest chunk tracking
     closest_chunk = None
-    min_distance_sq = float('inf')  # Initialize with a large number
+    min_distance_sq = float('inf')
 
-    # Iterate through each loaded chunk to find the nearest one
+    # Iterate through each loaded chunk
     for chunk in loaded_chunks:
-        chunk_x, chunk_z = chunk.x, chunk.z  # Accessing .x and .z properties of the chunk
+        chunk_x, chunk_z = getattr(chunk, "x", 0), getattr(chunk, "z", 0)  # Default to 0 if missing
 
-        # Calculate the squared distance between the player and the chunk
-        distance_sq = (chunk_x - player_chunk_x) ** 2 + (chunk_z - player_chunk_z) ** 2
+        # Compute squared Euclidean distance
+        dx = chunk_x - player_chunk_x
+        dz = chunk_z - player_chunk_z
+        distance_sq = dx * dx + dz * dz
 
-        # Update the closest chunk if a closer one is found
+        # Check if this is the closest chunk so far
         if distance_sq < min_distance_sq:
             min_distance_sq = distance_sq
             closest_chunk = chunk
 
-    return closest_chunk
+    # Default to chunk (0,0) if no valid chunk is found
+    closest_chunk = closest_chunk or type("Chunk", (), {"x": 0, "z": 0})()
+
+    return closest_chunk, player_chunk_x, player_chunk_z
 
 def clear_all_intervals(self: "WMCTPlugin"):
     """Clear all active intervals."""

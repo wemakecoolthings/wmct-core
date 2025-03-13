@@ -3,96 +3,73 @@ from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
 from endstone_wmctcore.utils.prefixUtil import infoLog, errorLog
 
-from typing import TYPE_CHECKING, Tuple, Any
+from typing import TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin
 
 DIM_SCALE = {
     "OVERWORLD": 1,
-    "NETHER": 8,  # Nether to Overworld scaling (1:8 ratio)
-    "THE_END": 1  # The End doesn't scale with other dimensions
+    "NETHER": 8,
+    "THE_END": 1
+}
+
+HEIGHT_LIMITS = {
+    "OVERWORLD": 320,
+    "NETHER": 127,
+    "THE_END": 255
 }
 
 # Register command
 command, permission = create_command(
     "dimtp",
     "Teleports a player across dimensions!",
-    ["/dimtp <player: player> (overworld|nether|the_end) <DIM: dim_0> [pos: pos]",
-            "/dimtp (overworld|nether|the_end) <DIM: dim_1> [pos: pos]"],
+    ["/dimtp <player: player> (overworld|nether|the_end)<dim: dim> [pos: pos] [translate: bool]"],
     ["wmctcore.command.dimtp"]
 )
 
-# DIMTP COMMAND FUNCTIONALITY
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     if not isinstance(sender, Player):
         sender.send_error_message(f"{errorLog()} This command can only be used by players.")
         return False
 
-    if not args:
-        sender.send_error_message(f"{errorLog()} Usage: /dimtp <player> (overworld|nether|the_end) [x y z]")
+    if len(args) < 2:
+        sender.send_error_message(f"{errorLog()} Usage: /dimtp <player> <overworld|nether|the_end> [x y z] [translate]")
         return False
 
-    if args[0] == "overworld" or args[0] == "nether" or args[0] == "the_end":
-        player = self.server.get_player(sender.name)
-    else:
-        player = self.server.get_player(args[0])
+    player_name, target_dim = args[0], args[1].upper()
+    player = self.server.get_player(player_name)
 
-    current_dim = player.dimension.name.upper()
-    target_dim = args[0].upper()
+    if not player:
+        sender.send_error_message(f"{errorLog()} Player '{player_name}' not found.")
+        return False
 
     if target_dim not in DIM_SCALE:
         sender.send_error_message(
-            f"{errorLog()} Invalid dimension: {target_dim}. Must be overworld, nether, or the_end")
+            f"{errorLog()} Invalid dimension: {target_dim}. Must be overworld, nether, or the_end.")
         return False
-
-    # Set height limits per dimension
-    height_limits = {
-        "OVERWORLD": 320,
-        "NETHER": 127,
-        "THE_END": 255
-    }
-
-    # Get player's current position
-    current_x, current_y, current_z = player.location.x, player.location.y, player.location.z
 
     try:
-        if len(args) > 1:
-            # Player provided coordinates (absolute or relative)
-            new_x, new_y, new_z = parse_coordinates(args[1], (current_x, current_y, current_z))
-        else:
-            # Auto-translate coordinates based on dimension scaling
-            scale_from = DIM_SCALE.get(current_dim, 1)
-            scale_to = DIM_SCALE.get(target_dim, 1)
-            scale_factor = scale_from / scale_to  # Convert position correctly
+        new_x, new_y, new_z = player.location.x, player.location.y, player.location.z
+        translate = False
 
-            new_x = current_x * scale_factor
-            new_y = min(current_y, height_limits[target_dim])  # Ensure within height limits
-            new_z = current_z * scale_factor
-    except ValueError as e:
-        sender.send_error_message(f"{errorLog()} Invalid coordinate: {str(e)}")
+        if len(args) >= 5:
+            new_x, new_y, new_z = float(args[2]), float(args[3]), float(args[4])
+
+        if len(args) == 6:
+            translate = args[5].lower() == "true"
+    except ValueError:
+        sender.send_error_message(f"{errorLog()} Coordinates must be numbers, and translate must be true or false.")
         return False
 
-    # Ensure Y-level is valid
-    new_y = max(-64, min(new_y, height_limits[target_dim]))
+    if translate:
+        scale_from = DIM_SCALE.get(player.dimension.name.upper(), 1)
+        scale_to = DIM_SCALE.get(target_dim, 1)
+        scale_factor = scale_from / scale_to
+        new_x *= scale_factor
+        new_z *= scale_factor
 
-    # Execute teleport command
+    new_y = max(-64, min(new_y, HEIGHT_LIMITS[target_dim]))  # Ensure Y-level is valid
+
     player.perform_command(f"execute in {target_dim.lower()} run tp \"{player.name}\" {new_x} {new_y} {new_z}")
     return True
-
-def parse_coordinates(coord_str: str, current_values: tuple[float, float, float]) -> tuple[float | int | Any, ...]:
-    parts = coord_str.split()
-    parsed_coords = []
-
-    for i, part in enumerate(parts):
-        if part.startswith("~"):  # Relative coordinate
-            offset = float(part[1:]) if part[1:] else 0
-            parsed_coords.append(current_values[i] + offset)
-        else:  # Absolute coordinate
-            parsed_coords.append(float(part))
-
-    # Fill missing coordinates with current player values
-    while len(parsed_coords) < 3:
-        parsed_coords.append(current_values[len(parsed_coords)])
-
-    return tuple(parsed_coords)

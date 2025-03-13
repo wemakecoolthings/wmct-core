@@ -61,6 +61,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         # Display leaderboard
         dbgl = GriefLog("wmctcore_gl.db")
         leaderboard = dbgl.get_all_playtimes()
+        leaderboard = sorted(leaderboard, key=lambda x: x['total_playtime'], reverse=True)
 
         sender.send_message(f"{infoLog()}§rTop 10 Playtimes on the Server:")
 

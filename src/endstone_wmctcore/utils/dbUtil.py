@@ -648,10 +648,12 @@ class GriefLog(DatabaseManager):
             'xuid': 'TEXT',
             'name': 'TEXT',
             'action': 'TEXT',
-            'x': 'REAL',  # Storing x coordinate as a REAL number
-            'y': 'REAL',  # Storing y coordinate as a REAL number
-            'z': 'REAL',  # Storing z coordinate as a REAL number
-            'timestamp': 'INTEGER'
+            'x': 'REAL',
+            'y': 'REAL',
+            'z': 'REAL',
+            'timestamp': 'INTEGER',
+            'block_type': 'TEXT',
+            'block_state': 'TEXT'
         }
         session_log_columns = {
             'id': 'INTEGER PRIMARY KEY AUTOINCREMENT',
@@ -741,7 +743,9 @@ class GriefLog(DatabaseManager):
                 'name': log[2],
                 'action': log[3],
                 'location': f"{log[4]},{log[5]},{log[6]}",  # Rebuilding the location string
-                'timestamp': log[7]
+                'timestamp': log[7],
+                'block_type': log[8],  # Adding block_type to the result
+                'block_state': log[9]  # Adding block_state to the result
             })
         return result
 
@@ -759,7 +763,9 @@ class GriefLog(DatabaseManager):
                 'name': log[2],
                 'action': log[3],
                 'location': log[4],
-                'timestamp': log[5]
+                'timestamp': log[5],
+                'block_type': log[8],  # Adding block_type to the result
+                'block_state': log[9]  # Adding block_state to the result
             })
         return result
 
@@ -780,12 +786,15 @@ class GriefLog(DatabaseManager):
                 'name': log[2],
                 'action': log[3],
                 'location': f"{log[4]},{log[5]},{log[6]}",  # Rebuilding the location string
-                'timestamp': log[7]
+                'timestamp': log[7],
+                'block_type': log[8],  # Adding block_type to the result
+                'block_state': log[9]  # Adding block_state to the result
             })
         return result
 
-    def log_action(self, xuid: str, name: str, action: str, location, timestamp: int):
-        """Logs an action performed by a player. Stores x, y, z as separate coordinates."""
+    def log_action(self, xuid: str, name: str, action: str, location, timestamp: int, block_type: str = None,
+                   block_state: str = None):
+        """Logs an action performed by a player, stores x, y, z as separate coordinates, and includes block data if available."""
         # Parse the location if it's a Vec object (assuming it has x, y, z attributes)
         if isinstance(location, Vector):
             x, y, z = location.x, location.y, location.z
@@ -793,6 +802,7 @@ class GriefLog(DatabaseManager):
             # If it's not a Vec, assume it's a string or already formatted location
             x, y, z = map(float, location.split(','))
 
+        # Prepare additional block data if available
         data = {
             'xuid': xuid,
             'name': name,
@@ -800,8 +810,15 @@ class GriefLog(DatabaseManager):
             'x': x,
             'y': y,
             'z': z,
-            'timestamp': timestamp
+            'timestamp': timestamp,
         }
+
+        if block_type:
+            data['block_type'] = block_type  # Log block type (e.g., 'minecraft:stone')
+
+        if block_state:
+            data['block_state'] = block_state  # Log block state (if applicable)
+
         self.insert('actions_log', data)
 
     def start_session(self, xuid: str, name: str, start_time: int):
@@ -892,3 +909,7 @@ class GriefLog(DatabaseManager):
         condition = 'timestamp < ?'
         params = (cutoff_timestamp,)
         self.delete('actions_log', condition, params)
+
+    def delete_all_logs(self):
+        """Deletes all logs."""
+        self.delete('actions_log', '1', ())  # '1' is just a condition that will match all logs

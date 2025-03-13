@@ -1,12 +1,10 @@
 import time
-
 from endstone import Player
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
 from endstone_wmctcore.utils.prefixUtil import infoLog, errorLog, trailLog
 from endstone_wmctcore.utils.dbUtil import GriefLog
 from endstone_wmctcore.utils.timeUtil import TimezoneUtils
-
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -16,75 +14,91 @@ if TYPE_CHECKING:
 command, permission = create_command(
     "activity",
     "Lists out session information!",
-    ["/activity <player: player> [page: int]"],
+    ["/activity <player: player>"],
     ["wmctcore.command.activity"]
 )
-
-SESSIONS_PER_PAGE = 5
 
 # ACTIVITY COMMAND FUNCTIONALITY
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     if len(args) < 1:
-        sender.sendMessage(f"{errorLog()} Usage: /activity <player> [page]")
+        sender.sendMessage(f"{errorLog()} Usage: /activity <player>")
         return True
 
     player_name = args[0]
     player = self.server.get_player(player_name)
-    page = int(args[1]) if len(args) > 1 else 1
 
-    if page < 1:
-        sender.send_message(f"{errorLog()}Page must be 1 or higher")
+    if not player:
+        sender.send_message(f"{errorLog()} Player '{player_name}' not found.")
         return True
 
     dbgl = GriefLog("wmctcore_gl.db")
 
-    # Fetch all sessions and reverse them (latest first)
+    # Fetch the most recent sessions (limit to 5)
     sessions = dbgl.get_user_sessions(player.xuid)
-    sessions.reverse()
+    sessions.reverse()  # Ensure latest sessions are at the front
+    sessions = sessions[:5]  # Only take the 5 most recent
 
-    # Handle no sessions found
     if not sessions:
-        sender.send_message(f"{errorLog()}No session history found for {player_name}")
+        sender.send_message(f"{errorLog()} No session history found for {player_name}.")
         return True
 
-    # Calculate total combined playtime (including active sessions)
+    # Calculate total playtime (including active sessions)
     total_playtime_seconds = dbgl.get_total_playtime(player.xuid)
-    total_playtime_minutes = total_playtime_seconds // 60
-    total_playtime_hours = total_playtime_minutes // 60
-    total_playtime_minutes %= 60
 
-    # Display total playtime at the top
-    sender.send_message(f"{infoLog()}§rSession History for {player_name} (Page {page}/{(len(sessions) + SESSIONS_PER_PAGE - 1) // SESSIONS_PER_PAGE}):")
-    sender.send_message(f"{trailLog()}§eTotal Playtime: §f{total_playtime_hours}h {total_playtime_minutes}m")
+    # Display session header
+    sender.send_message(f"{infoLog()} §rSession History for {player_name}:")
 
-    # Pagination setup
-    total_sessions = len(sessions)
-    total_pages = (total_sessions + SESSIONS_PER_PAGE - 1) // SESSIONS_PER_PAGE
+    # Calculate days, hours, minutes, and seconds
+    days = total_playtime_seconds // 86400  # 1 day = 86400 seconds
+    hours = (total_playtime_seconds % 86400) // 3600  # 1 hour = 3600 seconds
+    minutes = (total_playtime_seconds % 3600) // 60  # 1 minute = 60 seconds
+    seconds = total_playtime_seconds % 60  # Remaining seconds
 
-    if page > total_pages:
-        sender.sendMessage(f"{errorLog()} Page {page} does not exist. Maximum page: {total_pages}.")
-        return True
+    # Construct the playtime string
+    playtime_str = ""
+    if days > 0:
+        playtime_str += f"{days}d "
+    if hours > 0 or days > 0:
+        playtime_str += f"{hours}h "
+    if minutes > 0 or hours > 0 or days > 0:
+        playtime_str += f"{minutes}m "
+    playtime_str += f"{seconds}s"
 
-    # Slice the sessions for the current page
-    start_index = (page - 1) * SESSIONS_PER_PAGE
-    end_index = start_index + SESSIONS_PER_PAGE
-    page_sessions = sessions[start_index:end_index]
+    # Send the message with the full playtime length
+    sender.send_message(f"{trailLog()} §eTotal Playtime: §f{playtime_str}")
 
-    # Display the sessions
-    for session in page_sessions:
-        start_time = TimezoneUtils.convert_to_timezone(session['start_time'], 'EST')
-
-        # Handle active sessions
+    # Check for active session
+    active_session = None
+    for session in sessions:
         if session['end_time'] is None:
-            end_time = "§aActive Now"
-            active_minutes = int((time.time() - session['start_time']) // 60)
-            duration_text = f"§a(+{active_minutes} min)"
-        else:
-            end_time = TimezoneUtils.convert_to_timezone(session['end_time'], 'EST')
-            duration_minutes = session['duration'] // 60
-            duration_text = f"§f({duration_minutes} min)"
+            active_session = session
+            sessions.remove(session)  # Remove it from past sessions
+            break
 
-        sender.send_message(f"{trailLog()}§a{start_time}§7 - §c{end_time} {duration_text}")
+    # Display the active session first (if applicable)
+    if active_session:
+        start_time = TimezoneUtils.convert_to_timezone(active_session['start_time'], 'EST')
+        active_seconds = int(time.time() - active_session['start_time'])
+        sender.send_message(f"{trailLog()} §a{start_time}§7 - §aActive Now §f(+{format_time(active_seconds)})")
+
+    # Display up to 5 past sessions
+    for session in sessions:
+        start_time = TimezoneUtils.convert_to_timezone(session['start_time'], 'EST')
+        end_time = TimezoneUtils.convert_to_timezone(session['end_time'], 'EST')
+        duration_text = f"§f({format_time(session['duration'])})"
+        sender.send_message(f"{trailLog()} §a{start_time}§7 - §c{end_time} {duration_text}")
 
     dbgl.close_connection()
     return True
+
+def format_time(seconds: int) -> str:
+    if seconds < 60:
+        return f"{seconds}s"
+    minutes = seconds // 60
+    if minutes < 60:
+        return f"{minutes}m"
+    hours = minutes // 60
+    if hours < 24:
+        return f"{hours}h"
+    days = hours // 24
+    return f"{days}d"

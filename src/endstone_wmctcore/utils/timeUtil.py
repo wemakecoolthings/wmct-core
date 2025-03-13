@@ -1,39 +1,44 @@
 from datetime import datetime, timedelta
 import time
 
-
 class TimezoneUtils:
     TIMEZONE_OFFSETS = {
         "EST": -5,  # Standard time offset (EST)
     }
 
-    # Automatically calculates if DST is active based on timestamp
     @staticmethod
     def is_dst(timestamp):
-        # America/New_York DST: Starts second Sunday in March, Ends first Sunday in November
-        dt = datetime.fromtimestamp(timestamp)
+        """Determines if a given timestamp falls within Daylight Saving Time (DST) for Eastern Time."""
+        dt = datetime.utcfromtimestamp(timestamp)  # Use UTC time
         year = dt.year
 
-        # Second Sunday of March
-        dst_start = datetime(year, 3, 8)
+        # Second Sunday of March at 2 AM (DST Start)
+        dst_start = datetime(year, 3, 8, 2)  # Start searching from March 8th at 2 AM
         while dst_start.weekday() != 6:  # Find the first Sunday
             dst_start += timedelta(days=1)
 
-        # First Sunday of November
-        dst_end = datetime(year, 11, 1)
+        # First Sunday of November at 2 AM (DST End)
+        dst_end = datetime(year, 11, 1, 2)  # Start searching from November 1st at 2 AM
         while dst_end.weekday() != 6:
             dst_end += timedelta(days=1)
 
-        # Determine if we're in DST
+        # Eastern Daylight Time (EDT) applies between these dates
         return dst_start <= dt < dst_end
 
-    # Converts a UTC timestamp to any timezone without imports
     @staticmethod
     def convert_to_timezone(timestamp, timezone_name):
-        offset = TimezoneUtils.TIMEZONE_OFFSETS.get(timezone_name, 0)
-        if TimezoneUtils.is_dst(timestamp):
-            offset += 1  # Adjust for DST
+        """Converts a UTC timestamp to EST/EDT time with proper DST handling."""
+        if timezone_name not in TimezoneUtils.TIMEZONE_OFFSETS:
+            return "Invalid timezone"
 
-        utc_time = datetime.fromtimestamp(timestamp)
-        local_time = utc_time + timedelta(hours=offset)
-        return local_time.strftime('%Y-%m-%d %I:%M:%S %p') + f" {timezone_name}"
+        standard_offset = TimezoneUtils.TIMEZONE_OFFSETS[timezone_name]
+        dst_offset = 1 if TimezoneUtils.is_dst(timestamp) else 0
+
+        # Convert UTC time to local time
+        utc_time = datetime.utcfromtimestamp(timestamp)
+        local_time = utc_time + timedelta(hours=standard_offset + dst_offset)
+
+        # Determine the correct timezone label (EST or EDT)
+        timezone_label = "EDT" if dst_offset else "EST"
+
+        return local_time.strftime('%Y-%m-%d %I:%M:%S %p') + f" {timezone_label}"

@@ -14,6 +14,7 @@ def handle_login_event(self: "WMCTPlugin", ev: PlayerLoginEvent):
 
     # Ban System: ENHANCEMENT
     db = UserDB("wmctcore_users.db")
+    now = datetime.now()
 
     player_xuid = ev.player.xuid
     player_ip = str(ev.player.address)
