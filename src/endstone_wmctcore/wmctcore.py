@@ -1,4 +1,5 @@
 import os
+import time
 import traceback
 from endstone import ColorFormat, Player
 from endstone.plugin import Plugin
@@ -14,7 +15,7 @@ from endstone_wmctcore.events.intervalChecks import interval_function, stop_inte
 from endstone_wmctcore.commands.Server_Management.monitor import clear_all_intervals
 from endstone_wmctcore.utils.configUtil import load_config
 
-from endstone_wmctcore.utils.dbUtil import UserDB
+from endstone_wmctcore.utils.dbUtil import UserDB, GriefLog
 from endstone_wmctcore.utils.internalPermissionsUtil import get_permissions
 from endstone_wmctcore.utils.prefixUtil import errorLog, infoLog
 

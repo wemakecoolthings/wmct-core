@@ -1,6 +1,7 @@
 from endstone import Player, ColorFormat
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
+from endstone_wmctcore.utils.configUtil import load_config
 from endstone_wmctcore.utils.dbUtil import GriefLog
 from endstone_wmctcore.utils.prefixUtil import infoLog, errorLog, griefLog
 
@@ -19,6 +20,13 @@ command, permission = create_command(
 
 # INSPECT COMMAND FUNCTIONALITY
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
+    config = load_config()
+    is_gl_enabled = config["modules"]["grieflog"]["enabled"]
+
+    if not is_gl_enabled:
+        sender.send_message(f"{errorLog()}Grief Logger is currently disabled by config")
+        return True
+
     if isinstance(sender, Player):
         dbgl = GriefLog("wmctcore_gl.db")
         player = self.server.get_player(sender.name)
