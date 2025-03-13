@@ -33,13 +33,14 @@ WMCT Core Loaded!
     )
 
 # EVENT IMPORTS
-from endstone.event import (EventPriority, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent,
+from endstone.event import (EventPriority, event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent,
                             ServerCommandEvent, PlayerCommandEvent, PlayerChatEvent, BlockBreakEvent, BlockPlaceEvent,
-                            PlayerInteractEvent, event_handler)
+                            PlayerInteractEvent, DataPacketSendEvent, DataPacketReceiveEvent)
 from endstone_wmctcore.events.chat_events import handle_chat_event
 from endstone_wmctcore.events.command_processes import handle_command_preprocess, handle_server_command_preprocess
 from endstone_wmctcore.events.player_connect import handle_login_event, handle_join_event, handle_leave_event
 from endstone_wmctcore.events.grieflog_events import handle_block_break, handle_player_interact, handle_block_place
+
 
 class WMCTPlugin(Plugin):
     api_version = "0.6"
@@ -99,6 +100,11 @@ class WMCTPlugin(Plugin):
             self.reload_custom_perms(player)
 
         config = load_config()
+        if config["modules"]["grieflog_storage_auto_delete"]["enabled"]:
+            dbgl = GriefLog("wmctcore_gl.db")
+            dbgl.delete_logs_older_than_seconds(config["modules"]["grieflog_storage_auto_delete"]["removal_time_in_seconds"], True)
+            dbgl.close_connection()
+
         if config["modules"]["check_prolonged_death_screen"]["enabled"] or config["modules"]["check_afk"]["enabled"]:
             if config["modules"]["check_prolonged_death_screen"]["enabled"]:
                 print(f"[CONFIG] doimmediaterespawn gamerule is now set to true since prolonged deathscreen check is enabled")

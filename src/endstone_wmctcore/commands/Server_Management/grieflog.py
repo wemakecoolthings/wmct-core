@@ -6,7 +6,7 @@ from endstone_wmctcore.utils.commandUtil import create_command
 from endstone_wmctcore.utils.configUtil import load_config
 from endstone_wmctcore.utils.dbUtil import GriefLog
 from endstone_wmctcore.utils.loggingUtil import sendGriefLog
-from endstone_wmctcore.utils.prefixUtil import infoLog, errorLog, griefLog
+from endstone_wmctcore.utils.prefixUtil import errorLog, griefLog
 
 from typing import TYPE_CHECKING
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 command, permission = create_command(
     "grieflog",
     "Displays or manages grief logs based on the given parameters.",
-    ["/grieflog <radius: int> (login|logout|block_break|block_place|opened_container|item_use)[filter: action_log] [player: player]",
+    ["/grieflog <radius: int> (login|logout|block_break|block_place|opened_container)[filter: action_log] [player: player]",
             "/grieflog (flush)<clear_logs: clear_logs> (all|time)<all: all_gl> [time_in_minutes: int]"],
     ["wmctcore.command.grieflog"],
     "op",
@@ -49,8 +49,18 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
                 radius = 0
 
         if len(args) > 1:
-            # Action filter (e.g. login, logout, block_break, etc.)
-            action_filter = map_action_to_internal(args[1])  # Map the formatted action to internal
+            # Convert input to lowercase for case-insensitive matching
+            action_input = args[1].lower()
+
+            # Reverse lookup in action mapping
+            action_mapping = {
+                "block_break": "Block Break",
+                "block_place": "Block Place",
+                "opened_container": "Opened Container",
+                "login": "Login",
+                "logout": "Logout"
+            }
+            action_filter = action_mapping.get(action_input)
 
         if len(args) > 2:
             # Player name filter
@@ -67,9 +77,8 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             elif len(args) == 3 and args[1].lower() == "time" and args[2].isdigit():
                 # Clear logs from the last x minutes
                 minutes = int(args[2])
-                cutoff_timestamp = int((datetime.utcnow() - timedelta(minutes=minutes)).timestamp())
-                dbgl.delete_old_grief_logs(cutoff_timestamp)
-                sender.send_message(f"{griefLog()}All grief logs from the last {minutes} minutes have been cleared")
+                logs_cleared = dbgl.delete_logs_older_than_seconds(int(minutes * 60))
+                sender.send_message(f"{griefLog()}Cleared {logs_cleared} grief logs from the last {minutes} minutes have been cleared")
                 return True
 
             else:
@@ -103,14 +112,3 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
 def format_action(action: str) -> str:
     return " ".join(word.capitalize() for word in action.split("_"))
-
-def map_action_to_internal(action: str) -> str:
-    action_mapping = {
-        "Block Break": "block_break",
-        "Block Place": "block_place",
-        "Opened Container": "opened_container",
-        "Item Use": "item_use",
-        "Login": "login",
-        "Logout": "logout"
-    }
-    return action_mapping.get(action, None)

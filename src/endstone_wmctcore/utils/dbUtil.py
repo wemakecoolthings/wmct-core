@@ -1,7 +1,7 @@
 import sqlite3
 import time
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Tuple, Any, Dict, Optional
 from endstone import ColorFormat
 from endstone.util import Vector
@@ -904,11 +904,70 @@ class GriefLog(DatabaseManager):
             })
         return result
 
-    def delete_old_grief_logs(self, cutoff_timestamp: int):
-        """Deletes logs older than a given timestamp."""
-        condition = 'timestamp < ?'
-        params = (cutoff_timestamp,)
-        self.delete('actions_log', condition, params)
+    from datetime import datetime, timedelta
+
+    def delete_logs_older_than_seconds(self, seconds: int, sendPrint=False):
+        """Deletes logs that are older than the given seconds threshold and logs the action."""
+
+        # Fetch current time
+        current_time = datetime.utcnow()
+
+        # Fetch logs and count them
+        count_query = "SELECT COUNT(*) FROM actions_log"
+        self.cursor.execute(count_query)
+        count_result = self.cursor.fetchone()
+        count = count_result[0] if count_result else 0
+
+        if count == 0:
+            print("[GriefLog] No logs to delete.")
+            return
+
+        # Fetch individual logs and check timestamps
+        select_logs_query = "SELECT id, timestamp FROM actions_log"
+        self.cursor.execute(select_logs_query)
+        logs_to_delete = self.cursor.fetchall()
+
+        # Perform deletion for each individual log that matches the condition
+        deleted_count = 0
+        for log in logs_to_delete:
+            log_id, log_timestamp = log
+
+            # Convert log timestamp to datetime
+            log_time = datetime.utcfromtimestamp(log_timestamp)
+
+            # Calculate the difference in seconds between current time and log timestamp
+            time_difference = (current_time - log_time).total_seconds()
+
+            # Compare the time difference with the input seconds
+            if time_difference > seconds:
+                # Delete this log
+                delete_query = "DELETE FROM actions_log WHERE id = ?"
+                self.cursor.execute(delete_query, (log_id,))
+                deleted_count += 1
+
+        # Commit the changes
+        self.conn.commit()
+
+        # Convert the input seconds into the highest available time increment
+        time_units = [
+            ("day", 86400),
+            ("hour", 3600),
+            ("minute", 60),
+            ("second", 1)
+        ]
+
+        # Find the largest unit of time that fits
+        for unit, value in time_units:
+            if seconds >= value:
+                amount = seconds // value
+                time_string = f"{amount} {unit}{'s' if amount > 1 else ''}"
+                break
+
+        # Final Log Message
+        if sendPrint:
+            print(f"[GriefLog] Purged {deleted_count} logs older than {time_string}")
+
+        return deleted_count
 
     def delete_all_logs(self):
         """Deletes all logs."""

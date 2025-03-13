@@ -1,6 +1,6 @@
 import time
 
-from endstone.event import BlockPlaceEvent, BlockBreakEvent, PlayerInteractEvent
+from endstone.event import BlockPlaceEvent, BlockBreakEvent, PlayerInteractEvent, DataPacketSendEvent, DataPacketReceiveEvent
 from typing import TYPE_CHECKING
 
 from endstone_wmctcore.utils.configUtil import load_config

@@ -130,12 +130,13 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
             if display == "tip":
                 player.send_tip(f"{ColorFormat.AQUA}Server Monitor{ColorFormat.RESET}\n"
+                                f"{ColorFormat.RESET}---------------------------\n"
                                 f"{ColorFormat.RESET}Level: {self.server.level.name} {ColorFormat.ITALIC}{ColorFormat.GRAY}(ver. {version_str}{ColorFormat.GRAY})\n"
                                 f"{ColorFormat.RESET}TPS: {tps_str} {ColorFormat.RESET}\n"
                                 f"{ColorFormat.RESET}MSPT: {mspt_str}\n"
                                 f"{ColorFormat.RESET}Loaded Chunks: {chunk_str}\n"
                                 f"{ColorFormat.RESET}Loaded Entities: {entity_str}\n"
-                                f"{ColorFormat.RESET}--------------\n"
+                                f"{ColorFormat.RESET}---------------------------\n"
                                 f"{ColorFormat.RESET}Your Ping: {ping_str}\n"
                                 f"{ColorFormat.RESET}Current Chunk: {your_chunk_str}, {chunk_lag_str}\n"
                                 f"{ColorFormat.RESET}Current DIM: {your_dim}")

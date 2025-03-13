@@ -4,8 +4,11 @@ from endstone.event import PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent
 from typing import TYPE_CHECKING
 
 from datetime import datetime
+
+from endstone_wmctcore.utils.configUtil import load_config
 from endstone_wmctcore.utils.modUtil import format_time_remaining, ban_message
 from endstone_wmctcore.utils.dbUtil import UserDB, GriefLog
+from endstone.util import Vector
 
 if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin
@@ -65,6 +68,11 @@ def handle_join_event(self: "WMCTPlugin", ev: PlayerJoinEvent):
             # User Log
             dbgl = GriefLog("wmctcore_gl.db")
             dbgl.start_session(ev.player.xuid, ev.player.name, int(time.time()))
+            rounded_x = round(ev.player.location.x)
+            rounded_y = round(ev.player.location.y)
+            rounded_z = round(ev.player.location.z)
+            rounded_coords = Vector(rounded_x, rounded_y, rounded_z)
+            dbgl.log_action(ev.player.xuid, ev.player.name, "Login", rounded_coords, int(time.time()))
             dbgl.close_connection()
 
     db.close_connection()
@@ -73,6 +81,7 @@ def handle_join_event(self: "WMCTPlugin", ev: PlayerJoinEvent):
 def handle_leave_event(self: "WMCTPlugin", ev: PlayerQuitEvent):
 
     # Update Data On Leave
+    config = load_config()
     db = UserDB("wmctcore_users.db")
     db.update_user_data(ev.player.name, 'last_leave', int(time.time()))
 
@@ -85,6 +94,11 @@ def handle_leave_event(self: "WMCTPlugin", ev: PlayerQuitEvent):
             # User Log
             dbgl = GriefLog("wmctcore_gl.db")
             dbgl.end_session(ev.player.xuid, int(time.time()))
+            rounded_x = round(ev.player.location.x)
+            rounded_y = round(ev.player.location.y)
+            rounded_z = round(ev.player.location.z)
+            rounded_coords = Vector(rounded_x, rounded_y, rounded_z)
+            dbgl.log_action(ev.player.xuid, ev.player.name, "Logout", rounded_coords, int(time.time()))
             dbgl.close_connection()
 
     db.close_connection()
