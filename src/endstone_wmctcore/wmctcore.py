@@ -44,7 +44,7 @@ from endstone_wmctcore.events.grieflog_events import handle_block_break, handle_
 
 class WMCTPlugin(Plugin):
     api_version = "0.6"
-    authors = ["PrimeStrat", "CraZ-Guy", "trainer jeo"]
+    authors = ["PrimeStrat", "trainer jeo"]
 
     commands = preloaded_commands
     permissions = preloaded_permissions
@@ -95,7 +95,7 @@ class WMCTPlugin(Plugin):
 
     def on_enable(self):
         self.register_events(self)
-
+        
         for player in self.server.online_players:
             self.reload_custom_perms(player)
 
