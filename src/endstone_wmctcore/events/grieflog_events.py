@@ -58,7 +58,7 @@ def handle_player_interact(self: "WMCTPlugin", ev: PlayerInteractEvent):
     if is_gl_enabled:
         dbgl = GriefLog("wmctcore_gl.db")
 
-        current_time = time.time()  # Get the current time in seconds
+        current_time = time.time() 
         last_time = last_interaction_time.get(ev.player.xuid, 0)
 
         if current_time - last_time < 0.5:
