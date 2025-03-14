@@ -5,7 +5,7 @@
 A server management plugin for Minecraft Events & Survival Servers using Endstone -> https://github.com/EndstoneMC/endstone
 
 NOTES: 
-- All features are disabled by default for performance. Use /settings to enable modules in-game or via the config file.
+- All features are disabled by default for performance. Use /wmctcoresettings to enable modules in-game or via the config file.
 - This plugin does not support the use of command selectors. Rather, you specify a player name or specify the term "ALL" if applicable.
 - All custom commands that target players will attempt to target offline players!
 
@@ -33,7 +33,7 @@ NOTES:
     - This applies to moderation commands such as /tempban or /mute as well as Minecraft's moderation commands such as /kick 
   
 - Commands
-  - [OP] /settings (A menu for all plugin settings)
+  - [OP] /wmctcoresettings (A menu for all plugin settings)
     - Logging Settings
     - Spectator Module Settings
     - Prolonged Death Screen Settings
@@ -51,8 +51,7 @@ NOTES:
   - [OP] /reloadscripts (Reloads only the Script API, ignoring plugins and other external data)
   - [OP] /updatepacks (Dynamically allows you to increment resource pack versions & update behavior pack dependencies REQUIRES RESTART AFTER)
     - This allows you to update resource packs for forced redownloads as well as update behavior packs in-game on title updates
-  - [OP] /saveleveldb [ID] (Saves scoreboards and player data to an external DB)
-  - [OP] /loadleveldb [ID] (Loads scoreboards and player data to the world if saved data was found)
+  - [OP] /leveldb (save|load) (Save and load scoreboard profiles between worlds!)
   - [OP] /bossbar [player] [text] [color] [progress] (Creates a custom bossbar that can be set to only display to certain players)
   - [OP] /activity [player] [list number: optional] (Lists out session information and the total time playing on the server)
   - [OP] /activitylist (Lists all of the player's total session logs in a menu)
