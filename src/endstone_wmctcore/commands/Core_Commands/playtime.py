@@ -19,12 +19,10 @@ command, permission = create_command(
 
 # PLAYTIME COMMAND FUNCTIONALITY
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
-    # Check if the sender is a valid player
     player_name = sender.name
     player = self.server.get_player(player_name)
 
     if len(args) == 0:
-        # No argument, show sender's playtime
         dbgl = GriefLog("wmctcore_gl.db")
 
         # Fetch total playtime for the player
@@ -90,7 +88,6 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     return True
 
-# Function to add rank suffixes
 def get_rank_suffix(rank: int) -> str:
     if 10 <= rank % 100 <= 20:
         suffix = 'th'
