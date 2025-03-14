@@ -3,7 +3,7 @@
 A server management plugin for Minecraft Events & Survival Servers using Endstone -> https://github.com/EndstoneMC/endstone
 
 NOTES: 
-- All features are disabled by default for performance. Use /wmctcoresettings to enable modules in-game or via the config file.
+- Most of the modules are disabled by default for performance. Use /wmctcoresettings to enable modules in-game or via the config file.
 - This plugin does not support the use of command selectors. Rather, you specify a player name or specify the term "ALL" if applicable.
 - All custom commands that target players will attempt to target offline players!
 
