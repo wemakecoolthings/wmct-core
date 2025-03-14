@@ -30,11 +30,9 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         target_name = args[0].lower()
 
         if target_name == "all":
-            # Set game mode for all players
             sender.perform_command("gamemode c @a")
 
         else:
-            # Set game mode for a specific player
             target = self.server.get_player(target_name)
             if target:
                 sender.perform_command(f"gamemode c {target_name}")

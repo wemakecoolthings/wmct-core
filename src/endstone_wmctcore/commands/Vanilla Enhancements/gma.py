@@ -24,20 +24,18 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             sender.send_message(f"{errorLog()}This command can only be executed by a player")
             return False
         target = self.server.get_player(sender.name)
-        target.perform_command("gamemode a @s")  # Set sender's game mode to Adventure
+        target.perform_command("gamemode a @s") 
 
     elif len(args) == 1:
         target_name = args[0].lower()
 
         if target_name == "all":
-            # Set game mode for all players
-            sender.perform_command("gamemode a @a")  # Set each player's game mode to Adventure
+            sender.perform_command("gamemode a @a")
 
         else:
-            # Set game mode for a specific player
             target = self.server.get_player(target_name)
             if target:
-                sender.perform_command(f"gamemode a {target_name}")  # Set the target player's game mode to Adventure
+                sender.perform_command(f"gamemode a {target_name}")
             else:
                 sender.send_message(f"{errorLog()}Player {target_name} not found.")
 

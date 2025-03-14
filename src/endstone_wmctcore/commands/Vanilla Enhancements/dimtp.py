@@ -28,6 +28,7 @@ command, permission = create_command(
     ["wmctcore.command.dimtp"]
 )
 
+# DIMTP COMMAND FUNCTIONALITY
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     if not isinstance(sender, Player):
         sender.send_error_message(f"{errorLog()} This command can only be used by players.")
