@@ -27,7 +27,7 @@ def create_command(command_name: str, description: str, usages: list, permission
         }
     }
 
-    # Define the permission dictionary, assuming the first permission is the main one
+    # Endstone permission
     permission = {
         permissions[0]: {
             "description": f"Allows use of the {command_name} command",

@@ -11,17 +11,15 @@ def load_config():
     """Load or create a configuration file to enable/disable commands."""
     if not os.path.exists(CONFIG_PATH):
         default_config = {
-            "commands": {}  # Will be populated dynamically
+            "commands": {} 
         }
         with open(CONFIG_PATH, "w") as config_file:
             json.dump(default_config, config_file, indent=4)
 
     with open(CONFIG_PATH, "r") as config_file:
-        # Log in the console where the config is loaded from
         return json.load(config_file)
 
 def save_config(config):
     """Save the current config state to disk."""
     with open(CONFIG_PATH, "w") as config_file:
-        # Log in the console  where the config saved
         json.dump(config, config_file, indent=4)
