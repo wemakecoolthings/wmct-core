@@ -74,7 +74,7 @@ NOTES:
   - [OP] /punishments [player] (Displays past and current moderation actions taken on the player)
   - [OP] /setrank [player] [Default | Helper | Mod | Operator] (Applies an internal permission setting to the player without operator)
   - [OP] /inspect (Toggles inspect mode where interacting or breaking a block will return any related grief logs)
-  - [OP] /grieflog [player] [radius] [filter: optional] (Returns grief logs in the specified area)
+  - [OP] /grieflog [radius] [filter: optional [player] (Returns grief logs in the specified area)
     - Supported Logs
       - Login Location
       - Logout Location
