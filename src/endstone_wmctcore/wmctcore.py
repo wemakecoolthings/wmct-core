@@ -16,7 +16,7 @@ from endstone_wmctcore.commands.Server_Management.monitor import clear_all_inter
 from endstone_wmctcore.utils.configUtil import load_config
 
 from endstone_wmctcore.utils.dbUtil import UserDB, GriefLog
-from endstone_wmctcore.utils.internalPermissionsUtil import get_permissions
+from endstone_wmctcore.utils.internalPermissionsUtil import get_permissions, RANKS
 from endstone_wmctcore.utils.prefixUtil import errorLog, infoLog
 
 
@@ -100,10 +100,13 @@ class WMCTPlugin(Plugin):
             self.reload_custom_perms(player)
 
         config = load_config()
-        if config["modules"]["grieflog_storage_auto_delete"]["enabled"]:
-            dbgl = GriefLog("wmctcore_gl.db")
-            dbgl.delete_logs_older_than_seconds(config["modules"]["grieflog_storage_auto_delete"]["removal_time_in_seconds"], True)
-            dbgl.close_connection()
+        is_gl_enabled = config["modules"]["grieflog"]["enabled"]
+
+        if is_gl_enabled:
+            if config["modules"]["grieflog_storage_auto_delete"]["enabled"]:
+                dbgl = GriefLog("wmctcore_gl.db")
+                dbgl.delete_logs_older_than_seconds(config["modules"]["grieflog_storage_auto_delete"]["removal_time_in_seconds"], True)
+                dbgl.close_connection()
 
         if config["modules"]["check_prolonged_death_screen"]["enabled"] or config["modules"]["check_afk"]["enabled"]:
             if config["modules"]["check_prolonged_death_screen"]["enabled"]:
@@ -111,6 +114,7 @@ class WMCTPlugin(Plugin):
             interval_function(self)
 
     def on_disable(self):
+        config = load_config()
         clear_all_intervals(self)
         stop_interval(self)
 
@@ -120,6 +124,11 @@ class WMCTPlugin(Plugin):
         db = UserDB("wmctcore_users.db")
         db.save_user(player)
         user = db.get_online_user(player.xuid)
+
+        if player.has_permission("minecraft.kick"):
+            db.update_user_data(player.name, 'internal_rank', "Operator")
+        elif user.internal_rank == "Operator" and not player.has_permission("minecraft.kick"):
+            db.update_user_data(player.name, 'internal_rank', "Default")
 
         permissions = get_permissions(user.internal_rank)
 

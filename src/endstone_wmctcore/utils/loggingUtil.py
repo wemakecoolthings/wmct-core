@@ -16,47 +16,51 @@ from endstone_wmctcore.utils.timeUtil import TimezoneUtils
 if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin
 
+import threading
+
 def log(self: "WMCTPlugin", message, type):
+    # Load configuration and initialize single DB connection
     config = load_config()
-    discordRelay(message, type)
-    admin_tags = set(config["modules"]["game_logging"].get("custom_tags", []))
+    db = UserDB("wmctcore_users.db")  # Open DB connection once at the start
 
-    db = UserDB("wmctcore_users.db")
+    discord_thread = threading.Thread(target=discordRelay, args=(message, type))
+    discord_thread.start()
 
+    # Load config tags once
+    config_tags = set(config["modules"]["game_logging"].get("custom_tags", []))
+
+    # Create a set of online players that need messages sent
+    players_to_notify = []
     for player in self.server.online_players:
         user = db.get_online_user(player.xuid)
-        if has_log_perms(user.internal_rank) or admin_tags.intersection(set(player.scoreboard_tags) or player.is_op):
+        if has_log_perms(user.internal_rank) or config_tags.intersection(set(player.scoreboard_tags) or player.is_op):
             if db.enabled_logs(player.xuid):
-                player.send_message(message)
-                return True
+                players_to_notify.append(player)
 
-    db.close_connection()
+    # Send messages to players asynchronously
+    if players_to_notify:
+        threading.Thread(target=send_messages, args=(players_to_notify, message, db)).start()
 
+    db.close_connection()  # Close the DB connection after everything is done
     return False
 
+def send_messages(players, message, db):
+    """Send the log message to all valid players asynchronously."""
+    for player in players:
+        player.send_message(message)
+
 def discordRelay(message, type):
-    message = re.sub(r'§.', '', message)
+    """Send message to Discord asynchronously without blocking."""
+    message = re.sub(r'§.', '', message)  # Clean up formatting
 
     config = load_config()
     discord_logging = config["modules"]["discord_logging"]
 
-    if type == "cmd" and discord_logging["commands"]["enabled"]:
-        webhook_url = discord_logging["commands"]["webhook"]
-    elif type == "mod" and discord_logging["moderation"]["enabled"]:
-        webhook_url = discord_logging["moderation"]["webhook"]
-    elif type == "chat" and discord_logging["chat"]["enabled"]:
-        webhook_url = discord_logging["chat"]["webhook"]
-    elif type == "grief" and discord_logging["griefing"]["enabled"]:
-        webhook_url = discord_logging["griefing"]["webhook"]
-    else:
-        # No matching category or disabled module
-        return False
-
-    # If the webhook URL is empty, do nothing
+    webhook_url = get_webhook_url(type, discord_logging)
     if not webhook_url:
-        return False
+        return False  # No valid webhook found or enabled
 
-    # Format the payload to be sent to Discord
+    # Prepare the payload for Discord
     payload = {
         "embeds": [
             {
@@ -70,14 +74,54 @@ def discordRelay(message, type):
         ]
     }
 
-    # Send the HTTP POST request to the Discord webhook
-    try:
-        response = requests.post(webhook_url, json=payload)
-        response.raise_for_status()
-        return True
-    except requests.exceptions.RequestException as e:
-        print(f"Failed to send Discord message: {e}")
-        return False
+    # Send Discord message asynchronously
+    threading.Thread(target=send_discord_message, args=(webhook_url, payload)).start()
+    return True
+
+def get_webhook_url(type, discord_logging):
+    """Helper function to get the appropriate webhook URL based on the message type."""
+    if type == "cmd" and discord_logging["commands"]["enabled"]:
+        return discord_logging["commands"]["webhook"]
+    elif type == "mod" and discord_logging["moderation"]["enabled"]:
+        return discord_logging["moderation"]["webhook"]
+    elif type == "chat" and discord_logging["chat"]["enabled"]:
+        return discord_logging["chat"]["webhook"]
+    elif type == "grief" and discord_logging["griefing"]["enabled"]:
+        return discord_logging["griefing"]["webhook"]
+    return None
+
+MAX_RETRIES = 15  # Max retries in case of rate limits
+INITIAL_BACKOFF = 1  # Start with 1 second
+def send_discord_message(webhook_url, payload):
+    """Send HTTP request to Discord webhook with exponential backoff."""
+    retries = 0
+    backoff = INITIAL_BACKOFF  # Initial backoff time
+
+    while retries < MAX_RETRIES:
+        try:
+            # Send the request to the Discord webhook
+            response = requests.post(webhook_url, json=payload)
+
+            # Raise an exception if response indicates a failure (4xx or 5xx)
+            response.raise_for_status()
+
+            # If request was successful, exit the loop
+            return True
+        except requests.exceptions.RequestException as e:
+            # Check if rate limit (HTTP 429) occurred
+            if response.status_code == 429:
+                retries += 1
+                wait_time = backoff * (2 ** retries)  # Exponential backoff
+                print(f"[WMCTCORE - Discord Log] Rate limit exceeded. Retrying in {wait_time}s...")
+                time.sleep(wait_time)  # Wait before retrying
+            else:
+                # For other exceptions (like network errors), just print and exit
+                print(f"Failed to send Discord message: {e}")
+                return False
+
+    # If max retries were reached, log failure
+    print("Max retries reached. Failed to send message.")
+    return False
 
 def sendGriefLog(logs: list[dict], sender):
     if not logs:  # Check if logs are empty

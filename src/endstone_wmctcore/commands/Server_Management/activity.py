@@ -28,7 +28,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     player = self.server.get_player(player_name)
 
     if not player:
-        sender.send_message(f"{errorLog()} Player '{player_name}' not found.")
+        sender.send_message(f"{errorLog()}Player '{player_name}' not found")
         return True
 
     dbgl = GriefLog("wmctcore_gl.db")
@@ -39,7 +39,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     sessions = sessions[:5]  # Only take the 5 most recent
 
     if not sessions:
-        sender.send_message(f"{errorLog()} No session history found for {player_name}.")
+        sender.send_message(f"{errorLog()}No session history found for {player_name}")
         return True
 
     # Calculate total playtime (including active sessions)

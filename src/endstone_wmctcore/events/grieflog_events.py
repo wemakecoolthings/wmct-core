@@ -23,7 +23,7 @@ def handle_block_break(self: "WMCTPlugin", ev: BlockBreakEvent):
             ev.is_cancelled = True
         else:
             block_states = list(ev.block.data.block_states.values())
-            formatted_block_states = ", ".join(block_states)
+            formatted_block_states = ", ".join(map(str, block_states))
             dbgl.log_action(ev.player.xuid, ev.player.name, "Block Break", ev.block.location, int(time.time()), ev.block.data.type, formatted_block_states)
 
         dbgl.close_connection()
@@ -43,8 +43,8 @@ def handle_block_place(self: "WMCTPlugin", ev: BlockPlaceEvent):
             ev.is_cancelled = True
         else:
             placed_block = ev.block_placed_state
-            block_states = list(placed_block.data.block_states.values())
-            formatted_block_states = ", ".join(block_states)
+            block_states = list(ev.block.data.block_states.values())
+            formatted_block_states = ", ".join(map(str, block_states))
             dbgl.log_action(ev.player.xuid, ev.player.name, "Block Place", placed_block.location, int(time.time()), placed_block.type, formatted_block_states)
 
         dbgl.close_connection()

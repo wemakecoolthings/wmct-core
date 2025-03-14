@@ -234,8 +234,22 @@ class UserDB(DatabaseManager):
                 self.player_data_cache[xuid].update(updates)
             return True
 
+    def _get_from_cache(self, xuid: str, name: str = None) -> Optional[dict]:
+        """Private method to check cache for user or mod log data."""
+        if xuid in self.player_data_cache:
+            if name and self.player_data_cache[xuid].get("name") == name:
+                return self.player_data_cache[xuid]
+            elif not name:
+                return self.player_data_cache[xuid]
+        return None
+
     def get_mod_log(self, xuid: str) -> Optional[ModLog]:
         """Retrieve moderation log for a user, using cache when available."""
+        cached_data = self._get_from_cache(xuid)
+        if cached_data and "mod_log" in cached_data:
+            return cached_data["mod_log"]
+
+        # If not in cache, fetch from DB
         query = "SELECT * FROM mod_logs WHERE xuid = ?"
         self.cursor.execute(query, (xuid,))
         result = self.cursor.fetchone()
@@ -255,17 +269,19 @@ class UserDB(DatabaseManager):
             )
 
             # Store in cache
-            if xuid in self.player_data_cache:
-                self.player_data_cache[xuid]["mod_log"] = mod_log
+            self.player_data_cache[xuid] = self.player_data_cache.get(xuid, {})
+            self.player_data_cache[xuid]["mod_log"] = mod_log
 
             return mod_log
         return None
 
     def get_online_user(self, xuid: str) -> Optional[User]:
         """Retrieves all user data as an object, checking cache first."""
-        if xuid in self.player_data_cache:
-            return User(**self.player_data_cache[xuid])
+        cached_data = self._get_from_cache(xuid)
+        if cached_data:
+            return User(**cached_data)
 
+        # If not in cache, fetch from DB
         query = "SELECT * FROM users WHERE xuid = ?"
         self.cursor.execute(query, (xuid,))
         result = self.cursor.fetchone()
@@ -277,18 +293,20 @@ class UserDB(DatabaseManager):
         return None
 
     def get_offline_user(self, name: str) -> Optional[User]:
-        """Retrieves all user data as an object, checking cache first."""
+        """Retrieves all user data as an object by name, checking cache first."""
+        # Check cache for matching name
         for xuid, data in self.player_data_cache.items():
             if data.get("name") == name:
                 return User(**data)
 
+        # If not in cache, fetch from DB
         query = "SELECT * FROM users WHERE name = ?"
         self.cursor.execute(query, (name,))
         result = self.cursor.fetchone()
 
         if result:
             user = User(*result)
-            self.player_data_cache[user.xuid] = user.__dict__  # Store in cache
+            self.player_data_cache[result[0]] = user.__dict__  # Store in cache
             return user
         return None
 
@@ -919,7 +937,7 @@ class GriefLog(DatabaseManager):
         count = count_result[0] if count_result else 0
 
         if count == 0:
-            print("[GriefLog] No logs to delete.")
+            print("[WMCTCORE - GriefLog] No logs to delete.")
             return
 
         # Fetch individual logs and check timestamps
@@ -965,7 +983,41 @@ class GriefLog(DatabaseManager):
 
         # Final Log Message
         if sendPrint:
-            print(f"[GriefLog] Purged {deleted_count} logs older than {time_string}")
+            print(f"[WMCTCORE - GriefLog] Purged {deleted_count} logs older than {time_string}")
+
+        return deleted_count
+
+    def delete_logs_within_seconds(self, seconds: int):
+        """Deletes logs that are within the given seconds threshold and logs the action."""
+
+        # Fetch current time
+        current_time = datetime.utcnow()
+
+        # Fetch logs and check timestamps
+        select_logs_query = "SELECT id, timestamp FROM actions_log"
+        self.cursor.execute(select_logs_query)
+        logs_to_delete = self.cursor.fetchall()
+
+        # Perform deletion for each individual log that matches the condition
+        deleted_count = 0
+        for log in logs_to_delete:
+            log_id, log_timestamp = log
+
+            # Convert log timestamp to datetime
+            log_time = datetime.utcfromtimestamp(log_timestamp)
+
+            # Calculate the difference in seconds between current time and log timestamp
+            time_difference = (current_time - log_time).total_seconds()
+
+            # Compare the time difference with the input seconds
+            if time_difference <= seconds:
+                # Delete this log
+                delete_query = "DELETE FROM actions_log WHERE id = ?"
+                self.cursor.execute(delete_query, (log_id,))
+                deleted_count += 1
+
+        # Commit the changes
+        self.conn.commit()
 
         return deleted_count
 

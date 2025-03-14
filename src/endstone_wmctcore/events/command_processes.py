@@ -36,8 +36,12 @@ def handle_command_preprocess(self: "WMCTPlugin", event: PlayerCommandEvent):
                 log(self, f"{modLog()}Player {ColorFormat.YELLOW}{player.name} {ColorFormat.GOLD}was kicked due to {ColorFormat.YELLOW}Crasher Exploit", "mod")
                 player.kick("Crasher Detected")
 
-
     # Internal Permissions Handler
+    db = UserDB("wmctcore_users.db")
+    if ((db.get_online_user(player.xuid).internal_rank == "Operator" and not player.has_permission("minecraft.kick")) or
+            (db.get_online_user(player.xuid).internal_rank == "Default" and player.is_op) or not player.has_permission("wmctcore.command.refresh")):
+        self.reload_custom_perms(player)
+
     if args and len(args) > 0 and args[0].lstrip("/").lower() in moderation_commands \
             or (len(args) > 0 and args[0].lstrip("/").lower() == "kick"): # Edge case for kick
 
@@ -63,7 +67,6 @@ def handle_command_preprocess(self: "WMCTPlugin", event: PlayerCommandEvent):
                 return True
 
         elif target:
-            db = UserDB("wmctcore_users.db")
             target_user = db.get_online_user(target.xuid)
             sender = db.get_online_user(player.xuid)
 
@@ -73,10 +76,7 @@ def handle_command_preprocess(self: "WMCTPlugin", event: PlayerCommandEvent):
                     event.is_cancelled = True
                     event.player.send_message(f"{modLog()}Player {ColorFormat.YELLOW}{target.name} {ColorFormat.GOLD}has higher permissions")
 
-            db.close_connection()
-
         elif not target:
-            db = UserDB("wmctcore_users.db")
             target_user = db.get_offline_user(args[1])
             sender = db.get_online_user(player.xuid)
 
@@ -87,12 +87,12 @@ def handle_command_preprocess(self: "WMCTPlugin", event: PlayerCommandEvent):
                     event.player.send_message(
                         f"{modLog()}Player {ColorFormat.YELLOW}{target.name} {ColorFormat.GOLD}has higher permissions")
 
-            db.close_connection()
-
     elif args and args[0].lstrip("/").lower() == "ban" or args[0].lstrip("/").lower() == "unban" or args[0].lstrip("/").lower() == "pardon":
         player.send_message(f"{errorLog()}Hardcoded Endstone Moderation Commands are disabled by wmctcore")
         event.is_cancelled = True
         return False
+
+    db.close_connection()
 
 def handle_server_command_preprocess(self: "WMCTPlugin", event: ServerCommandEvent):
     command = event.command

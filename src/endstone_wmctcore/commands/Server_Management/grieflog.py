@@ -18,7 +18,7 @@ command, permission = create_command(
     "grieflog",
     "Displays or manages grief logs based on the given parameters.",
     ["/grieflog <radius: int> (login|logout|block_break|block_place|opened_container)[filter: action_log] [player: player]",
-            "/grieflog (flush)<clear_logs: clear_logs> (all|time)<all: all_gl> [time_in_minutes: int]"],
+            "/grieflog (delete)<clear_logs: clear_logs> (all|time)<all: all_gl> [time_in_minutes: int]"],
     ["wmctcore.command.grieflog"],
     "op",
     ["gl"]
@@ -67,7 +67,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             player_name = args[2]
 
         # Handle the "flush" functionality (delete logs)
-        if len(args) > 0 and args[0].lower() == "flush":
+        if len(args) > 0 and args[0].lower() == "delete":
             if len(args) == 2 and args[1].lower() == "all":
                 # Clear all logs
                 dbgl.delete_all_logs()
@@ -77,7 +77,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             elif len(args) == 3 and args[1].lower() == "time" and args[2].isdigit():
                 # Clear logs from the last x minutes
                 minutes = int(args[2])
-                logs_cleared = dbgl.delete_logs_older_than_seconds(int(minutes * 60))
+                logs_cleared = dbgl.delete_logs_within_seconds(int(minutes * 60))
                 sender.send_message(f"{griefLog()}Cleared {logs_cleared} grief logs from the last {minutes} minutes have been cleared")
                 return True
 
