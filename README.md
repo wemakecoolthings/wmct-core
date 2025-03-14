@@ -49,7 +49,7 @@ NOTES:
   - [OP] /reloadscripts (Reloads only the Script API, ignoring plugins and other external data)
   - [OP] /updatepacks (Dynamically allows you to increment resource pack versions & update behavior pack dependencies REQUIRES RESTART AFTER)
     - This allows you to update resource packs for forced redownloads as well as update behavior packs in-game on title updates
-  - [OP] /leveldb (save|load) (Save and load scoreboard profiles between worlds!)
+  - [OP] /levelscores (save|load|list|delete) (Create scoreboard profiles to use between worlds!)
   - [OP] /bossbar [player] [color] [progress] [style] [text] [is_sky_dark: bool] (Creates a custom bossbar that can be set to only display to certain players)
   - [OP] /activity [player] [list number: optional] (Lists out session information and the total time playing on the server)
   - [OP] /activitylist (Lists all of the player's total session logs in a menu)
@@ -63,6 +63,7 @@ NOTES:
   - [OP] /sendpopup [player] [text] (Sends a custom popup message)
   - [OP] /sendtip [player] [text] (Sends a custom tip message)
   - [OP] /sendtoast [player] [title] [text] (Sends a custom toast message)
+  - [OP] /clientscoreboard
   - [OP] /top [min_y] (Sends the player to the topmost block)
   - [OP] /bottom [max_y] (Sends the player to the first air pocket below them)
   - [OP] /mute [player] [reason: optional] (A moderation command that blocks chat messages)
