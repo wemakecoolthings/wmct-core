@@ -1,9 +1,9 @@
 from endstone import Player
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
-from endstone_wmctcore.utils.prefixUtil import infoLog, errorLog
+from endstone_wmctcore.utils.prefixUtil import errorLog
 
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from endstone_wmctcore.wmctcore import WMCTPlugin

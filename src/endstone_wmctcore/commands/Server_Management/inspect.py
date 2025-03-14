@@ -31,14 +31,11 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         dbgl = GriefLog("wmctcore_gl.db")
         player = self.server.get_player(sender.name)
 
-        # Get the current toggle value (True or False)
         toggle = dbgl.get_user_toggle(player.xuid, player.name)[3]
         toggle = not toggle
 
-        # Update the toggle in the database
         dbgl.set_user_toggle(player.xuid, player.name)
 
-        # Send a message based on the new toggle state
         if toggle:
             sender.send_message(f"{griefLog()}Inspect mode {ColorFormat.GREEN}Enabled")
         else:

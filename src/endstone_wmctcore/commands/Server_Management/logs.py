@@ -25,15 +25,12 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     db = UserDB("wmctcore_users.db")
 
-    # Fetch the current status of logs
     current_status = db.get_offline_user(sender.name).enabled_logs
 
     if not args:
-        # No arguments: return current status
         status_message = f"{infoLog()}Admin logs are currently {f'{ColorFormat.GREEN}enabled' if current_status else f'{ColorFormat.RED}disabled'}"
         sender.send_message(status_message)
     else:
-        # Toggle logs based on input
         new_status = args[0].lower() in ["true", "1", "yes", "enable"]
         db.update_user_data(sender.name, "enabled_logs", int(new_status))
         sender.send_message(f"{infoLog()}Admin logs have been {f'{ColorFormat.GREEN}enabled' if new_status else f'{ColorFormat.RED}disabled'}")

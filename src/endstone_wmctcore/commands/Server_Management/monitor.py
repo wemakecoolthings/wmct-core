@@ -23,7 +23,7 @@ active_intervals = {}
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     if isinstance(sender, Player):
 
-        specification = args[0] if len(args) > 0 else "on"  # Default specification if none provided
+        specification = args[0] if len(args) > 0 else "on" 
 
         # Check if the 'off' argument is passed to disable monitoring
         if specification.lower() == 'off':
@@ -41,8 +41,8 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         # If the player wants to enable or re-enable monitoring, clear existing intervals
         if sender.name in active_intervals:
             task_id = active_intervals[sender.name]
-            self.server.scheduler.cancel_task(task_id)  # Cancel the existing task
-            del active_intervals[sender.name]  # Remove from active intervals
+            self.server.scheduler.cancel_task(task_id) 
+            del active_intervals[sender.name]
 
         # Parse the specification and time arguments
         time = int(args[1]) if len(args) > 1 else 1  # Default time interval if not provided
@@ -165,32 +165,25 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
 def check_entities_in_chunk(self: "WMCTPlugin", target_chunk_x: int, target_chunk_z: int) -> bool:
     """Checks the number of entities in a specific chunk and returns True if the count exceeds 400."""
-    # Initialize the count of entities in the target chunk
     entity_count = 0
 
-    # Iterate over all entities to check if they are in the target chunk
     for entity in self.server.level.actors:
-        # Get the chunk coordinates of the entity
         entity_chunk_x = entity.location.x // 16
         entity_chunk_z = entity.location.z // 16
 
-        # Check if the entity is in the target chunk
         if entity_chunk_x == target_chunk_x and entity_chunk_z == target_chunk_z:
             entity_count += 1
 
-    # Return True if the entity count exceeds 400
     return entity_count > 400
 
 def get_nearest_chunk(player: Player, level):
-    # Convert player location to chunk coordinates, defaulting to 0 if None
     player_chunk_x = int(player.location.x) // 16 if player.location and player.location.x is not None else 0
     player_chunk_z = int(player.location.z) // 16 if player.location and player.location.z is not None else 0
 
-    # Get all loaded chunks
     loaded_chunks = level.get_dimension(player.dimension.name).loaded_chunks if level else []
 
     if not loaded_chunks:
-        return 0, player_chunk_x, player_chunk_z  # Default chunk (0,0)
+        return 0, player_chunk_x, player_chunk_z  
 
     # Initialize closest chunk tracking
     closest_chunk = None
@@ -198,7 +191,7 @@ def get_nearest_chunk(player: Player, level):
 
     # Iterate through each loaded chunk
     for chunk in loaded_chunks:
-        chunk_x, chunk_z = getattr(chunk, "x", 0), getattr(chunk, "z", 0)  # Default to 0 if missing
+        chunk_x, chunk_z = getattr(chunk, "x", 0), getattr(chunk, "z", 0) 
 
         # Compute squared Euclidean distance
         dx = chunk_x - player_chunk_x
@@ -219,5 +212,5 @@ def clear_all_intervals(self: "WMCTPlugin"):
     """Clear all active intervals."""
     global active_intervals
     for player_name, task_id in active_intervals.items():
-        self.server.scheduler.cancel_task(task_id)  # Cancel each task using its ID
-    active_intervals.clear()  # Clear the dictionary of active intervals
+        self.server.scheduler.cancel_task(task_id) 
+    active_intervals.clear() 

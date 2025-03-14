@@ -34,25 +34,19 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         return True
 
     if isinstance(sender, Player):
-        # Default values
         radius = 0
         action_filter = None
         player_name = None
         dbgl = GriefLog("wmctcore_gl.db")
 
-        # Parse arguments
         if len(args) > 0:
             try:
-                # Check for radius argument
                 radius = int(args[0]) if args[0].isdigit() else 0
             except ValueError:
                 radius = 0
 
         if len(args) > 1:
-            # Convert input to lowercase for case-insensitive matching
             action_input = args[1].lower()
-
-            # Reverse lookup in action mapping
             action_mapping = {
                 "block_break": "Block Break",
                 "block_place": "Block Place",
@@ -63,10 +57,8 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             action_filter = action_mapping.get(action_input)
 
         if len(args) > 2:
-            # Player name filter
             player_name = args[2]
 
-        # Handle the "flush" functionality (delete logs)
         if len(args) > 0 and args[0].lower() == "delete":
             if len(args) == 2 and args[1].lower() == "all":
                 # Clear all logs
@@ -86,7 +78,6 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
                 sender.send_message(f"{errorLog()}Invalid arguments. Usage: /grieflog flush (all|time) [time_in_minutes]")
                 return True
 
-        # Fetch logs within the radius
         sender = self.server.get_player(sender.name)
         logs = dbgl.get_logs_within_radius(sender.location.x, sender.location.y, sender.location.z, radius)
 
@@ -103,7 +94,6 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             sender.send_message(f"{griefLog()}No grief logs found for the given parameters")
             return True
 
-        # Send logs
         sendGriefLog(logs, sender)
         return True
     else:

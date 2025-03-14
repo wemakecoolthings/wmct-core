@@ -22,25 +22,21 @@ command, permission = create_command(
 def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     db = UserDB("wmctcore_users.db")
     player_name = args[0]
-    new_rank = args[1].lower()  # Convert input rank to lowercase for comparison
+    new_rank = args[1].lower()  
 
-    # Fetch user data
     user = db.get_offline_user(player_name)
     if user:
         current_rank = user.internal_rank
 
-        # Check if the rank needs to be updated
         if current_rank.lower() == new_rank.lower():
             sender.send_message(f"{errorLog()}Player {player_name} already has the rank {new_rank}. No changes made.")
             db.close_connection()
             return False
 
-        # Update the user's rank in the database
         for rank in RANKS:
             if rank.lower() == new_rank:
                 db.update_user_data(player_name, 'internal_rank', rank)
 
-                # Reload permissions if the player is online
                 online_target = self.server.get_player(player_name)
                 if online_target:
                     if new_rank == "operator":

@@ -1,5 +1,4 @@
 import time
-from endstone import Player
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
 from endstone_wmctcore.utils.prefixUtil import infoLog, errorLog, trailLog
@@ -45,10 +44,8 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     # Calculate total playtime (including active sessions)
     total_playtime_seconds = dbgl.get_total_playtime(player.xuid)
 
-    # Display session header
     sender.send_message(f"{infoLog()} §rSession History for {player_name}:")
 
-    # Calculate days, hours, minutes, and seconds
     days = total_playtime_seconds // 86400  # 1 day = 86400 seconds
     hours = (total_playtime_seconds % 86400) // 3600  # 1 hour = 3600 seconds
     minutes = (total_playtime_seconds % 3600) // 60  # 1 minute = 60 seconds
@@ -64,15 +61,13 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         playtime_str += f"{minutes}m "
     playtime_str += f"{seconds}s"
 
-    # Send the message with the full playtime length
     sender.send_message(f"{trailLog()} §eTotal Playtime: §f{playtime_str}")
 
-    # Check for active session
     active_session = None
     for session in sessions:
         if session['end_time'] is None:
             active_session = session
-            sessions.remove(session)  # Remove it from past sessions
+            sessions.remove(session)  
             break
 
     # Display the active session first (if applicable)

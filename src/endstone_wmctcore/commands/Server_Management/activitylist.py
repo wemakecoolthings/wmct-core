@@ -4,9 +4,8 @@ from endstone import Player, ColorFormat
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
 from endstone_wmctcore.utils.formWrapperUtil import ActionFormResponse, ActionFormData
-from endstone_wmctcore.utils.prefixUtil import infoLog, errorLog, trailLog
+from endstone_wmctcore.utils.prefixUtil import errorLog
 from endstone_wmctcore.utils.dbUtil import GriefLog
-from endstone_wmctcore.utils.timeUtil import TimezoneUtils
 
 from typing import TYPE_CHECKING
 
@@ -63,17 +62,14 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         sender.send_message(f"{errorLog()} Invalid filter type. Use 'highest', 'lowest', or 'recent'.")
         return True
 
-    # Create action form for the sorted list
     form = ActionFormData()
     form.title("Player Activity List")
     form.body(f"Top players sorted by {filter_type} activity:")
 
-    # Add buttons with player names and their total playtime to the form
     for entry in sorted_playtimes:
         player_name = entry['name']
         total_playtime_seconds = entry['total_playtime']
 
-        # Calculate days, hours, minutes, and seconds
         days = total_playtime_seconds // 86400  # 1 day = 86400 seconds
         hours = (total_playtime_seconds % 86400) // 3600  # 1 hour = 3600 seconds
         minutes = (total_playtime_seconds % 3600) // 60  # 1 minute = 60 seconds
@@ -89,10 +85,8 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
             playtime_str += f"{minutes}m "
         playtime_str += f"{seconds}s"
 
-        # Add button with formatted player playtime
         form.button(f"{ColorFormat.AQUA}{player_name}\n{ColorFormat.RED}{playtime_str}")
 
-    # Add Cancel Button
     form.button("Cancel")
 
     form.show(sender).then(
@@ -103,7 +97,6 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
 
     return True
 
-# Handle the response after player selects from the action form
 def handle_activitylist_response(player: Player, result: ActionFormResponse):
     if result.canceled or result.selection is None:
-        return  # User canceled or didn't select anything
+        return 

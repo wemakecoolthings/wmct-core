@@ -87,20 +87,20 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         if player in boss_bar_cache:
             existing_bar = boss_bar_cache[player]
             existing_bar.remove_player(player)
-            if not existing_bar.players:  # Remove from cache if empty
+            if not existing_bar.players: 
                 del boss_bar_cache[player]
 
     if args[0] == "all":
         for player in self.server.online_players:
-            remove_existing_bossbar(player)  # Remove any existing boss bar
+            remove_existing_bossbar(player)  
             bar.add_player(player)
-            boss_bar_cache[player] = bar  # Store in cache
+            boss_bar_cache[player] = bar 
     else:
         target = self.server.get_player(args[0])
         if target:
-            remove_existing_bossbar(target)  # Remove any existing boss bar
+            remove_existing_bossbar(target)  
             bar.add_player(target)
-            boss_bar_cache[target] = bar  # Store in cache
+            boss_bar_cache[target] = bar  
         else:
             sender.send_message(f"{errorLog()}Player {args[0]} not found!")
             return False

@@ -82,16 +82,13 @@ def select_pack(sender: CommandSender, path) -> None:
         sender.send_message(f"{errorLog()} No behavior packs found.")
         return
 
-    # Create form with the list of behavior packs
     form = ActionFormData()
     form.title("Select Behavior Pack")
     form.body("Choose a behavior pack to update:")
 
-    # Add buttons using .button() for each pack
     for pack in packs:
         form.button(pack)
 
-    # Add Cancel Button
     form.button("Cancel")
 
     form.show(sender).then(
