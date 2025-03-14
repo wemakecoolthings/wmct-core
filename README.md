@@ -33,7 +33,7 @@ NOTES:
     - This applies to moderation commands such as /tempban or /mute as well as Minecraft's moderation commands such as /kick 
   
 - Commands
-  - [OP] /settings (A menu for all plugin settings)
+  - [OP] /wmctcoresettings (A menu for all plugin settings)
     - Logging Settings
     - Spectator Module Settings
     - Prolonged Death Screen Settings
