@@ -1,7 +1,5 @@
 # WMCT Core
 
-**NOTICE: This plugin is currently under development. All of the listed features are just planned features and may not be fully implemented.**
-
 A server management plugin for Minecraft Events & Survival Servers using Endstone -> https://github.com/EndstoneMC/endstone
 
 NOTES: 
@@ -12,15 +10,15 @@ NOTES:
 **FEATURES**
 - Game Patches & Enhancements
   - FIX: /me crasher
-    - Logs will always fire but you can choose whether to auto-kick or auto-ban as this usually only ever is caused by hacked clients
-  - ENHANCEMENT: Admin protection to prevent higher internal permission levels from getting kicked or banned from lower permission levels
+    - Defaults to auto-kick but can auto-ban. Furthermore, this is connected to this plugin's moderation system
+  - ENHANCEMENT: Admin protection to prevent higher or equal internal permission levels from getting kicked, banned, or muted from lower permission levels
     - Read the Internal Permissions Information section below for more info!
   - ENHANCEMENT: Custom moderation system (This disables Endstone's banning systems)
   - ENHANCEMENT: Additional movement commands (/top /bottom)
   - ENHANCEMENT: Aliases for gamemode commands
   - ENHANCEMENT: AFK Detection
   - ENHANCEMENT: Prolonged death screen detection
-    - If a player forces the game to stay stuck on the death screen while the immediate respawn gamerule is enabled, they will be automatically kicked or logged depending on settings
+    - If a player forces the game to stay stuck on the death screen while the immediate respawn gamerule is enabled, they will be automatically kicked or logged depending on settings. Additionally, while this setting is enabled that gameule is forced to be set to true.
 
 - Internal Permissions Information
   - Internal Ranks (from highest to lowest): This includes Minecraft's Permissions & WMCT Core's Permissions Systems
@@ -34,25 +32,25 @@ NOTES:
   
 - Commands
   - [OP] /wmctcoresettings (A menu for all plugin settings)
+    - Enabled Commands Settings
     - Logging Settings
     - Spectator Module Settings
     - Prolonged Death Screen Settings
     - Level DB Storage Settings
     - Grief Log DB Storage Settings
-  - [OP] /monitor [statistic: optional] (Used to track active changes in server stability & player connection)
+  - [OP] /monitor [on|off] [time_frequency] [tip|toast] (Used to track active changes in server stability & player connection)
     - Server Statistics
       - ALL / No Stat Specified (displays a compressed version of important server information)
       - Chunk Info
       - MSPT (Milliseconds Per Tick)
       - Entities
       - CPU Usage
-      - Player Ping List
   - [OP] /check [player] (Displays all client info associated with the player)
   - [OP] /reloadscripts (Reloads only the Script API, ignoring plugins and other external data)
   - [OP] /updatepacks (Dynamically allows you to increment resource pack versions & update behavior pack dependencies REQUIRES RESTART AFTER)
     - This allows you to update resource packs for forced redownloads as well as update behavior packs in-game on title updates
   - [OP] /leveldb (save|load) (Save and load scoreboard profiles between worlds!)
-  - [OP] /bossbar [player] [text] [color] [progress] (Creates a custom bossbar that can be set to only display to certain players)
+  - [OP] /bossbar [player] [color] [progress] [style] [text] [is_sky_dark: bool] (Creates a custom bossbar that can be set to only display to certain players)
   - [OP] /activity [player] [list number: optional] (Lists out session information and the total time playing on the server)
   - [OP] /activitylist (Lists all of the player's total session logs in a menu)
   - [OP] /viewscriptprofiles (Views script profiler outputs)
@@ -82,8 +80,7 @@ NOTES:
       - Logout Location
       - Block Place
       - Block Break
-      - Block Interact
-      - Item Use
+      - Container Opened
   - [DEFAULT] /ping [player: optional] (Displays the ping of a player in the chat)
   - [DEFAULT] /refresh (Updates player permissions & commands - to avoid relogging incidents with OP updates)
   - [DEFAULT] /spectate [player: optional] (Through a menu or directly through the command- allows players in spectator to teleport to players in other gamemodes)  
