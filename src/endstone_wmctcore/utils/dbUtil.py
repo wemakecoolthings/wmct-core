@@ -52,6 +52,8 @@ class GriefAction:
     action: str
     location: str
     timestamp: int
+    block_type: str
+    block_state: str
 
 # DB
 class DatabaseManager:
@@ -175,11 +177,9 @@ class UserDB(DatabaseManager):
         # Determine rank
         internal_rank = "Operator" if player.is_op else "Default"
 
-        # Check cache first
         user = self.player_data_cache.get(xuid)
 
         if not user:
-            # Fetch from DB if not in cache
             self.cursor.execute("SELECT * FROM users WHERE xuid = ?", (xuid,))
             user = self.cursor.fetchone()
 
@@ -213,7 +213,6 @@ class UserDB(DatabaseManager):
             self.insert('users', data)
             self.insert('mod_logs', mod_data)
 
-            # Cache new user data
             self.player_data_cache[xuid] = data
             return True
         else:
@@ -249,7 +248,6 @@ class UserDB(DatabaseManager):
         if cached_data and "mod_log" in cached_data:
             return cached_data["mod_log"]
 
-        # If not in cache, fetch from DB
         query = "SELECT * FROM mod_logs WHERE xuid = ?"
         self.cursor.execute(query, (xuid,))
         result = self.cursor.fetchone()
@@ -268,7 +266,6 @@ class UserDB(DatabaseManager):
                 is_ip_banned=bool(result[9]),
             )
 
-            # Store in cache
             self.player_data_cache[xuid] = self.player_data_cache.get(xuid, {})
             self.player_data_cache[xuid]["mod_log"] = mod_log
 
@@ -281,32 +278,29 @@ class UserDB(DatabaseManager):
         if cached_data:
             return User(**cached_data)
 
-        # If not in cache, fetch from DB
         query = "SELECT * FROM users WHERE xuid = ?"
         self.cursor.execute(query, (xuid,))
         result = self.cursor.fetchone()
 
         if result:
             user = User(*result)
-            self.player_data_cache[xuid] = user.__dict__  # Store in cache
+            self.player_data_cache[xuid] = user.__dict__ 
             return user
         return None
 
     def get_offline_user(self, name: str) -> Optional[User]:
         """Retrieves all user data as an object by name, checking cache first."""
-        # Check cache for matching name
         for xuid, data in self.player_data_cache.items():
             if data.get("name") == name:
                 return User(**data)
 
-        # If not in cache, fetch from DB
         query = "SELECT * FROM users WHERE name = ?"
         self.cursor.execute(query, (name,))
         result = self.cursor.fetchone()
 
         if result:
             user = User(*result)
-            self.player_data_cache[result[0]] = user.__dict__  # Store in cache
+            self.player_data_cache[result[0]] = user.__dict__  
             return user
         return None
 
@@ -321,7 +315,7 @@ class UserDB(DatabaseManager):
         self.cursor.execute(query, (xuid,))
         result =  self.cursor.fetchone()
 
-        return result is not None and result[0] == 1  # True if enabled_logs is 1
+        return result is not None and result[0] == 1
 
     def add_ban(self, xuid, expiration: int, reason: str, ip_ban: bool = False):
         """Bans a player by updating the mod_logs table."""
@@ -399,10 +393,10 @@ class UserDB(DatabaseManager):
         ip_base = ip.split(':')[0]
 
         query = "SELECT 1 FROM mod_logs WHERE ip_address LIKE ? AND is_ip_banned = 1 LIMIT 1"
-        self.cursor.execute(query, (f"{ip_base}%",))  # % is used to match any port number
+        self.cursor.execute(query, (f"{ip_base}%",))
         result = self.cursor.fetchone()
 
-        return result is not None  # Return True if a banned user is found, False otherwise
+        return result is not None
 
     def remove_mute(self,  name: str):
         updates = {
@@ -428,7 +422,6 @@ class UserDB(DatabaseManager):
     def print_punishment_history(self, name: str, page: int = 1):
         """Retrieve all punishments for a user, showing active ones (ban/mute) first and paginate the results."""
 
-        # Query the mod_logs table to check if the player is banned or muted
         query_mod_log = """
             SELECT is_muted, mute_time, mute_reason, is_banned, banned_time, ban_reason, is_ip_banned 
             FROM mod_logs 
@@ -442,7 +435,6 @@ class UserDB(DatabaseManager):
 
         is_muted, mute_time, mute_reason, is_banned, banned_time, ban_reason, is_ip_banned = mod_log_result
 
-        # Query punishment_logs to get timestamps of active punishments
         query_active_punishments = """
             SELECT action_type, timestamp 
             FROM punishment_logs 
@@ -480,7 +472,6 @@ class UserDB(DatabaseManager):
                 )
                 active_timestamps.add(timestamp)
 
-        # Query to fetch all past punishments
         query = """
             SELECT action_type, reason, timestamp, duration 
             FROM punishment_logs 
@@ -506,11 +497,9 @@ class UserDB(DatabaseManager):
                 f"{ColorFormat.ITALIC}Date Issued: {ColorFormat.GRAY}{formatted_time}{ColorFormat.RESET}"
             )
 
-            # Only add past punishments that do not match the timestamp of an active one
             if timestamp not in active_timestamps:
                 past_punishments.append(punishment_entry)
 
-        # Paginate (5 per page)
         per_page = 5
         total_pages = (len(past_punishments) + per_page - 1) // per_page
         start = (page - 1) * per_page
@@ -537,7 +526,6 @@ class UserDB(DatabaseManager):
 
         msg.append(f"{ColorFormat.GOLD}---------------")
 
-        # Show navigation hint
         if page < total_pages:
             msg.append(f"§8Use §e/punishments {name} {page + 1} §8for more.")
 
@@ -547,7 +535,7 @@ class UserDB(DatabaseManager):
         """Fetches all punishment logs for a given player based on their name."""
         query = "SELECT * FROM punishment_logs WHERE name = ?"
         self.cursor.execute(query, (name,))
-        results = self.cursor.fetchall()  # Use fetchall() to get all results
+        results = self.cursor.fetchall() 
 
         if results:
             punishment_logs = []
@@ -572,7 +560,6 @@ class UserDB(DatabaseManager):
         self.cursor.execute(query, (name,))
         self.conn.commit()
 
-        # Check if the deletion was successful
         if self.cursor.rowcount > 0:
             return True
         else:
@@ -584,7 +571,6 @@ class UserDB(DatabaseManager):
         self.cursor.execute(query, (name, log_id))
         self.conn.commit()
 
-        # Check if the deletion was successful
         if self.cursor.rowcount > 0:
             return True
         else:
@@ -642,14 +628,12 @@ class UserDB(DatabaseManager):
         updates = {column: value}
         self.update('users', updates, condition, params)
 
-        # Update cache if user exists in cache
         for xuid, data in self.player_data_cache.items():
             if data.get("name") == name:
                 self.player_data_cache[xuid][column] = value
-                # Handle name change (to keep cache consistent)
                 if column == "name":
                     self.player_data_cache[value] = self.player_data_cache.pop(xuid)
-                break  # Exit loop early after finding user
+                break 
 
 class GriefLog(DatabaseManager):
     """Handles actions related to grief logs and session tracking."""
@@ -688,16 +672,14 @@ class GriefLog(DatabaseManager):
         }
         self.create_table('actions_log', action_log_columns)
         self.create_table('sessions_log', session_log_columns)
-        self.create_table('user_toggles', user_toggle_columns)  # New table for user-specific toggles
+        self.create_table('user_toggles', user_toggle_columns)  
 
     def set_user_toggle(self, xuid: str, name: str):
         """Toggles the inspect mode for a player."""
 
-        # Check if the player already has a toggle in the database
         existing_toggle = self.get_user_toggle(xuid, name)
 
         if existing_toggle:
-            # If the toggle exists, invert the current state
             new_toggle = not existing_toggle[3]  # Assuming 'inspect_mode' is at index 3
             updates = {'inspect_mode': new_toggle}
             condition = 'xuid = ?'
@@ -708,7 +690,6 @@ class GriefLog(DatabaseManager):
             except Exception as e:
                 print(f"Error updating data: {e}")
         else:
-            # Insert new toggle if none exists
             data = {'xuid': xuid, 'name': name, 'inspect_mode': True}
             try:
                 self.insert('user_toggles', data)
@@ -725,9 +706,8 @@ class GriefLog(DatabaseManager):
         self.cursor.execute(query, (xuid,))
         result = self.cursor.fetchone()
 
-        # If no result, create a new default entry
         if result is None:
-            default_value = 0  # Or False for inspect_mode
+            default_value = 0  
             insert_query = """
                 INSERT INTO user_toggles (xuid, name, inspect_mode) 
                 VALUES (?, ?, ?)
@@ -735,7 +715,6 @@ class GriefLog(DatabaseManager):
             self.cursor.execute(insert_query, (xuid, name, default_value))
             self.conn.commit()
 
-            # Fetch the newly inserted data to return it
             self.cursor.execute(query, (xuid,))
             result = self.cursor.fetchone()
 
@@ -744,7 +723,7 @@ class GriefLog(DatabaseManager):
     def get_logs_by_coordinates(self, x: float, y: float, z: float, player_name: str = None) -> list[dict]:
         """Returns logs based on coordinates and an optional player name filter."""
         query = "SELECT * FROM actions_log WHERE x = ? AND y = ? AND z = ?"
-        params = [x, y, z]  # Searching for exact coordinates
+        params = [x, y, z]  
 
         if player_name:
             query += " AND name = ?"
@@ -762,8 +741,8 @@ class GriefLog(DatabaseManager):
                 'action': log[3],
                 'location': f"{log[4]},{log[5]},{log[6]}",  # Rebuilding the location string
                 'timestamp': log[7],
-                'block_type': log[8],  # Adding block_type to the result
-                'block_state': log[9]  # Adding block_state to the result
+                'block_type': log[8], 
+                'block_state': log[9] 
             })
         return result
 
@@ -782,8 +761,8 @@ class GriefLog(DatabaseManager):
                 'action': log[3],
                 'location': log[4],
                 'timestamp': log[5],
-                'block_type': log[8],  # Adding block_type to the result
-                'block_state': log[9]  # Adding block_state to the result
+                'block_type': log[8],  
+                'block_state': log[9] 
             })
         return result
 
@@ -805,8 +784,8 @@ class GriefLog(DatabaseManager):
                 'action': log[3],
                 'location': f"{log[4]},{log[5]},{log[6]}",  # Rebuilding the location string
                 'timestamp': log[7],
-                'block_type': log[8],  # Adding block_type to the result
-                'block_state': log[9]  # Adding block_state to the result
+                'block_type': log[8], 
+                'block_state': log[9] 
             })
         return result
 
@@ -832,7 +811,7 @@ class GriefLog(DatabaseManager):
         }
 
         if block_type:
-            data['block_type'] = block_type  # Log block type (e.g., 'minecraft:stone')
+            data['block_type'] = block_type  # Log block type (if applicable)
 
         if block_state:
             data['block_state'] = block_state  # Log block state (if applicable)
@@ -916,7 +895,7 @@ class GriefLog(DatabaseManager):
         for xuid, name in users:
             total_playtime = self.get_total_playtime(xuid)
             result.append({
-                'xuid': xuid,  # Added xuid to the result dictionary
+                'xuid': xuid, 
                 'name': name,
                 'total_playtime': total_playtime
             })
@@ -950,23 +929,17 @@ class GriefLog(DatabaseManager):
         for log in logs_to_delete:
             log_id, log_timestamp = log
 
-            # Convert log timestamp to datetime
             log_time = datetime.utcfromtimestamp(log_timestamp)
-
-            # Calculate the difference in seconds between current time and log timestamp
             time_difference = (current_time - log_time).total_seconds()
 
             # Compare the time difference with the input seconds
             if time_difference > seconds:
-                # Delete this log
                 delete_query = "DELETE FROM actions_log WHERE id = ?"
                 self.cursor.execute(delete_query, (log_id,))
                 deleted_count += 1
 
-        # Commit the changes
         self.conn.commit()
 
-        # Convert the input seconds into the highest available time increment
         time_units = [
             ("day", 86400),
             ("hour", 3600),
@@ -974,7 +947,6 @@ class GriefLog(DatabaseManager):
             ("second", 1)
         ]
 
-        # Find the largest unit of time that fits
         for unit, value in time_units:
             if seconds >= value:
                 amount = seconds // value
@@ -990,10 +962,8 @@ class GriefLog(DatabaseManager):
     def delete_logs_within_seconds(self, seconds: int):
         """Deletes logs that are within the given seconds threshold and logs the action."""
 
-        # Fetch current time
         current_time = datetime.utcnow()
 
-        # Fetch logs and check timestamps
         select_logs_query = "SELECT id, timestamp FROM actions_log"
         self.cursor.execute(select_logs_query)
         logs_to_delete = self.cursor.fetchall()
@@ -1003,20 +973,15 @@ class GriefLog(DatabaseManager):
         for log in logs_to_delete:
             log_id, log_timestamp = log
 
-            # Convert log timestamp to datetime
             log_time = datetime.utcfromtimestamp(log_timestamp)
-
-            # Calculate the difference in seconds between current time and log timestamp
             time_difference = (current_time - log_time).total_seconds()
 
             # Compare the time difference with the input seconds
             if time_difference <= seconds:
-                # Delete this log
                 delete_query = "DELETE FROM actions_log WHERE id = ?"
                 self.cursor.execute(delete_query, (log_id,))
                 deleted_count += 1
 
-        # Commit the changes
         self.conn.commit()
 
         return deleted_count

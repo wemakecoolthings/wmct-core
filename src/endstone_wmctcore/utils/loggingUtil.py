@@ -19,9 +19,8 @@ if TYPE_CHECKING:
 import threading
 
 def log(self: "WMCTPlugin", message, type):
-    # Load configuration and initialize single DB connection
     config = load_config()
-    db = UserDB("wmctcore_users.db")  # Open DB connection once at the start
+    db = UserDB("wmctcore_users.db") 
 
     discord_thread = threading.Thread(target=discordRelay, args=(message, type))
     discord_thread.start()
@@ -29,7 +28,6 @@ def log(self: "WMCTPlugin", message, type):
     # Load config tags once
     config_tags = set(config["modules"]["game_logging"].get("custom_tags", []))
 
-    # Create a set of online players that need messages sent
     players_to_notify = []
     for player in self.server.online_players:
         user = db.get_online_user(player.xuid)
@@ -41,7 +39,7 @@ def log(self: "WMCTPlugin", message, type):
     if players_to_notify:
         threading.Thread(target=send_messages, args=(players_to_notify, message, db)).start()
 
-    db.close_connection()  # Close the DB connection after everything is done
+    db.close_connection() 
     return False
 
 def send_messages(players, message, db):
@@ -95,17 +93,12 @@ INITIAL_BACKOFF = 1  # Start with 1 second
 def send_discord_message(webhook_url, payload):
     """Send HTTP request to Discord webhook with exponential backoff."""
     retries = 0
-    backoff = INITIAL_BACKOFF  # Initial backoff time
+    backoff = INITIAL_BACKOFF 
 
     while retries < MAX_RETRIES:
         try:
-            # Send the request to the Discord webhook
             response = requests.post(webhook_url, json=payload)
-
-            # Raise an exception if response indicates a failure (4xx or 5xx)
             response.raise_for_status()
-
-            # If request was successful, exit the loop
             return True
         except requests.exceptions.RequestException as e:
             # Check if rate limit (HTTP 429) occurred
@@ -115,16 +108,14 @@ def send_discord_message(webhook_url, payload):
                 print(f"[WMCTCORE - Discord Log] Rate limit exceeded. Retrying in {wait_time}s...")
                 time.sleep(wait_time)  # Wait before retrying
             else:
-                # For other exceptions (like network errors), just print and exit
                 print(f"Failed to send Discord message: {e}")
                 return False
 
-    # If max retries were reached, log failure
     print("Max retries reached. Failed to send message.")
     return False
 
 def sendGriefLog(logs: list[dict], sender):
-    if not logs:  # Check if logs are empty
+    if not logs: 
         sender.send_message(f"{griefLog()}No grief logs found.")
         return True
 
@@ -140,15 +131,12 @@ def sendGriefLog(logs: list[dict], sender):
 
 def show_page(current_page, logs, total_pages, sender, logs_per_page):
     form = ActionFormData()
-    form.title(f"Grief Log Activity ({current_page}/{total_pages})")  # Display total pages correctly
-
-    # Ensure the page number is within valid bounds
-    start_idx = (current_page - 1) * logs_per_page  # Start index for the current page
-    end_idx = min(start_idx + logs_per_page, len(logs))  # End index for the current page
+    form.title(f"Grief Log Activity ({current_page}/{total_pages})")  
+    start_idx = (current_page - 1) * logs_per_page 
+    end_idx = min(start_idx + logs_per_page, len(logs)) 
 
     log_text = f"{ColorFormat.YELLOW}Found logs:\n\n"
 
-    # Format logs for the current page
     for log in logs[start_idx:end_idx]:
         player_name = log['name']
         action = log['action']
@@ -159,12 +147,10 @@ def show_page(current_page, logs, total_pages, sender, logs_per_page):
         # Start building the log text
         log_text += f"{ColorFormat.RESET}User: {ColorFormat.AQUA}{player_name}\n{ColorFormat.RESET}Action: {ColorFormat.GREEN}{action}\n{ColorFormat.RESET}Location: {ColorFormat.YELLOW}{location}\n{ColorFormat.RESET}Time: {ColorFormat.RED}{formatted_time}\n"
 
-        # Check if block_type exists and append it if present
         if 'block_type' in log:
             block_type = log['block_type']
             log_text += f"{ColorFormat.RESET}Block Type: {ColorFormat.BLUE}{block_type}\n"
 
-        # Check if block_state exists and append it if present
         if 'block_state' in log:
             block_state = log['block_state']
             log_text += f"{ColorFormat.RESET}Block State: {ColorFormat.LIGHT_PURPLE}{block_state}\n"
@@ -185,8 +171,8 @@ def show_page(current_page, logs, total_pages, sender, logs_per_page):
 
 def handle_grieflog_response(player, result, current_page, logs, total_pages, sender, logs_per_page):
     if result.canceled or result.selection is None:
-        return  # User canceled or didn't select anything
-
+        return  
+    
     # Next Page
     if result.selection == 0:  # Next button
         if current_page < total_pages:
