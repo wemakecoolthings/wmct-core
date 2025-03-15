@@ -63,7 +63,7 @@ NOTES:
   - [OP] /sendpopup [player] [text] (Sends a custom popup message)
   - [OP] /sendtip [player] [text] (Sends a custom tip message)
   - [OP] /sendtoast [player] [title] [text] (Sends a custom toast message)
-  - [OP] /clientscoreboard
+  - [OP] /clientscoreboard [player] [action] [objective] [display_name] [value] (Set or remove client-sided scoreboards!)
   - [OP] /top [min_y] (Sends the player to the topmost block)
   - [OP] /bottom [max_y] (Sends the player to the first air pocket below them)
   - [OP] /mute [player] [reason: optional] (A moderation command that blocks chat messages)
