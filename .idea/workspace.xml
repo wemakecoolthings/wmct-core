@@ -5,9 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f5fd6630-a202-4725-bfac-b315f4cd2d56" name="Changes" comment="tes">
-      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/leveldb.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/wmctcoresettings.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/clientscoreboard.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/endstone_wmctcore-1.0.0b0.tar.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/leveldb.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/leveldb.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/wmctcoresettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/wmctcoresettings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,11 +66,11 @@
       <recent name="C:\Users\mkate\PycharmProjects\endstone-wmctcore" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\dist" />
       <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\Core Commands" />
       <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\Server Management" />
       <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\Vanilla Enhancements" />
       <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands" />
-      <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\vanilla_additions" />
     </key>
   </component>
   <component name="SharedIndexes">
