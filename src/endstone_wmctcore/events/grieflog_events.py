@@ -75,7 +75,7 @@ def handle_player_interact(self: "WMCTPlugin", ev: PlayerInteractEvent):
             ev.is_cancelled = True
         elif any(item in ev.block.data.type for item in types_to_check):
             block_states = list(ev.block.data.block_states.values())
-            formatted_block_states = ", ".join(block_states)
+            formatted_block_states = ", ".join(map(str, block_states))
             dbgl.log_action(ev.player.xuid, ev.player.name, "Opened Container", ev.block.location, int(time.time()), ev.block.data.type, formatted_block_states)
 
         dbgl.close_connection()
