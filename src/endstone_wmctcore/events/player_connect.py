@@ -1,6 +1,6 @@
 import time
 
-from endstone.event import PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent
+from endstone.event import PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent, PlayerKickEvent
 from typing import TYPE_CHECKING
 
 from datetime import datetime
@@ -81,7 +81,6 @@ def handle_join_event(self: "WMCTPlugin", ev: PlayerJoinEvent):
 def handle_leave_event(self: "WMCTPlugin", ev: PlayerQuitEvent):
 
     # Update Data On Leave
-    config = load_config()
     db = UserDB("wmctcore_users.db")
     db.update_user_data(ev.player.name, 'last_leave', int(time.time()))
 
@@ -103,3 +102,9 @@ def handle_leave_event(self: "WMCTPlugin", ev: PlayerQuitEvent):
 
     db.close_connection()
     return
+
+def handle_kick_event(self: "WMCTPlugin", ev: PlayerKickEvent):
+    print(ev.player.name, ev.reason)
+    dbgl = GriefLog("wmctcore_gl.db")
+    dbgl.end_session(ev.player.xuid, int(time.time()))
+    dbgl.close_connection()
