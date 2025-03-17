@@ -766,27 +766,38 @@ class GriefLog(DatabaseManager):
             })
         return result
 
-    def get_logs_within_radius(self, x: float, y: float, z: float, radius: float) -> list[dict]:
+    def get_logs_within_radius(self, x: float, y: float, z: float, radius: float) -> List[dict]:
         """Returns logs within a defined radius of the given coordinates."""
+        # Query to check for the existence of 'block_type' and 'block_state' columns
+        self.cursor.execute("PRAGMA table_info(actions_log);")
+        columns = [column[1] for column in self.cursor.fetchall()]
+        has_block_type = 'block_type' in columns
+        has_block_state = 'block_state' in columns
+
+        # SQL query to fetch logs within the radius
         query = """
         SELECT * FROM actions_log
-        WHERE SQRT(POWER(x - ?, 2) + POWER(y - ?, 2) + POWER(z - ?, 2)) <= ?
+        WHERE (POWER(x - ?, 2) + POWER(y - ?, 2) + POWER(z - ?, 2)) <= POWER(?, 2)
         """
         self.cursor.execute(query, (x, y, z, radius))
         logs = self.cursor.fetchall()
 
         result = []
         for log in logs:
-            result.append({
+            log_dict = {
                 'id': log[0],
                 'xuid': log[1],
                 'name': log[2],
                 'action': log[3],
                 'location': f"{log[4]},{log[5]},{log[6]}",  # Rebuilding the location string
                 'timestamp': log[7],
-                'block_type': log[8], 
-                'block_state': log[9] 
-            })
+            }
+            if has_block_type:
+                log_dict['block_type'] = log[8]
+            if has_block_state:
+                log_dict['block_state'] = log[9]
+            result.append(log_dict)
+
         return result
 
     def log_action(self, xuid: str, name: str, action: str, location, timestamp: int, block_type: str = None,
@@ -819,7 +830,14 @@ class GriefLog(DatabaseManager):
         self.insert('actions_log', data)
 
     def start_session(self, xuid: str, name: str, start_time: int):
-        """Logs the start of a player session."""
+        """Logs the start of a player session and automatically ends any previous sessions in case of a crash."""
+        # Fetch the latest session for this player
+        current_session = self.get_current_session(xuid)
+        if current_session:
+            # Automatically end any previous session if it is still open
+            self.end_session(xuid, int(time.time()))
+
+        # Now log the new session as a start
         data = {
             'xuid': xuid,
             'name': name,
@@ -838,23 +856,15 @@ class GriefLog(DatabaseManager):
         self.cursor.execute(query, (end_time, xuid))
         self.conn.commit()
 
-    def get_total_playtime(self, xuid: str) -> int:
-        """
-        Gets the total playtime of a player in seconds.
-        Automatically calculates ongoing session times if still active.
-        """
-        query = "SELECT start_time, end_time FROM sessions_log WHERE xuid = ?"
+    def get_current_session(self, xuid: str):
+        """Fetches the most recent active session for a player (where end_time is None)."""
+        query = "SELECT * FROM sessions_log WHERE xuid = ? AND end_time IS NULL ORDER BY start_time DESC LIMIT 1"
         self.cursor.execute(query, (xuid,))
-        sessions = self.cursor.fetchall()
+        result = self.cursor.fetchone()
 
-        total_time = 0
-        for start_time, end_time in sessions:
-            if end_time:
-                total_time += end_time - start_time
-            else:
-                total_time += int(time.time()) - start_time  # Active session
-
-        return total_time
+        if result:
+            return result  # Returns the session data if an active session is found
+        return None  # Return None if there is no active session
 
     def get_user_sessions(self, xuid: str) -> list[dict]:
         """
@@ -880,6 +890,24 @@ class GriefLog(DatabaseManager):
                 'duration': duration
             })
         return result
+
+    def get_total_playtime(self, xuid: str) -> int:
+        """
+        Gets the total playtime of a player in seconds.
+        Automatically calculates ongoing session times if still active.
+        """
+        query = "SELECT start_time, end_time FROM sessions_log WHERE xuid = ?"
+        self.cursor.execute(query, (xuid,))
+        sessions = self.cursor.fetchall()
+
+        total_time = 0
+        for start_time, end_time in sessions:
+            if end_time:
+                total_time += end_time - start_time
+            else:
+                total_time += int(time.time()) - start_time  # Active session
+
+        return total_time
 
     def get_all_playtimes(self) -> list[dict]:
         """
