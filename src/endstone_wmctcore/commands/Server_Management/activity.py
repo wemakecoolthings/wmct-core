@@ -2,7 +2,7 @@ import time
 from endstone.command import CommandSender
 from endstone_wmctcore.utils.commandUtil import create_command
 from endstone_wmctcore.utils.prefixUtil import infoLog, errorLog, trailLog
-from endstone_wmctcore.utils.dbUtil import GriefLog
+from endstone_wmctcore.utils.dbUtil import GriefLog, UserDB
 from endstone_wmctcore.utils.timeUtil import TimezoneUtils
 from typing import TYPE_CHECKING
 
@@ -24,16 +24,19 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         return True
 
     player_name = args[0]
-    player = self.server.get_player(player_name)
-
-    if not player:
-        sender.send_message(f"{errorLog()}Player '{player_name}' not found")
-        return True
 
     dbgl = GriefLog("wmctcore_gl.db")
 
+    db = UserDB("wmctcore_users.db")
+    xuid = db.get_xuid_by_name(player_name)
+    db.close_connection()
+
+    if not xuid:
+        sender.send_message(f"{errorLog()}No session history found for {player_name}")
+        return True
+
     # Fetch the most recent sessions (limit to 5)
-    sessions = dbgl.get_user_sessions(player.xuid)
+    sessions = dbgl.get_user_sessions(xuid)
     sessions.reverse()  # Ensure latest sessions are at the front
     sessions = sessions[:5]  # Only take the 5 most recent
 
@@ -42,7 +45,7 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         return True
 
     # Calculate total playtime (including active sessions)
-    total_playtime_seconds = dbgl.get_total_playtime(player.xuid)
+    total_playtime_seconds = dbgl.get_total_playtime(xuid)
 
     sender.send_message(f"{infoLog()} §rSession History for {player_name}:")
 

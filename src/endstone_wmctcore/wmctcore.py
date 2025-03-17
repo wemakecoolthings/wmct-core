@@ -11,6 +11,7 @@ from endstone_wmctcore.commands import (
     preloaded_handlers
 )
 
+from endstone.util import Vector
 from endstone_wmctcore.events.intervalChecks import interval_function, stop_interval
 from endstone_wmctcore.commands.Server_Management.monitor import clear_all_intervals
 from endstone_wmctcore.utils.configUtil import load_config
@@ -35,7 +36,7 @@ WMCT Core Loaded!
 # EVENT IMPORTS
 from endstone.event import (EventPriority, event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent,
                             ServerCommandEvent, PlayerCommandEvent, PlayerChatEvent, BlockBreakEvent, BlockPlaceEvent,
-                            PlayerInteractEvent, DataPacketSendEvent, DataPacketReceiveEvent)
+                            PlayerInteractEvent, ServerLoadEvent)
 from endstone_wmctcore.events.chat_events import handle_chat_event
 from endstone_wmctcore.events.command_processes import handle_command_preprocess, handle_server_command_preprocess
 from endstone_wmctcore.events.player_connect import handle_login_event, handle_join_event, handle_leave_event
@@ -113,10 +114,33 @@ class WMCTPlugin(Plugin):
                 print(f"[CONFIG] doimmediaterespawn gamerule is now set to true since prolonged deathscreen check is enabled")
             interval_function(self)
 
+        self.check_for_inactive_sessions()
+
     def on_disable(self):
-        config = load_config()
         clear_all_intervals(self)
         stop_interval(self)
+
+    def check_for_inactive_sessions(self):
+        """Checks for players who have active sessions (NULL end_time) and are not online. Ends their session."""
+        dbgl = GriefLog("wmctcore_gl.db")
+
+        # Fetch players with active sessions (where end_time is NULL)
+        query = "SELECT xuid, name, start_time FROM sessions_log WHERE end_time IS NULL"
+        dbgl.cursor.execute(query)
+        active_sessions = dbgl.cursor.fetchall()
+
+        for session in active_sessions:
+            xuid = session[0]
+            player_name = session[1]  # Get the player's name from the session data
+
+            # Check if the player is online
+            player = self.server.get_player(player_name)
+            if not player:  # If player is not online
+                # End the session with the current time
+                dbgl.end_session(xuid, int(time.time()))
+                print(f"[WMCTCORE - GriefLog] Ended session for offline player {player_name} (XUID: {xuid})")
+
+        dbgl.close_connection()
 
     # PERMISSIONS HANDLER
     def reload_custom_perms(self, player: Player):
@@ -192,6 +216,7 @@ class WMCTPlugin(Plugin):
                     f"{ColorFormat.GOLD}This command generated an error -> please report this on our GitHub and provide a copy of the error below!\n"
                     f"{ColorFormat.RED}========\n\n"
                     f"{ColorFormat.YELLOW}{e}\n\n"
+                    f"{ColorFormat.YELLOW}Command Usage: {command} + {args}"
                     + f"{ColorFormat.YELLOW}{clean_traceback(traceback.format_exc())}\n"
                       f"{ColorFormat.RESET}"
             )
@@ -200,6 +225,7 @@ class WMCTPlugin(Plugin):
                     f"This command generated an error -> please report this on our GitHub and provide a copy of the error below!\n"
                     f"========\n\n"
                     f"{e}\n\n"
+                    f"{ColorFormat.YELLOW}Command Usage: {command} + {args}"
                     + clean_traceback(traceback.format_exc())
             )
 
