@@ -129,16 +129,26 @@ class WMCTPlugin(Plugin):
         dbgl.cursor.execute(query)
         active_sessions = dbgl.cursor.fetchall()
 
+        MAX_SESSION_TIME = 10800  # 3 hours in seconds
+
         for session in active_sessions:
             xuid = session[0]
-            player_name = session[1]  # Get the player's name from the session data
+            player_name = session[1]
+            start_time = session[2]
 
             # Check if the player is online
             player = self.server.get_player(player_name)
             if not player:  # If player is not online
-                # End the session with the current time
-                dbgl.end_session(xuid, int(time.time()))
-                print(f"[WMCTCORE - GriefLog] Ended session for offline player {player_name} (XUID: {xuid})")
+                current_time = int(time.time())
+                session_duration = current_time - start_time
+
+                # If session exceeds 3 hours, cap it at 3 hours
+                end_time = start_time + MAX_SESSION_TIME if session_duration > MAX_SESSION_TIME else current_time
+
+                # End the session with the calculated end_time
+                dbgl.end_session(xuid, end_time)
+                print(
+                    f"[WMCTCORE - GriefLog] Ended session for offline player {player_name} (XUID: {xuid}) with end_time: {end_time}")
 
         dbgl.close_connection()
 
