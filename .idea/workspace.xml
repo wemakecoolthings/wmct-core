@@ -6,9 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="f5fd6630-a202-4725-bfac-b315f4cd2d56" name="Changes" comment="tes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.2.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.2.tar.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/activity.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/activity.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/events/grieflog_events.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/events/grieflog_events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.3.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.3.tar.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/attribute.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/attribute.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/logs.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/logs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/refresh.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/refresh.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/wmctcoresettings.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/wmctcore.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +59,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/mkate/OneDrive/Documents/GitHub/etherium-core",
+    "last_opened_file_path": "C:/Users/mkate/OneDrive/Documents/GitHub/wmct-core",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
@@ -64,11 +68,11 @@
       <recent name="C:\Users\mkate\PycharmProjects\endstone-wmctcore" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\Core_Commands" />
       <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\dist" />
       <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\Core Commands" />
       <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\Server Management" />
       <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands\Vanilla Enhancements" />
-      <recent name="C:\Users\mkate\OneDrive\Documents\GitHub\wmct-core\src\endstone_wmctcore\commands" />
     </key>
   </component>
   <component name="SharedIndexes">

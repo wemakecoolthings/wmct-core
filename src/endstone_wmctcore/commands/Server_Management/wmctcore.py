@@ -1,11 +1,17 @@
 import json
+import os
+
 from endstone import Player, ColorFormat
 from endstone.command import CommandSender
+from endstone.plugin import Plugin, PluginLoader, PluginManager
+
+import endstone_wmctcore
 from endstone_wmctcore.utils.commandUtil import create_command
 from endstone_wmctcore.utils.formWrapperUtil import ActionFormData, ActionFormResponse, ModalFormData, ModalFormResponse
 from endstone_wmctcore.utils.configUtil import load_config, save_config
 
 from typing import TYPE_CHECKING
+from re import compile
 
 from endstone_wmctcore.utils.prefixUtil import errorLog, infoLog
 
@@ -14,10 +20,10 @@ if TYPE_CHECKING:
 
 # Register command
 command, permission = create_command(
-    "wmctcoresettings",
-    "Opens the wmctcore plugin settings menu!",
-    ["/wmctcoresettings"],
-    ["wmctcore.command.wmctcoresettings"]
+    "wmctcore",
+    "A global command for wmctcore to modify settings.!",
+    ["/wmctcore (settings)<wmctcore_action: wmctcore_action>"],
+    ["wmctcore.command.wmctcore"]
 )
 
 # WMCTCORESETTINGS COMMAND FUNCTIONALITY
@@ -26,21 +32,30 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         sender.send_error_message("This command can only be executed by a player")
         return True
 
-    config = load_config()
+    if args[0] == "settings":
+        config = load_config()
 
-    form = ActionFormData()
-    form.title("WMCTCore Settings")
-    form.body("Select a category to view settings:")
+        form = ActionFormData()
+        form.title("WMCTCore Settings")
+        form.body("Select a category to view settings:")
 
-    form.button("Commands Settings")
-    form.button("Modules Settings")
-    form.button("Cancel")
+        form.button("Commands Settings")
+        form.button("Modules Settings")
+        form.button("Cancel")
 
-    form.show(sender).then(
-        lambda player=sender, result=ActionFormResponse: handle_settings_menu(player, result, config)
-    )
+        form.show(sender).then(
+            lambda player=sender, result=ActionFormResponse: handle_settings_menu(player, result, config)
+        )
 
     return True
+
+def find_whl_file(name):
+    # Search for .whl files in the current directory and subdirectories
+    for root, dirs, files in os.walk("."):
+        for file in files:
+            if file.endswith(".whl") and name in file:
+                return os.path.join(root, file)
+    return None
 
 # HANDLE MAIN SETTINGS MENU
 def handle_settings_menu(player: Player, result: ActionFormResponse, config: dict):
@@ -82,7 +97,7 @@ def toggle_command_setting(player: Player, command_name: str, config: dict):
         save_config(config)
     new_status = config["commands"][command_name]["enabled"]
     status_color = "§a" if new_status else "§c"
-    player.send_message(f"{infoLog()}Command §b/{command_name}§r was set to {status_color}{new_status}§r! Use §e/reload §rto enable changes!")
+    player.send_message(f"{infoLog()}Command §b/{command_name}§r was set to {status_color}{new_status}§r! Use §e/wmctcore reload §rto enable changes!")
 
 def show_modules_settings(player: Player, config: dict):
     modules = config.get("modules", {})

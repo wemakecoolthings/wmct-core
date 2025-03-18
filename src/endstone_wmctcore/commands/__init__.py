@@ -49,6 +49,7 @@ def preload_settings():
 
     save_config(config)
 
+
 def preload_commands():
     """Preload all command modules before WMCTPlugin is instantiated, respecting the config."""
     global preloaded_commands, preloaded_permissions, preloaded_handlers, moderation_commands
@@ -57,6 +58,7 @@ def preload_commands():
     config = load_config()
 
     grouped_commands = defaultdict(list)
+    found_commands = set()  # Track commands that are found
 
     print("[WMCT CORE] Registering commands...")
 
@@ -71,6 +73,8 @@ def preload_commands():
 
             if hasattr(module, 'command') and hasattr(module, 'handler'):
                 for cmd, details in module.command.items():
+                    found_commands.add(cmd)  # Mark command as found
+
                     # Ensure command exists in config, default to enabled
                     if cmd not in config["commands"]:
                         config["commands"][cmd] = {"enabled": True}
@@ -81,7 +85,7 @@ def preload_commands():
 
                         # Check if the command belongs to "Moderation"
                         if package_path.lower() == "moderation":
-                            moderation_commands.add(cmd)  # Add the main command
+                            moderation_commands.add(cmd)  # Add main command
                             aliases = details.get("aliases", [])  # Get aliases if available
                             moderation_commands.update(aliases)  # Add aliases to the set
 
@@ -93,6 +97,11 @@ def preload_commands():
                     for perm, details in module.permission.items():
                         preloaded_permissions[perm] = details
 
+    # Remove commands that are no longer found
+    removed_commands = set(config["commands"].keys()) - found_commands
+    for cmd in removed_commands:
+        del config["commands"][cmd]
+
     # Print grouped commands
     for category, commands in grouped_commands.items():
         if category or commands:  # Only print "Root" if it has commands
@@ -100,6 +109,12 @@ def preload_commands():
             for cmd, desc in commands:
                 status = "✓" if "Disabled by config" not in desc else "✗"
                 print(f"{status} {cmd} - {desc}")
+
+    # Print removed commands
+    if removed_commands:
+        print("\n[Cleanup] Removed missing commands:")
+        for cmd in removed_commands:
+            print(f"✗ {cmd}")
 
     print("\n")
     save_config(config)

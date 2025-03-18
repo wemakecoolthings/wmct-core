@@ -36,7 +36,7 @@ WMCT Core Loaded!
 # EVENT IMPORTS
 from endstone.event import (EventPriority, event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent,
                             ServerCommandEvent, PlayerCommandEvent, PlayerChatEvent, BlockBreakEvent, BlockPlaceEvent,
-                            PlayerInteractEvent, ServerLoadEvent)
+                            PlayerInteractEvent)
 from endstone_wmctcore.events.chat_events import handle_chat_event
 from endstone_wmctcore.events.command_processes import handle_command_preprocess, handle_server_command_preprocess
 from endstone_wmctcore.events.player_connect import handle_login_event, handle_join_event, handle_leave_event
@@ -46,6 +46,7 @@ from endstone_wmctcore.events.grieflog_events import handle_block_break, handle_
 class WMCTPlugin(Plugin):
     api_version = "0.6"
     authors = ["PrimeStrat", "trainer jeo"]
+    name = "wmctcore"
 
     commands = preloaded_commands
     permissions = preloaded_permissions
@@ -226,7 +227,7 @@ class WMCTPlugin(Plugin):
                     f"{ColorFormat.GOLD}This command generated an error -> please report this on our GitHub and provide a copy of the error below!\n"
                     f"{ColorFormat.RED}========\n\n"
                     f"{ColorFormat.YELLOW}{e}\n\n"
-                    f"{ColorFormat.YELLOW}Command Usage: {command} + {args}"
+                    f"{ColorFormat.YELLOW}Command Usage: {ColorFormat.AQUA}{command.name} + {args}\n\n"
                     + f"{ColorFormat.YELLOW}{clean_traceback(traceback.format_exc())}\n"
                       f"{ColorFormat.RESET}"
             )
@@ -235,7 +236,7 @@ class WMCTPlugin(Plugin):
                     f"This command generated an error -> please report this on our GitHub and provide a copy of the error below!\n"
                     f"========\n\n"
                     f"{e}\n\n"
-                    f"{ColorFormat.YELLOW}Command Usage: {command} + {args}"
+                    f"Command Usage: {command.name} + {args}\n\n"
                     + clean_traceback(traceback.format_exc())
             )
 
