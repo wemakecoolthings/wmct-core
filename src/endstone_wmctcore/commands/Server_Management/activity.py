@@ -50,6 +50,8 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     playtime_str = format_time(total_playtime_seconds)
     sender.send_message(f"{trailLog()} §eTotal Playtime: §f{playtime_str}")
 
+    sessions.sort(key=lambda s: s['start_time'], reverse=True)
+
     active_session = None
     for session in sessions:
         if session['end_time'] is None:

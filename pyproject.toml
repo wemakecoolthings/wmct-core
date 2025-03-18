@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "endstone-wmctcore"
-version = "0.0.2"
+version = "0.0.3"
 description = "A server management plugin for Minecraft Events & Survival Servers!"
 author = "PrimeStrat"
 
