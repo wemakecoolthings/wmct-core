@@ -11,6 +11,7 @@ from endstone_wmctcore.utils.prefixUtil import modLog
 
 # In-memory cache for mute status
 mute_cache = {}
+mute_cache_lock = threading.Lock()
 
 # Periodic cache cleanup interval (in minutes)
 CACHE_CLEANUP_INTERVAL = 10
@@ -21,11 +22,18 @@ if TYPE_CHECKING:
 def handle_chat_event(self: "WMCTPlugin", ev: PlayerChatEvent):
     discordRelay(f"**{ev.player.name}**: {ev.message}", "chat")
 
-    # Check cache and load from DB if not found
-    mute_data = mute_cache.get(ev.player.xuid)
+    # Check cache
+    with mute_cache_lock:
+        mute_data = mute_cache.get(ev.player.xuid)
+
     if not mute_data:
-        threading.Thread(target=load_mute_from_db, args=(ev.player.xuid,)).start()
-        return True
+        # Load mute data synchronously to prevent chat bypass
+        mute_data = load_mute_from_db(ev.player.xuid)
+        if mute_data:
+            with mute_cache_lock:
+                mute_cache[ev.player.xuid] = mute_data
+        else:
+            return True  # No mute found, allow chat
 
     # Handle mute status
     if mute_data["is_permanent"]:
@@ -35,9 +43,12 @@ def handle_chat_event(self: "WMCTPlugin", ev: PlayerChatEvent):
 
     # Check mute expiration
     if datetime.fromtimestamp(mute_data['time']) < datetime.now():
+        with mute_cache_lock:
+            if ev.player.xuid in mute_cache:  # Double-check before deletion
+                del mute_cache[ev.player.xuid]
+
         threading.Thread(target=remove_expired_mute, args=(ev.player.name,)).start()
-        del mute_cache[ev.player.xuid]
-        return True
+        return True  # Allow chat after unmute
 
     # Display mute message with remaining time
     ev.player.send_message(f"{modLog()}You are muted for \"{ColorFormat.YELLOW}{mute_data['reason']}\" "
@@ -52,13 +63,18 @@ def load_mute_from_db(xuid):
     db.close_connection()
 
     if not mod_log:
-        return
+        return None  # Explicitly return None to indicate no mute
 
-    mute_cache[xuid] = {
+    mute_data = {
         "reason": mod_log.mute_reason,
         "time": mod_log.mute_time,
-        "is_permanent": mod_log.mute_time > (datetime.now().timestamp() + (365 * 100 * 24 * 60 * 60))
+        "is_permanent": mod_log.mute_time > (datetime.now().timestamp() + (365 * 10 * 24 * 60 * 60))  # 10 years instead of 100
     }
+
+    with mute_cache_lock:
+        mute_cache[xuid] = mute_data
+
+    return mute_data  # Return the data so the caller can use it immediately
 
 def remove_expired_mute(player_name):
     """Remove expired mute from database and cache."""
@@ -69,9 +85,10 @@ def remove_expired_mute(player_name):
 def cleanup_cache():
     """Clear expired mutes from cache periodically."""
     now = datetime.now().timestamp()
-    expired = [xuid for xuid, data in mute_cache.items() if data['time'] < now]
-    for xuid in expired:
-        del mute_cache[xuid]
+    with mute_cache_lock:
+        expired = [xuid for xuid, data in mute_cache.items() if data['time'] < now]
+        for xuid in expired:
+            del mute_cache[xuid]
 
 def start_cache_cleanup():
     """Start a background thread to clean up expired mutes periodically."""
