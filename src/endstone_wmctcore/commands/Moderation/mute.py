@@ -43,7 +43,6 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
     mute_expiration = datetime.now() + mute_duration
     reason = " ".join(args[3:]) if len(args) > 3 else "Negative Behavior"
 
-    # Convert datetime to timestamp for format_time_remaining
     formatted_expiration = format_time_remaining(int(mute_expiration.timestamp()), True)
     message = f"{modLog()}You are muted for {ColorFormat.YELLOW}{reason} {ColorFormat.GOLD}which expires {ColorFormat.YELLOW}{formatted_expiration}"
 
