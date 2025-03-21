@@ -19,6 +19,7 @@ NOTES:
   - ENHANCEMENT: AFK Detection
   - ENHANCEMENT: Prolonged death screen detection
     - If a player forces the game to stay stuck on the death screen while the immediate respawn gamerule is enabled, they will be automatically kicked or logged depending on settings. Additionally, while this setting is enabled that gameule is forced to be set to true.
+  - ENHANCEMENT: Access to useful internal commands, auto-generating a config file to open them to OP players
 
 - Internal Permissions Information
   - Internal Ranks (from highest to lowest): This includes Minecraft's Permissions & WMCT Core's Permissions Systems
@@ -31,7 +32,7 @@ NOTES:
     - This applies to moderation commands such as /tempban or /mute as well as Minecraft's moderation commands such as /kick 
   
 - Commands
-  - [OP] /wmctcoresettings (A menu for all plugin settings)
+  - [OP] /wmctcore [settings] (A menu for all plugin settings)
     - Enabled Commands Settings
     - Logging Settings
     - Spectator Module Settings
