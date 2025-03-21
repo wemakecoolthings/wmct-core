@@ -36,7 +36,6 @@ def handler(self: "WMCTPlugin", sender: CommandSender, args: list[str]) -> bool:
         sender.send_error_message("This command can only be executed by a player.")
     return True
 
-
 # Get file paths based on OS
 def get_profiles_directory() -> str:
     if os.name == 'nt':  # Windows
