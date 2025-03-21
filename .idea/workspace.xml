@@ -4,7 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f5fd6630-a202-4725-bfac-b315f4cd2d56" name="Changes" comment="tes" />
+    <list default="true" id="f5fd6630-a202-4725-bfac-b315f4cd2d56" name="Changes" comment="tes">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/endstone_wmctcore-0.0.3.tar.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Moderation/mute.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Moderation/mute.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/viewscriptprofiles.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/viewscriptprofiles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla_Enhancements/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/dimtp.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla_Enhancements/dimtp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/gma.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla_Enhancements/gma.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/gmc.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla_Enhancements/gmc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/gms.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla_Enhancements/gms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla Enhancements/gmsp.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla_Enhancements/gmsp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/events/chat_events.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/events/chat_events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/events/command_processes.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/events/command_processes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
