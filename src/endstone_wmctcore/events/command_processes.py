@@ -24,8 +24,15 @@ def handle_command_preprocess(self: "WMCTPlugin", event: PlayerCommandEvent):
         discordRelay(f"**{player.name}** ran: {command}", "cmd")
 
     # /me Crasher Fix
-    if args and args[0].lstrip("/").lower() == "me" and command.count("@e") >= 5:
+    if (args and args[0].lstrip("/").lower() == "me"
+            and args[0].lstrip("/").lower() == "tell"
+            and args[0].lstrip("/").lower() == "w"
+            and args[0].lstrip("/").lower() == "msg"
+            and command.count("@e") >= 5):
         event.player.add_attachment(self, "minecraft.command.me", False)
+        event.player.add_attachment(self, "minecraft.command.tell", False)
+        event.player.add_attachment(self, "minecraft.command.w", False)
+        event.player.add_attachment(self, "minecraft.command.msg", False)
         event.is_cancelled = True
 
         # Log the staff message
