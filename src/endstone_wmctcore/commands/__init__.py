@@ -55,8 +55,8 @@ def preload_settings():
 def enable_hidden_commands():
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # Locate 'bedrock_server' directory
-    while not os.path.exists(os.path.join(current_dir, 'bedrock_server')):
+    # Locate the correct directory by finding 'worlds' and 'plugins' folders
+    while not (os.path.exists(os.path.join(current_dir, 'worlds')) and os.path.exists(os.path.join(current_dir, 'plugins'))):
         parent_dir = os.path.dirname(current_dir)
         if parent_dir == current_dir:
             print("[Internal Commands] WARNING: Restart the server to enable hidden commands!")
@@ -64,7 +64,7 @@ def enable_hidden_commands():
         current_dir = parent_dir
 
     # Construct path to commands.json
-    config_dir = os.path.join(current_dir, 'bedrock_server', 'config')
+    config_dir = os.path.join(current_dir, 'config')
     config_path = os.path.join(config_dir, 'commands.json')
 
     attempts = 0
