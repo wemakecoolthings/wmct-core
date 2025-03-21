@@ -1,6 +1,9 @@
 import importlib
+import json
 import pkgutil
 import os
+import time
+
 import endstone_wmctcore
 
 from endstone_wmctcore.utils.configUtil import load_config, save_config
@@ -49,6 +52,50 @@ def preload_settings():
 
     save_config(config)
 
+def enable_hidden_commands():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Locate 'bedrock_server' directory
+    while not os.path.exists(os.path.join(current_dir, 'bedrock_server')):
+        parent_dir = os.path.dirname(current_dir)
+        if parent_dir == current_dir:
+            print("[Internal Commands] WARNING: Restart the server to enable hidden commands!")
+            return
+        current_dir = parent_dir
+
+    # Construct path to commands.json
+    config_dir = os.path.join(current_dir, 'bedrock_server', 'config')
+    config_path = os.path.join(config_dir, 'commands.json')
+
+    attempts = 0
+    while not os.path.exists(config_path) and attempts < 2:
+        time.sleep(1)
+        attempts += 1
+
+    if not os.path.exists(config_path):
+        os.makedirs(config_dir, exist_ok=True)
+        config = {}
+    else:
+        with open(config_path, "r") as config_file:
+            try:
+                config = json.load(config_file)
+            except json.JSONDecodeError:
+                config = {}
+
+    # Set permissions
+    config["permission_levels"] = {
+        "sendshowstoreoffer": "game_directors",
+        "reload": "game_directors",
+        "transfer": "game_directors"
+    }
+
+    with open(config_path, "w") as config_file:
+        json.dump(config, config_file, indent=4)
+
+    print(f"[Internal Commands] Hidden permissions were set in config/commands.json\n"
+          f"✓ sendshowstoreoffer - Sends a request to show a store offer to the target player.\n"
+          f"✓ reload - Reloads the server configuration, functions, scripts, and plugins.\n"
+          f"✓ transfer - Transfers a player to another server.")
 
 def preload_commands():
     """Preload all command modules before WMCTPlugin is instantiated, respecting the config."""
@@ -105,7 +152,8 @@ def preload_commands():
     # Print grouped commands
     for category, commands in grouped_commands.items():
         if category or commands:  # Only print "Root" if it has commands
-            print(f"\n[{category if category else 'Root'}]")
+            clean_category = category.replace("_", " ") if category else "Root"
+            print(f"\n[{clean_category}]")
             for cmd, desc in commands:
                 status = "✓" if "Disabled by config" not in desc else "✗"
                 print(f"{status} {cmd} - {desc}")
@@ -122,5 +170,6 @@ def preload_commands():
 # Run preload automatically when this file is imported
 preload_settings()
 preload_commands()
+enable_hidden_commands()
 
 __all__ = [preloaded_commands, preloaded_permissions, preloaded_handlers, moderation_commands]
