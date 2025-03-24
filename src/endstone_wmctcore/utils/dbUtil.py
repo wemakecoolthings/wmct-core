@@ -583,8 +583,6 @@ class UserDB(DatabaseManager):
         result = self.cursor.fetchone()
         if result:
             return result[0]
-        else:
-            raise ValueError(f"Player {player_name} not found in database.")
 
     def get_name_by_xuid(self, xuid: str) -> str:
         """Fetch the xuid of a player by their name."""
@@ -593,8 +591,6 @@ class UserDB(DatabaseManager):
         result = self.cursor.fetchone()
         if result:
             return result[0]
-        else:
-            raise ValueError(f"XUID {xuid} not found in database.")
 
     def get_offline_mod_log(self, name: str) -> Optional[ModLog]:
         """Retrieves a user's moderation log as an object."""
@@ -621,7 +617,7 @@ class UserDB(DatabaseManager):
         """Updates a specific column for an existing user in the 'users' table and updates cache."""
         if column not in ['xuid', 'uuid', 'name', 'ping', 'device_os', 'client_ver',
                           'last_join', 'last_leave', 'internal_rank', 'enabled_logs']:
-            raise ValueError(f"Invalid column name: {column}")
+            return
 
         condition = 'name = ?'
         params = (name,)
