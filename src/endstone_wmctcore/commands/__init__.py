@@ -86,7 +86,8 @@ def enable_hidden_commands():
     config["permission_levels"] = {
         "sendshowstoreoffer": "game_directors",
         "reload": "game_directors",
-        "transfer": "game_directors"
+        "transfer": "game_directors",
+        "whitelist": "game_directors"
     }
 
     with open(config_path, "w") as config_file:
@@ -95,7 +96,8 @@ def enable_hidden_commands():
     print(f"[Internal Commands] Hidden permissions were set in config/commands.json\n"
           f"✓ sendshowstoreoffer - Sends a request to show a store offer to the target player.\n"
           f"✓ reload - Reloads the server configuration, functions, scripts, and plugins.\n"
-          f"✓ transfer - Transfers a player to another server.")
+          f"✓ transfer - Transfers a player to another server.\n"
+          f"✓ whitelist - Manages the server whitelist.")
 
 def preload_commands():
     """Preload all command modules before WMCTPlugin is instantiated, respecting the config."""
