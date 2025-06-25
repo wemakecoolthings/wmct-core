@@ -5,10 +5,70 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f5fd6630-a202-4725-bfac-b315f4cd2d56" name="Changes" comment="tes">
+      <change afterPath="$PROJECT_DIR$/src/endstone_primebds/events/player_combat.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/top.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/top.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/events/grieflog_events.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_wmctcore/events/grieflog_events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/attribute.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/attribute.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/bottom.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/bottom.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/check.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/check.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/logs.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/logs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/nickname.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/nickname.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/ping.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/ping.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/playtime.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/playtime.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/refresh.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/refresh.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/sendpopup.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/sendpopup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/sendtip.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/sendtip.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/sendtoast.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/sendtoast.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/spectate.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/spectate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Core_Commands/top.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Core_Commands/top.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Moderation/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Moderation/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Moderation/ipban.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Moderation/ipban.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Moderation/mute.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Moderation/mute.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Moderation/permban.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Moderation/permban.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Moderation/punishments.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Moderation/punishments.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Moderation/removeban.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Moderation/removeban.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Moderation/tempban.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Moderation/tempban.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Moderation/tempmute.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Moderation/tempmute.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Moderation/unmute.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Moderation/unmute.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/activity.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/activity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/activitylist.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/activitylist.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/bossbar.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/bossbar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/clientscoreboard.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/grieflog.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/grieflog.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/inspect.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/inspect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/leveldb.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/leveldb.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/monitor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/monitor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/reloadscripts.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/reloadscripts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/setrank.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/setrank.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/updatepacks.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/updatepacks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/viewscriptprofiles.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/viewscriptprofiles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Server_Management/wmctcore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Server_Management/primebds.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla_Enhancements/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Vanilla_Enhancements/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla_Enhancements/dimtp.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Vanilla_Enhancements/dimtp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla_Enhancements/gma.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Vanilla_Enhancements/gma.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla_Enhancements/gmc.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Vanilla_Enhancements/gmc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla_Enhancements/gms.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Vanilla_Enhancements/gms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/Vanilla_Enhancements/gmsp.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/Vanilla_Enhancements/gmsp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/commands/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/commands/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/events/chat_events.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/events/chat_events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/events/command_processes.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/events/command_processes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/events/grieflog_events.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/events/grieflog_events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/events/intervalChecks.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/events/intervalChecks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/events/player_connect.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/events/player_connect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/commandUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/utils/commandUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/configUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/utils/configUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/dbUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/utils/dbUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/formWrapperUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/utils/formWrapperUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/internalPermissionsUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/utils/internalPermissionsUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/loggingUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/utils/loggingUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/modUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/utils/modUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/prefixUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/utils/prefixUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/utils/timeUtil.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/utils/timeUtil.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/endstone_wmctcore/wmctcore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/endstone_primebds/primebds.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,14 +111,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/mkate/OneDrive/Documents/GitHub/wmct-core&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/mkate/OneDrive/Documents/GitHub/wmct-core",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\mkate\PycharmProjects\endstone-wmctcore" />

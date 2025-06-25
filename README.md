@@ -3,7 +3,7 @@
 A server management plugin for Minecraft Events & Survival Servers using Endstone -> https://github.com/EndstoneMC/endstone
 
 NOTES: 
-- Most of the modules are disabled by default for performance. Use /wmctcoresettings to enable modules in-game or via the config file.
+- Most of the modules are disabled by default for performance. Use /primebdssettings to enable modules in-game or via the config file.
 - This plugin does not support the use of command selectors. Rather, you specify a player name or specify the term "all" if applicable.
 - All custom commands that target players will attempt to target offline players!
 
@@ -32,7 +32,7 @@ NOTES:
     - This applies to moderation commands such as /tempban or /mute as well as Minecraft's moderation commands such as /kick 
   
 - Commands
-  - [OP] /wmctcore [settings] (A menu for all plugin settings)
+  - [OP] /primebds [settings] (A menu for all plugin settings)
     - Enabled Commands Settings
     - Logging Settings
     - Spectator Module Settings
