@@ -1,13 +1,21 @@
+import os
 import sqlite3
 import time
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List, Tuple, Any, Dict, Optional
 from endstone import ColorFormat
 from endstone.util import Vector
 from endstone_primebds.utils.modUtil import format_time_remaining
 from endstone_primebds.utils.prefixUtil import modLog
 from endstone_primebds.utils.timeUtil import TimezoneUtils
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+while not (os.path.exists(os.path.join(current_dir, 'plugins')) and os.path.exists(os.path.join(current_dir, 'worlds'))):
+    current_dir = os.path.dirname(current_dir)
+
+DB_FOLDER = os.path.join(current_dir, 'plugins', 'primebds_data')
+os.makedirs(DB_FOLDER, exist_ok=True)
 
 @dataclass
 class User:
@@ -59,8 +67,8 @@ class GriefAction:
 class DatabaseManager:
     def __init__(self, db_name: str):
         """Initialize the database connection."""
-        self.db_name = db_name
-        self.conn = sqlite3.connect(self.db_name, check_same_thread=False)
+        self.db_path = os.path.join(DB_FOLDER, db_name if db_name.endswith('.db') else db_name + '.db')
+        self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
         self.cursor = self.conn.cursor()
 
     def create_table(self, table_name: str, columns: Dict[str, str]):

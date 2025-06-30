@@ -39,9 +39,10 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
 # Get file paths based on OS
 def get_profiles_directory() -> str:
     if os.name == 'nt':  # Windows
-        return os.path.expandvars(r"C:\Users\%USERNAME%\AppData\Roaming\logs\profiles")
-    else:  # Linux or other OS
-        return './profiles'
+        base_dir = os.path.expanduser("~")  # gives C:/Users/%USERNAME% on Windows
+        return os.path.join(base_dir, "AppData", "Roaming", "logs", "profiles")
+    else:  # Linux/macOS/Other
+        return os.path.join(os.path.expanduser("~"), ".config", "profiles")
 
 # List .cpuprofile files sorted by date
 def list_profiles() -> list[str]:

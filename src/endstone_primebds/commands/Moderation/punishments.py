@@ -29,7 +29,7 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
             ColorFormat.red("Usage: /punishments <player> [page] OR /punishments <player> (remove|clear)"))
         return False
 
-    db = UserDB("primebds_users.db")
+    db = UserDB("users.db")
 
     target_name = args[0]
 
@@ -61,7 +61,7 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
 
 def clear_all_punishments(self: "PrimeBDS", sender: CommandSender, target_name: str) -> bool:
     """Clears all punishment logs for the selected player."""
-    db = UserDB("primebds_users.db")
+    db = UserDB("users.db")
 
     success = db.delete_all_punishment_logs_by_name(target_name)
 
@@ -76,7 +76,7 @@ def remove_punishment_by_id(self: "PrimeBDS", sender: CommandSender, target_name
     """Removes a specific punishment by ID using a menu."""
 
     # Retrieve punishment history
-    db = UserDB("primebds_users.db")
+    db = UserDB("users.db")
     history = db.print_punishment_history(target_name)
     punish_log = db.get_punishment_logs(target_name)
 

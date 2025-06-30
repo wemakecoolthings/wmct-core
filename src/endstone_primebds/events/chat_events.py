@@ -35,7 +35,7 @@ def handle_chat_event(self: "PrimeBDS", ev: PlayerChatEvent):
 
 def load_mute_from_db(xuid):
     """Fetch mute data directly from the database."""
-    db = UserDB("userInfo.db")
+    db = UserDB("users.db")
     mod_log = db.get_mod_log(xuid)
     db.close_connection()
 
@@ -51,6 +51,6 @@ def load_mute_from_db(xuid):
 
 def remove_expired_mute(player_name):
     """Remove expired mute from the database."""
-    db = UserDB("primebds_users.db")
+    db = UserDB("users.db")
     db.remove_mute(player_name)
     db.close_connection()

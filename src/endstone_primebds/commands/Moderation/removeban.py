@@ -26,7 +26,7 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
         return False
 
     player_name = args[0].strip('"')
-    db = UserDB("primebds_users.db")
+    db = UserDB("users.db")
 
     # Get the mod log to check if the player is banned
     mod_log = db.get_offline_mod_log(player_name)

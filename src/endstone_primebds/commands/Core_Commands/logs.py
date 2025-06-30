@@ -23,7 +23,7 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
         sender.send_error_message("This command can only be executed by a player")
         return False
 
-    db = UserDB("userInfo.db")
+    db = UserDB("users.db")
 
     current_status = db.get_offline_user(sender.name).enabled_logs
 

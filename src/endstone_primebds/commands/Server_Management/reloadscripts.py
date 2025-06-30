@@ -13,7 +13,9 @@ command, permission = create_command(
     "reloadscripts",
     "Reloads the server scripts!",
     ["/reloadscripts"],
-    ["primebds.command.reloadscripts"]
+    ["primebds.command.reloadscripts"],
+    "op",
+    ["rscripts", "rs"]
 )
 
 # RELOADSCRIPTS COMMAND FUNCTIONALITY

@@ -23,7 +23,7 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
     player = self.server.get_player(player_name)
 
     if len(args) == 0:
-        dbgl = GriefLog("primebds_gl.db")
+        dbgl = GriefLog("griefLog.db")
 
         # Fetch total playtime for the player
         total_playtime_seconds = dbgl.get_total_playtime(player.xuid)
@@ -57,7 +57,7 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
         dbgl.close_connection()
     elif len(args) == 1 and args[0].lower() == 'true':
         # Display leaderboard
-        dbgl = GriefLog("primebds_gl.db")
+        dbgl = GriefLog("griefLog.db")
         leaderboard = dbgl.get_all_playtimes()
         leaderboard = sorted(leaderboard, key=lambda x: x['total_playtime'], reverse=True)
 

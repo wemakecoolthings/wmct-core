@@ -26,7 +26,7 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
     player_name = args[0].strip('"')
     target = sender.server.get_player(player_name)
 
-    db = UserDB("userInfo.db")
+    db = UserDB("users.db")
 
     if target is None:
         # Check Offline DB

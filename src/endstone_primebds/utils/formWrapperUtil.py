@@ -1,3 +1,6 @@
+from functools import partial
+import traceback
+
 from endstone._internal.endstone_python import (
     ActionForm,
     Dropdown,
@@ -15,7 +18,7 @@ class ActionFormResponse:
     Returns data about the player results from an action form.
     """
 
-    def __init__(self, canceled: bool, selection: str):
+    def __init__(self, canceled: bool, selection: int | None):
         self.canceled = canceled
         self.selection = selection
 
@@ -23,107 +26,72 @@ class ActionFormResponse:
 class ActionFormData:
     """
     Builds a simple player form with buttons that let the player take action.
-
-    *@example*
-
-    action_form.py
-
-    ```python
-    from endstone._internal.endstone_python import Player
-    from ..form_wrapper import (
-        ActionFormData,
-        ActionFormResponse,
-    )
-
-    def example_action_form(player: Player):
-        form = ActionFormData()
-        form.title("Test Form")
-        form.body("This is a test form.")
-        form.button("Test", "textures/ui/refresh_light")
-        form.button("Test 2", "textures/ui/anvil_icon")
-        form.button("Test 3", "textures/ui/refresh_light")
-
-        def submit(player: Player, result: ActionFormResponse):
-            if result.canceled:
-                player.send_message("§cForm canceled.")
-                return
-            else:
-                player.send_message(f"§aForm result: §f{result.selection}")
-                return
-
-        form.show(player).then(
-            lambda player=Player, result=ActionFormResponse: submit(player, result)
-        )
-
-    ```
-
     """
 
     def __init__(self):
         self._form = ActionForm()
+        self._callback = None
+
+    def title(self, title_text: str):
+        """
+        Sets the title of the form.
+        """
+        self._form.title = title_text
+        return self
 
     def body(self, body_text: str):
         """
-        Method that sets the body text for the modal form.
-
-        :param body_text: The body text to set.
+        Sets the body text of the form.
         """
         self._form.content = body_text
         return self
 
     def button(self, text: str, icon_path: str | None = None):
         """
-        Adds a button to this form with an icon from a resource pack.
-
-        :param text: The text to display on the button.
+        Adds a button to the form.
         """
         self._form.add_button(text, icon_path)
         return self
 
-    def show(self, player: Player):
+    def then(self, callback):
         """
-        Creates and shows this modal popup form. Returns asynchronously when the player confirms or cancels the dialog.
-        This function can't be called in read-only mode.
+        Registers a callback to run when the form is submitted.
 
-        :param player: Player to show this dialog to.
-        :raises: This function can throw errors.
+        The callback must accept exactly two parameters:
+        (player, result)
         """
-        self._form.on_submit = lambda p=Player, r=int: self.__form_submit(
-            p, r, result=ActionFormResponse(False, r)
+        try:
+            if not callable(callback):
+                raise ValueError("Callback passed to .then() must be callable.")
+            self._callback = callback
+            return self
+        except Exception as e:
+            return
+
+    def show(self, player):
+        """
+        Shows the form to the player and sets up internal submission handlers.
+        """
+        self._form.on_submit = lambda p, i: self.__form_submit(
+            p, i, result=ActionFormResponse(False, i)
         )
-        self._form.on_close = lambda p=Player: self.__form_submit(
+        self._form.on_close = lambda p: self.__form_submit(
             p, 0, result=ActionFormResponse(True, None)
         )
         player.send_form(self._form)
         return self
 
-    def then(self, callback):
+    def __form_submit(self, player, i, result):
         """
-        Sets the callback to be called on form submission.
-
-        :param callback: Callback function to be called on form submission.
-        """
-        self._callback = callback
-        return self
-
-    def title(self, title_text: str):
-        """
-        This builder method sets the title for the modal dialog.
-
-        :param title_text: The title text to set.
-        """
-        self._form.title = title_text
-        return self
-
-    def __form_submit(self, player: Player, i, result):
-        """
-        Private method to handle form submission.
-
-        :param player: Player who submitted the form.
-        :param result: Result of the form submission.
+        Internal form submit handler.
+        Catches all exceptions and logs them.
         """
         if self._callback:
-            self._callback(player, result)
+            try:
+                self._callback(player, result)
+            except Exception as e:
+                print(f"[Form Error] Callback failed: {e}")
+                traceback.print_exc()
 
 
 class ModalFormResponse:

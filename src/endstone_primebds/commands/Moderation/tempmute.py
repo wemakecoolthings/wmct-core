@@ -30,7 +30,7 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
     player_name = args[0].strip('"')
     target = self.server.get_player(player_name)
 
-    db = UserDB("primebds_users.db")
+    db = UserDB("users.db")
     if not target:
         mod_log = db.get_offline_mod_log(player_name)
         if not mod_log:

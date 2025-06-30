@@ -38,12 +38,13 @@ Prime BDS Loaded!
 # EVENT IMPORTS
 from endstone.event import (EventPriority, event_handler, PlayerLoginEvent, PlayerJoinEvent, PlayerQuitEvent,
                             ServerCommandEvent, PlayerCommandEvent, PlayerChatEvent, BlockBreakEvent, BlockPlaceEvent,
-                            PlayerInteractEvent, PlayerMoveEvent)
+                            PlayerInteractEvent, ActorDamageEvent, ActorKnockbackEvent)
 from endstone_primebds.events.chat_events import handle_chat_event
 from endstone_primebds.events.command_processes import handle_command_preprocess, handle_server_command_preprocess
 from endstone_primebds.events.player_connect import handle_login_event, handle_join_event, handle_leave_event
 from endstone_primebds.events.grieflog_events import handle_block_break, handle_player_interact, handle_block_place
-from endstone_primebds.events.player_combat import handle_movement_event
+from endstone_primebds.events.player_combat import handle_kb_event, handle_damage_event
+
 
 class PrimeBDS(Plugin):
     api_version = "0.6"
@@ -56,8 +57,17 @@ class PrimeBDS(Plugin):
 
     def __init__(self):
         super().__init__()
+        self.entity_damage_cooldowns = {}
 
     # EVENT HANDLER
+    @event_handler()
+    def on_entity_hurt(self, ev: ActorDamageEvent):
+        handle_damage_event(self, ev)
+
+    @event_handler()
+    def on_entity_kb(self, ev: ActorKnockbackEvent):
+        handle_kb_event(self, ev)
+
     @event_handler()
     def on_player_login(self, ev: PlayerLoginEvent):
         handle_login_event(self, ev)
@@ -93,10 +103,6 @@ class PrimeBDS(Plugin):
     @event_handler()
     def on_player_int(self, ev: PlayerInteractEvent):
         handle_player_interact(self, ev)
-
-    @event_handler()
-    def on_player_move(self, ev: PlayerMoveEvent):
-        handle_movement_event(self, ev)
 
     def on_load(self):
         plugin_text()
@@ -162,7 +168,7 @@ class PrimeBDS(Plugin):
     # PERMISSIONS HANDLER
     def reload_custom_perms(self, player: Player):
         # Update Internal DB
-        db = UserDB("userInfo.db")
+        db = UserDB("users.db")
         db.save_user(player)
         user = db.get_online_user(player.xuid)
 

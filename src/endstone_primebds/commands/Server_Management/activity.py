@@ -29,8 +29,8 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
     if page < 1:
         page = 1
 
-    dbgl = GriefLog("primebds_gl.db")
-    db = UserDB("primebds_users.db")
+    dbgl = GriefLog("griefLog.db")
+    db = UserDB("users.db")
     xuid = db.get_xuid_by_name(player_name)
     db.close_connection()
 

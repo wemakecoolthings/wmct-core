@@ -22,23 +22,85 @@ def preload_settings():
     # Define default modules and settings
     default_modules = {
         "discord_logging": {
-            "embed": {"color": 781919, "title": "Logger"},
-            "commands": {"enabled": False, "webhook": ""},
-            "moderation": {"enabled": False, "webhook": ""},
-            "chat": {"enabled": False, "webhook": ""},
-            "griefing": {"enabled": False, "webhook": ""}
+            "embed": {
+                "color": 781919,
+                "title": "Logger"
+            },
+            "commands": {
+                "enabled": False,
+                "webhook": ""
+            },
+            "moderation": {
+                "enabled": False,
+                "webhook": ""
+            },
+            "chat": {
+                "enabled": False,
+                "webhook": ""
+            },
+            "griefing": {
+                "enabled": False,
+                "webhook": ""
+            }
         },
         "game_logging": {
             "custom_tags": [],
-            "moderation": {"enabled": True},
-            "commands": {"enabled": False}
+            "moderation": {
+                "enabled": True
+            },
+            "commands": {
+                "enabled": False
+            }
         },
-        "spectator_check": {"check_gamemode": True, "check_tags": False, "allow_tags": [], "ignore_tags": []},
-        "me_crasher_patch": {"enabled": True, "ban": False},
-        "grieflog": {"enabled": False},
-        "grieflog_storage_auto_delete": {"enabled": False, "removal_time_in_seconds": 1209600},
-        "check_prolonged_death_screen": {"enabled": False, "kick": False, "time_in_seconds": 10},
-        "check_afk": {"enabled": False, "kick": False, "time_in_seconds": 180}
+        "spectator_check": {
+            "check_gamemode": True,
+            "check_tags": False,
+            "allow_tags": [],
+            "ignore_tags": []
+        },
+        "me_crasher_patch": {
+            "enabled": True,
+            "ban": False
+        },
+        "grieflog": {
+            "enabled": False
+        },
+        "grieflog_storage_auto_delete": {
+            "enabled": False,
+            "removal_time_in_seconds": 1209600
+        },
+        "check_prolonged_death_screen": {
+            "enabled": False,
+            "kick": False,
+            "time_in_seconds": 10
+        },
+        "check_afk": {
+            "enabled": False,
+            "kick": False,
+            "time_in_seconds": 180
+        },
+        "combat": {
+            "hit_cooldown_in_seconds": 0.0,
+            "base_damage": 1.0,
+            "horizontal_knockback_modifier": 1.0,
+            "vertical_knockback_modifier": 1.0,
+            "horizontal_sprint_knockback_modifier": 0.0,
+            "vertical_sprint_knockback_modifier": 0.0,
+            "tag_modifiers": {
+                "example_tag": {
+                    "hit_cooldown_in_seconds": 2,
+                    "base_damage": 5,
+                    "horizontal_knockback_modifier": 2,
+                    "vertical_knockback_modifier":2,
+                    "horizontal_sprint_knockback_modifier": 3,
+                    "vertical_sprint_knockback_modifier": 3
+                }
+            }
+        },
+        "allowlist": {
+            "profile": "default",
+            "WARNING": "⚠️ DO NOT EDIT 'profile' AS IT CAN RESULT IN UNEXPECTED BEHAVIOR",
+        }
     }
 
     # Ensure 'modules' key exists in config
@@ -51,53 +113,6 @@ def preload_settings():
             config["modules"][module] = settings
 
     save_config(config)
-
-def enable_hidden_commands():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # Locate the correct directory by finding 'worlds' and 'plugins' folders
-    while not (os.path.exists(os.path.join(current_dir, 'worlds')) and os.path.exists(os.path.join(current_dir, 'plugins'))):
-        parent_dir = os.path.dirname(current_dir)
-        if parent_dir == current_dir:
-            print("[Internal Commands] WARNING: Restart the server to enable hidden commands!")
-            return
-        current_dir = parent_dir
-
-    # Construct path to commands.json
-    config_dir = os.path.join(current_dir, 'config')
-    config_path = os.path.join(config_dir, 'commands.json')
-
-    attempts = 0
-    while not os.path.exists(config_path) and attempts < 2:
-        time.sleep(1)
-        attempts += 1
-
-    if not os.path.exists(config_path):
-        os.makedirs(config_dir, exist_ok=True)
-        config = {}
-    else:
-        with open(config_path, "r") as config_file:
-            try:
-                config = json.load(config_file)
-            except json.JSONDecodeError:
-                config = {}
-
-    # Set permissions
-    config["permission_levels"] = {
-        "sendshowstoreoffer": "game_directors",
-        "reload": "game_directors",
-        "transfer": "game_directors",
-        "whitelist": "game_directors"
-    }
-
-    with open(config_path, "w") as config_file:
-        json.dump(config, config_file, indent=4)
-
-    print(f"[Internal Commands] Hidden permissions were set in config/commands.json\n"
-          f"✓ sendshowstoreoffer - Sends a request to show a store offer to the target player.\n"
-          f"✓ reload - Reloads the server configuration, functions, scripts, and plugins.\n"
-          f"✓ transfer - Transfers a player to another server.\n"
-          f"✓ whitelist - Manages the server whitelist.")
 
 def preload_commands():
     """Preload all command modules before PrimeBDS is instantiated, respecting the config."""
@@ -172,6 +187,5 @@ def preload_commands():
 # Run preload automatically when this file is imported
 preload_settings()
 preload_commands()
-enable_hidden_commands()
 
 __all__ = [preloaded_commands, preloaded_permissions, preloaded_handlers, moderation_commands]

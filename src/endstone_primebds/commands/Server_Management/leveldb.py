@@ -1,16 +1,14 @@
-import os
 import json
-from pstats import SortKey
+import os
+from typing import TYPE_CHECKING
 
-import endstone.scoreboard
-from endstone import ColorFormat
-from endstone._internal.endstone_python import DisplaySlot, ObjectiveSortOrder
+from endstone import ColorFormat, Player
+from endstone._internal.endstone_python import DisplaySlot, ObjectiveSortOrder, Mob
 from endstone.command import CommandSender
-
 from endstone.scoreboard import Criteria
+
 from endstone_primebds.utils.commandUtil import create_command
 from endstone_primebds.utils.prefixUtil import infoLog, errorLog
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from endstone_primebds.primebds import PrimeBDS
@@ -48,29 +46,53 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
     return False
 
 def save_scoreboard(self: "PrimeBDS", player, name: str) -> bool:
-    save_path = os.path.join(get_profiles_directory(), f"{name}.json")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    while not (
+            os.path.exists(os.path.join(current_dir, 'plugins')) and
+            os.path.exists(os.path.join(current_dir, 'worlds'))
+    ):
+        current_dir = os.path.dirname(current_dir)
+
+    scoreboard_data_folder = os.path.join(current_dir, 'plugins/primebds_data', 'scoreboard_data')
+    os.makedirs(scoreboard_data_folder, exist_ok=True)
+
+    save_path = os.path.join(scoreboard_data_folder, f"{name}.json")
+
     objectives = self.server.scoreboard.objectives
-    entries = self.server.scoreboard.entries
     data = {}
+
+    entry_count = len(list(self.server.scoreboard.entries))
+    invalid_entry_counts = 0
 
     for objective in objectives:
         obj_data = {
+            "is_fully_loaded": False,
             "display_name": objective.display_name,
             "criteria": objective.criteria.name,
             "render_type": objective.render_type.value,
-            "display_slot": str(objective.display_slot) if hasattr(objective.display_slot, '__str__') else str(DisplaySlot.PLAYER_LIST),  # Default to PLAYER_LIST
-            "sort_order": str(objective.sort_order) if hasattr(objective.sort_order, '__str__') else str(ObjectiveSortOrder.ASCENDING), # Default to ASCENDING
+            "display_slot": str(objective.display_slot) if hasattr(objective.display_slot, '__str__') else str(DisplaySlot.PLAYER_LIST),
+            "sort_order": str(objective.sort_order) if hasattr(objective.sort_order, '__str__') else str(ObjectiveSortOrder.ASCENDING),
             "entries": {}
         }
 
-        if len(entries) > 0:
-            for entry in entries:
-                # Only process entries that are strings
-                if isinstance(entry, str):
-                    score_obj = objective.get_score(entry)
-                    obj_data["entries"][entry] = {
-                        "value": score_obj.value
-                    }
+        for entry in list(self.server.scoreboard.entries):  # copy list to avoid mutation issues
+            score = objective.get_score(entry)
+
+            if isinstance(entry, str):
+                entry_key = entry
+            else:
+                if hasattr(entry, "xuid"):
+                    entry_key = entry.xuid
+                else:
+                    entry_count -= 1
+                    invalid_entry_counts += 1
+                    continue
+
+            if entry_key is not None:
+                obj_data["entries"][entry_key] = {
+                    "value": score.value,
+                    "loaded": False
+                }
 
         data[objective.name] = obj_data
 
@@ -78,21 +100,40 @@ def save_scoreboard(self: "PrimeBDS", player, name: str) -> bool:
     with open(save_path, 'w') as f:
         json.dump(data, f, indent=4)
 
-    player.send_message(f"{infoLog()}Saved scoreboard profile '{name}'")
+    if not isinstance(player, Player):
+        print(f"Saved scoreboard profile '{name}'")
+        return False
+    else:
+        player.send_message(f"{infoLog()}Saved scoreboard profile '{name}' with {entry_count} entries!")
+        if invalid_entry_counts > 0:
+            player.send_message(f"{invalid_entry_counts} were removed as mob entries cannot be transferred.")
     return True
 
 def load_scoreboard(self: "PrimeBDS", player, name: str) -> bool:
-    load_path = os.path.join(get_profiles_directory(), f"{name}.json")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    while not (
+        os.path.exists(os.path.join(current_dir, 'plugins')) and
+        os.path.exists(os.path.join(current_dir, 'worlds'))
+    ):
+        current_dir = os.path.dirname(current_dir)
+
+    scoreboard_data_folder = os.path.join(current_dir, 'plugins/primebds_data', 'scoreboard_data')
+    os.makedirs(scoreboard_data_folder, exist_ok=True)
+
+    load_path = os.path.join(scoreboard_data_folder, f"{name}.json")
 
     if not os.path.exists(load_path):
-        player.send_message(f"{errorLog()}Scoreboard profile '{name}' not found!")
+        if isinstance(player, Player):
+            player.send_message(f"{errorLog()}Scoreboard profile '{name}' not found!")
+        else:
+            print(f"Scoreboard profile '{name}' not found!")
         return False
 
     with open(load_path, 'r') as f:
         data = json.load(f)
 
-    # Track if any new objectives were created
     new_profile = False
+    modified = False  # Track if we need to re-save the file
 
     for obj_name, obj_data in data.items():
         objective = self.server.scoreboard.get_objective(obj_name)
@@ -100,44 +141,82 @@ def load_scoreboard(self: "PrimeBDS", player, name: str) -> bool:
         if not objective:
             criteria = Criteria.DUMMY
             objective = self.server.scoreboard.add_objective(obj_name, criteria, obj_data["display_name"])
-            new_profile = True  # Mark as new profile
+            new_profile = True
 
-        # Set the entries for both new and existing objectives
+        all_entries_loaded = True  # Assume true, disprove if unloaded found
+
         for entry_name, entry_data in obj_data["entries"].items():
-            score_obj = objective.get_score(entry_name)
+            is_xuid = entry_name.isdigit() and len(entry_name) >= 12
+
+            if is_xuid:
+                player_obj = None
+                for player in self.server.online_players:
+                    if player.xuid == entry_name:
+                        player_obj = player
+                        break
+
+                if player_obj is None:
+                    all_entries_loaded = False  # Found an unloaded entry
+                    continue
+
+                score_key = player_obj
+
+            else:
+                score_key = entry_name
+
+            score_obj = objective.get_score(score_key)
             score_obj.value = entry_data["value"]
 
-    # Send the message after processing all objectives
-    if new_profile:
-        player.send_message(f"{infoLog()}Loaded scoreboard profile '{name}' {ColorFormat.GRAY}{ColorFormat.ITALIC}[NEW]")
+            if not entry_data.get("loaded", False):
+                entry_data["loaded"] = True
+                modified = True
+
+        # Update is_fully_loaded flag
+        if obj_data.get("is_fully_loaded") != all_entries_loaded:
+            obj_data["is_fully_loaded"] = all_entries_loaded
+            modified = True
+
+    if modified:
+        with open(load_path, 'w') as f:
+            json.dump(data, f, indent=4)
+
+    status = "NEW" if new_profile else "OLD"
+    if isinstance(player, Player):
+        player.send_message(f"{infoLog()}Loaded scoreboard profile '{name}' {ColorFormat.GRAY}{ColorFormat.ITALIC}[{status}]")
     else:
-        player.send_message(f"{infoLog()}Loaded scoreboard profile '{name}' {ColorFormat.GRAY}{ColorFormat.ITALIC}[OLD]")
+        print(f"Loaded scoreboard profile '{name}' [{status}]")
 
     return True
 
 def delete_scoreboard(self: "PrimeBDS", player, name: str) -> bool:
-    delete_path = os.path.join(get_profiles_directory(), f"{name}.json")
+    delete_path = os.path.join(get_scoreboard_directory(), f"{name}.json")
 
     if not os.path.exists(delete_path):
         player.send_message(f"{errorLog()}Scoreboard profile '{name}' not found!")
         return False
 
     os.remove(delete_path)
-    player.send_message(f"{infoLog()}Deleted scoreboard profile '{name}'")
+
+    if not isinstance(player, Player):
+        print(f"{infoLog()}Deleted scoreboard profile '{name}'")
+        return False
+    else:
+        player.send_message(f"{infoLog()}Deleted scoreboard profile '{name}'")
     return True
 
 def list_scoreboard_profiles() -> list[str]:
-    directory = get_profiles_directory()
+    directory = get_scoreboard_directory()
     return [f[:-5] for f in os.listdir(directory) if f.endswith('.json')]
 
-def get_profiles_directory() -> str:
+def get_scoreboard_directory() -> str:
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    while not (os.path.exists(os.path.join(current_dir, 'plugins')) and os.path.exists(
-            os.path.join(current_dir, 'worlds'))):
+    while not (
+        os.path.exists(os.path.join(current_dir, 'plugins')) and
+        os.path.exists(os.path.join(current_dir, 'worlds'))
+    ):
         current_dir = os.path.dirname(current_dir)
 
+    scoreboard_dir = os.path.join(current_dir, 'plugins', 'scoreboard_data')
+    os.makedirs(scoreboard_dir, exist_ok=True)
 
-    profiles_dir = os.path.join(current_dir, 'scoreboard_profiles')
-    os.makedirs(profiles_dir, exist_ok=True)
-
-    return profiles_dir
+    return scoreboard_dir

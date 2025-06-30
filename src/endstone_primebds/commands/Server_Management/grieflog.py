@@ -37,7 +37,7 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
         radius = 0
         action_filter = None
         player_name = None
-        dbgl = GriefLog("primebds_gl.db")
+        dbgl = GriefLog("griefLog.db")
 
         if len(args) > 0:
             try:

@@ -27,7 +27,7 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
     else:
         filter_type = args[0].lower()  # Filter type (highest, lowest, recent)
 
-    dbgl = GriefLog("primebds_gl.db")
+    dbgl = GriefLog("griefLog.db")
 
     # Fetch all users and their total playtimes
     playtimes = dbgl.get_all_playtimes()

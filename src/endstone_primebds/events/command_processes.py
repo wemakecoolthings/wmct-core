@@ -44,7 +44,7 @@ def handle_command_preprocess(self: "PrimeBDS", event: PlayerCommandEvent):
                 player.kick("Crasher Detected")
 
     # Internal Permissions Handler
-    db = UserDB("userInfo.db")
+    db = UserDB("users.db")
     if ((db.get_online_user(player.xuid).internal_rank == "Operator" and not player.has_permission("minecraft.kick")) or
             (db.get_online_user(player.xuid).internal_rank == "Default" and player.is_op) or not player.has_permission("primebds.command.refresh")):
         self.reload_custom_perms(player)
@@ -98,6 +98,14 @@ def handle_command_preprocess(self: "PrimeBDS", event: PlayerCommandEvent):
         player.send_message(f"{errorLog()}Hardcoded Endstone Moderation Commands are disabled by primebds")
         event.is_cancelled = True
         return False
+    elif args and args[0].lstrip("/").lower() == "op": # Disabled to handle PrimeBDS rank system
+        self.server.dispatch_command(self.server.command_sender, f"setrank \"{args[1]}\" operator")
+        event.is_cancelled = True
+        return False
+    elif args and args[0].lstrip("/").lower() == "deop":
+        self.server.dispatch_command(self.server.command_sender, f"setrank \"{args[1]}\" default")
+        event.is_cancelled = True
+        return False
 
     db.close_connection()
 
@@ -109,5 +117,13 @@ def handle_server_command_preprocess(self: "PrimeBDS", event: ServerCommandEvent
     if args and args[0].lstrip("/").lower() == "ban" or args[0].lstrip("/").lower() == "unban" or args[0].lstrip(
             "/").lower() == "pardon":
         player.send_message(f"{errorLog()}Hardcoded Endstone Moderation Commands are disabled by primebds\n{infoLog()}Please use \"permban\" or \"removeban\"")
+        event.is_cancelled = True
+        return False
+    elif args and args[0].lstrip("/").lower() == "op":  # Disabled to handle PrimeBDS rank system
+        self.server.dispatch_command(self.server.command_sender, f"setrank \"{args[1]}\" operator")
+        event.is_cancelled = True
+        return False
+    elif args and args[0].lstrip("/").lower() == "deop":
+        self.server.dispatch_command(self.server.command_sender, f"setrank \"{args[1]}\" default")
         event.is_cancelled = True
         return False

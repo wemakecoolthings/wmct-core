@@ -20,7 +20,7 @@ command, permission = create_command(
 
 # SETRANK COMMAND FUNCTIONALITY
 def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
-    db = UserDB("primebds_users.db")
+    db = UserDB("users.db")
     player_name = args[0]
     new_rank = args[1].lower()  
 

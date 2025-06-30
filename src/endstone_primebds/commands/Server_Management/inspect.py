@@ -28,7 +28,7 @@ def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
         return True
 
     if isinstance(sender, Player):
-        dbgl = GriefLog("primebds_gl.db")
+        dbgl = GriefLog("griefLog.db")
         player = self.server.get_player(sender.name)
 
         toggle = dbgl.get_user_toggle(player.xuid, player.name)[3]

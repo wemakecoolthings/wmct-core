@@ -23,7 +23,7 @@ command, permission = create_command(
 )
 
 # SPECTATE COMMAND FUNCTIONALITY
-def handler(self: "PrimeBDS", sendehr: CommandSender, args: list[str]) -> bool:
+def handler(self: "PrimeBDS", sender: CommandSender, args: list[str]) -> bool:
     config = load_config()
     check_gamemode = config["modules"]["spectator_check"].get("check_gamemode", True)
     check_tags = config["modules"]["spectator_check"].get("check_tags", False)
